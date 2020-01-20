@@ -112,7 +112,7 @@ python db_handler.py -d
 
 ### Running the application
 
-Create an environment with python 3.6 and above (3.7 prefer)
+Create an environment wit h python 3.6 and above (3.7 prefer)
 
 There are 3 main options
 

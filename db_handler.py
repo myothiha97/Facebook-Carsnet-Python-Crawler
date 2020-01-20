@@ -3,6 +3,7 @@ import mysql.connector
 import argparse
 import re
 
+
 class DBHandler:
     _instance = None
 
@@ -10,14 +11,6 @@ class DBHandler:
     # Keywords for filtering
     keywords = []
     regex_string = None
-
-    image_tables = ['fb_pages_img', 
-                    'fb_groups_img', 
-                    'fb_searches_img',]
-
-    tables = ['fb_pages', 
-                'fb_pages', 
-                'fb_searches',]
 
     default_tables = ['default_fbpages', 
                     'default_fbgroups',
@@ -43,10 +36,7 @@ class DBHandler:
             auth_plugin=config('DB_AUTH_PLUGIN')
         )
         self.cursor = self.db.cursor()
-        self.img_id = None     
-        
-
-        
+        self.img_id = None        
 
     def retrieve_filter_keyword(self):
         keyword_list = []
@@ -74,9 +64,7 @@ class DBHandler:
         return 'DROP TABLE IF EXISTS {}'.format(table)
 
 
-    def create_default_tables(self, image_table, table, default_table):
-        self.cursor.execute(f"CREATE TABLE IF NOT EXISTS {image_table} (id INT NOT NULL AUTO_INCREMENT, img_url LONGTEXT, PRIMARY KEY(id)); ")
-        self.cursor.execute(f"CREATE TABLE IF NOT EXISTS {table} (id INT NOT NULL AUTO_INCREMENT, post LONGTEXT, img_id INT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (img_id) REFERENCES {table}_img(id), PRIMARY KEY(id));")
+    def create_default_tables(self, image_table, table, default_table):        
         self.cursor.execute(f"CREATE TABLE IF NOT EXISTS {default_table} (id INT NOT NULL AUTO_INCREMENT, {default_table.split('_')[1]} VARCHAR(225), PRIMARY KEY(id));            ")       
     
     #Retrieve Create Statement For keywords table
@@ -100,6 +88,10 @@ class DBHandler:
 
 
     def create_table(self):
+
+
+        self.cursor.execute(f"CREATE TABLE IF NOT EXISTS screenshots (id INT NOT NULL AUTO_INCREMENT, img_url LONGTEXT, PRIMARY KEY(id)); ")
+        self.cursor.execute(f"CREATE TABLE IF NOT EXISTS post_content (id INT NOT NULL AUTO_INCREMENT, post LONGTEXT, img_id INT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (img_id) REFERENCES {table}_img(id), PRIMARY KEY(id));")
         for image_table, table, default_table in zip(self.image_tables, self.tables, self.default_tables):
             sql = self.create_default_tables(image_table, table, default_table)
             # Execute Multiple queries            
@@ -157,7 +149,8 @@ class DBHandler:
                     self.commit_db(sql, post)
             else:            
                 self.commit_db(sql, post)
-        except:
+        except Exception as e:
+            print('Issue saving the data: '+ str(e))
             print(f"There is an issue saving the following content to {table} table")
             print(f"{post}")
             print(f"----------------")

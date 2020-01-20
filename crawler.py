@@ -14,6 +14,8 @@ import argparse
 import uuid
 import re
 import requests
+from entity_extraction import retrieve_entity
+import json,requests
 
 class Crawler:
     def __init__(self, database, storage, depth, keep, filter):
@@ -53,7 +55,7 @@ class Crawler:
 
                     #time.sleep(self.delay)
 
-                    self.save_img_to_db(scroll, timestamp, url)
+                    # self.save_img_to_db(scroll, timestamp, url)
                     
                 self.save_post_to_db()
                     
@@ -105,7 +107,7 @@ class Crawler:
                 
                 time.sleep(self.delay)
                 
-                self.save_img_to_db(count, timestamp, url)
+                # self.save_img_to_db(count, timestamp, url)
 
                 try:
                     post_text = WebDriverWait(self.browser, self.delay).until(EC.presence_of_element_located((By.CLASS_NAME, "userContent"))).text
@@ -132,8 +134,9 @@ class Crawler:
 
 
     def save_post_to_db(self):
-         posts = self.browser.find_elements_by_class_name("userContentWrapper")
-         for post in posts:
+        posts = self.browser.find_elements_by_class_name("userContentWrapper")
+        all_content = []
+        for post in posts:
             # Click See More Button if exist
             try:
                 seemore = post.find_element_by_link_text("See more")
@@ -141,13 +144,66 @@ class Crawler:
             except:
                 continue
 
+            
+            # Retrieve Images
+            try:
+                image_holders = post.find_element_by_class_name('mtm').find_elements_by_css_selector('a[rel="theater"]')
+                images = []
+                for image_holder in image_holders:                
+                    image_url = image_holder.get_attribute("data-ploi")
+                    images.append(image_url)
+            except Exception as e:
+                #No image holder or images here 
+                print('Issue retrieving the images: '+ str(e))
+                pass
+
+
             post_text = post.find_element_by_class_name('userContent').text  
-
             clean_emoji = self.remove_emoji(post_text)
+            entities = retrieve_entity(post_text)
+            # print('-----------------------------------')
+            # print(post_text)
+            # print('-----------------------------------')
+            #print(entities)
+            # print('-----------------------------------')
+            # print(images)
 
+            
+            dataObj = {
+                'post_detail': post_text,
+                'post_url' : 'https://www.facebook.com/pg/CarsNET-102005471291910/posts/?ref=page_internal',
+                'published_at' : '2019-11-20 14:40:00',
+                'segmentation' : entities,
+                'post_image' : images
+            }
+            all_content.append(dataObj)           
             # response = requests.post(url="http://localhost:8000/api/v1/unicode-convertor", data = { 'content' : post})
-            self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
+            #self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
+        self.sent_to_digizaay(all_content)
     
+    def sent_to_digizaay(self,content):
+        url = 'https://carsnet-staging.mm-digital-solutions.com/api/v1/crawl-data-store'
+        # print(content)
+        data = json.dumps({ 'crawl_posts' : content})
+        # print(data)
+        # x = requests.post(url, data = data)
+
+        # data = {'crawl_posts': [dataObj]})
+        headers = {
+            'Content-Type': "application/json",
+            'Accept': "*/*",
+            'Cache-Control': "no-cache",
+            'Host': "carsnet-staging.mm-digital-solutions.com",
+            'Accept-Encoding': "gzip, deflate",
+            'Content-Length': "45",
+            'Connection': "keep-alive",
+            'cache-control': "no-cache"
+            }
+        x = requests.post(url, data=data,headers=headers)
+        print(x)
+        print(x.text)
+
+
     def remove_emoji(self,string):
         emoji_pattern = re.compile("["
                             u"\U0001F600-\U0001F64F"  # emoticons
