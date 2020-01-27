@@ -119,7 +119,7 @@ There are 3 main options
 -p for page
 
 ```
-python main.py -p="motherfinancemyanmar" # pages you want to crawl
+python main.py -p="CarsNET-102005471291910" # pages you want to crawl
 ```
 
 -g for group and

@@ -15,11 +15,13 @@ import uuid
 import re
 import requests
 from entity_extraction import retrieve_entity
-import json,requests
+import json
+import requests
+
 
 class Crawler:
     def __init__(self, database, storage, depth, keep, filter):
-        
+
         self.ids = None
         self.depth = depth
         self.delay = keep
@@ -33,7 +35,7 @@ class Crawler:
     def collect(self, type):
         # Create list for string of ("seameochat, facebookapp")
         objects = self.ids.strip().split(',')
-    
+
         for url in objects:
             self.select_types(type, url.strip())
 
@@ -45,26 +47,27 @@ class Crawler:
                 for scroll in range(self.depth):
                     timestamp = calendar.timegm(time.gmtime())
                     # Click Esc Key to prevent browser notification
-                    self.click_esc_key()                       
+                    self.click_esc_key()
 
                     time.sleep(self.delay)
-                    #self.click_see_more()
+                    # self.click_see_more()
 
                     # Scrolling
-                    self.browser.execute_script("window.scrollBy(0, document.body.scrollHeight)")
+                    self.browser.execute_script(
+                        "window.scrollBy(0, document.body.scrollHeight)")
 
-                    #time.sleep(self.delay)
+                    # time.sleep(self.delay)
 
                     # self.save_img_to_db(scroll, timestamp, url)
-                    
+
                 self.save_post_to_db()
-                    
-                    
-    
+
     # Select types and return sql query for post and imges
+
     def select_types(self, type, url):
         if type == "page":
-            self.browser.get('https://www.facebook.com/pg/{}/posts/?ref=page_internal'.format(url))
+            self.browser.get(
+                'https://www.facebook.com/pg/{}/posts/?ref=page_internal'.format(url))
             self.table = config('DB_NAME_PAGES')
             self.table_img = config('DB_NAME_PAGES_IMG')
 
@@ -82,48 +85,45 @@ class Crawler:
         elif type == "comment":
             pass
 
-
     def take_screenshot(self, count, timestamp, url):
-        return self.browser.save_screenshot('./screenshots/{}_{}_{}.png'.format(count,url, timestamp))
-
+        return self.browser.save_screenshot('./screenshots/{}_{}_{}.png'.format(count, url, timestamp))
 
     def click_see_more(self):
-            seemores = self.browser.find_elements_by_link_text("See more")
-            for seemore in seemores:
-                print("clicking a see more button")
-                return seemore.send_keys(Keys.ENTER)
-
+        seemores = self.browser.find_elements_by_link_text("See more")
+        for seemore in seemores:
+            print("clicking a see more button")
+            return seemore.send_keys(Keys.ENTER)
 
     def click_store_overview_posts(self, url):
-            overview_posts = self.browser.find_elements_by_css_selector('._5bl2._401d')
-            url = url.replace('/', '_')
-            
-            for count, overview_post in enumerate(overview_posts):
-                timestamp = calendar.timegm(time.gmtime())
-                
-                # Click Posts
-                self.browser.execute_script(
-                            "arguments[0].click()", overview_post)
-                
-                time.sleep(self.delay)
-                
-                # self.save_img_to_db(count, timestamp, url)
+        overview_posts = self.browser.find_elements_by_css_selector(
+            '._5bl2._401d')
+        url = url.replace('/', '_')
 
-                try:
-                    post_text = WebDriverWait(self.browser, self.delay).until(EC.presence_of_element_located((By.CLASS_NAME, "userContent"))).text
-                    print(post_text)
-                except:
-                    print("Can't import into database")
-                else:
-                    self.db.store_post_to_db(self.table, post_text)
+        for count, overview_post in enumerate(overview_posts):
+            timestamp = calendar.timegm(time.gmtime())
 
-                # Click Esc Key 
-                self.click_esc_key()
+            # Click Posts
+            self.browser.execute_script(
+                "arguments[0].click()", overview_post)
 
+            time.sleep(self.delay)
+
+            # self.save_img_to_db(count, timestamp, url)
+
+            try:
+                post_text = WebDriverWait(self.browser, self.delay).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "userContent"))).text
+                print(post_text)
+            except:
+                print("Can't import into database")
+            else:
+                self.db.store_post_to_db(self.table, post_text)
+
+            # Click Esc Key
+            self.click_esc_key()
 
     def click_esc_key(self):
         return webdriver.ActionChains(self.browser).send_keys(Keys.ESCAPE).perform()
-
 
     def click_store_comment(self, sql):
         comments = self.browser.find_elements_by_partial_link_text("View")
@@ -132,59 +132,96 @@ class Crawler:
             comment.send_keys(Keys.ENTER)
             text = comment.text
 
-
     def save_post_to_db(self):
         posts = self.browser.find_elements_by_class_name("userContentWrapper")
         all_content = []
         for post in posts:
             # Click See More Button if exist
+            
             try:
                 seemore = post.find_element_by_link_text("See more")
                 seemore.send_keys(Keys.ENTER)
             except:
                 continue
 
-            
-            # Retrieve Images
-            try:
-                image_holders = post.find_element_by_class_name('mtm').find_elements_by_css_selector('a[rel="theater"]')
-                images = []
-                for image_holder in image_holders:                
-                    image_url = image_holder.get_attribute("data-ploi")
-                    images.append(image_url)
+           
+
+            try: 
+                post_text = post.find_element_by_class_name('userContent').text
+                clean_emoji = self.remove_emoji(post_text)
             except Exception as e:
-                #No image holder or images here 
-                print('Issue retrieving the images: '+ str(e))
+                print('Issue with retrieving content: ' + str(e))
+
+            # Get Date
+            date_abbr = post.find_element_by_css_selector('.livetimestamp')            
+            date = date_abbr.get_attribute("title")
+
+            # Segementation
+            entities = retrieve_entity(post_text)
+
+            # Author Name
+            author_name = post.find_element_by_css_selector('.fwb.fcg a').text
+
+
+             # Retrieve Images
+            try:
+                
+                # Try clicking on the images
+                image_holder = post.find_element_by_class_name(
+                    'mtm').find_element_by_css_selector('a[rel="theater"]')
+                image_holder.click()
+
+                WebDriverWait(self.browser, 10).until(
+                    EC.presence_of_element_located(
+                        (By.CLASS_NAME, "spotlight"))
+                )
+
+                
+                images = []
+                count = 0
+                while(count < 20):  
+                    self.browser.implicitly_wait(100)                 
+                    spotlight = self.browser.find_element_by_class_name(
+                        'spotlight')
+
+                    # print('---------------------------------')                    
+                    image_url = spotlight.get_attribute("src")
+                    # print(image_url)
+                    if image_url in images:
+                        pass
+                        # print('same image already')
+                        # hasMore = False
+                    else:
+                        images.append(image_url)                                     
+                    next_btn = self.browser.find_element_by_css_selector(
+                        '.snowliftPager.prev')
+                    next_btn.click()
+                    count += 1
+                
+            except Exception as e:
+                # No image holder or images here
+                print('Issue retrieving the images: ' + str(e))
                 pass
 
-
-            post_text = post.find_element_by_class_name('userContent').text  
-            clean_emoji = self.remove_emoji(post_text)
-            entities = retrieve_entity(post_text)
-            # print('-----------------------------------')
-            # print(post_text)
-            # print('-----------------------------------')
-            #print(entities)
-            # print('-----------------------------------')
-            # print(images)
-
-            
             dataObj = {
                 'post_detail': post_text,
                 'post_url' : 'https://www.facebook.com/pg/CarsNET-102005471291910/posts/?ref=page_internal',
-                'published_at' : '2019-11-20 14:40:00',
-                'segmentation' : entities,
-                'post_image' : images
+                'page_name' : 'Cars Net',
+                'published_at' : date,
+                'author_name' : author_name,
+                'post_images' : images,                
+                'segmentation' : [],                
             }
-            all_content.append(dataObj)           
-            # response = requests.post(url="http://localhost:8000/api/v1/unicode-convertor", data = { 'content' : post})
+            all_content.append(dataObj)
+            print(all_content)            
+
             #self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
-        self.sent_to_digizaay(all_content)
-    
-    def sent_to_digizaay(self,content):
+        # self.sent_to_digizaay(all_content)
+
+    def sent_to_digizaay(self, content):
         url = 'https://carsnet-staging.mm-digital-solutions.com/api/v1/crawl-data-store'
         # print(content)
-        data = json.dumps({ 'crawl_posts' : content})
+        data = json.dumps({'crawl_posts': content})
         # print(data)
         # x = requests.post(url, data = data)
 
@@ -198,34 +235,32 @@ class Crawler:
             'Content-Length': "45",
             'Connection': "keep-alive",
             'cache-control': "no-cache"
-            }
-        x = requests.post(url, data=data,headers=headers)
+        }
+        x = requests.post(url, data=data, headers=headers)
         print(x)
         print(x.text)
 
-
-    def remove_emoji(self,string):
+    def remove_emoji(self, string):
         emoji_pattern = re.compile("["
-                            u"\U0001F600-\U0001F64F"  # emoticons
-                            u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-                            u"\U0001F680-\U0001F6FF"  # transport & map symbols
-                            u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-                            u"\U00002702-\U000027B0"
-                            u"\U000024C2-\U0001F251"
-                            "]+", flags=re.UNICODE)
+                                   u"\U0001F600-\U0001F64F"  # emoticons
+                                   u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                                   u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                                   u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                                   u"\U00002702-\U000027B0"
+                                   u"\U000024C2-\U0001F251"
+                                   "]+", flags=re.UNICODE)
         return emoji_pattern.sub(r'', string)
 
     def save_img_to_db(self, count, timestamp, url):
         # Store image and Get image URL from friebase
-        self.take_screenshot(count,timestamp, url)
+        self.take_screenshot(count, timestamp, url)
         image = self.storage.store_image_to_firebase(count, timestamp, url)
 
         self.db.store_imgurl_to_db(self.table_img, image)
 
-
     def login(self, email, password):
         self.browser.get("https://www.facebook.com")
-        
+
         emailbox = self.browser.find_element_by_name("email")
         emailbox.clear()
         emailbox.send_keys(email)
@@ -236,6 +271,5 @@ class Crawler:
 
         emailbox.send_keys(Keys.ENTER)
 
-    
     def close_browser(self):
         return self.browser.close()
