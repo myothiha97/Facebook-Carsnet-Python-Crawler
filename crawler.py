@@ -136,51 +136,99 @@ class Crawler:
         posts = self.browser.find_elements_by_class_name("userContentWrapper")
         all_content = []
         for post in posts:
-            # Click See More Button if exist
-            
-            try:
-                seemore = post.find_element_by_link_text("See more")
-                seemore.send_keys(Keys.ENTER)
-            except:
-                continue
-
-           
-
+            all_content = []
+            # Click See More Button if exist          
+            self.click_see_more_button(post)           
+          
+            # Post content
+            post_text  = ''
+            entities = []            
             try: 
                 post_text = post.find_element_by_class_name('userContent').text
                 clean_emoji = self.remove_emoji(post_text)
+                print(post_text)
+                # Segementation
+                entities = retrieve_entity(post_text)
             except Exception as e:
                 print('Issue with retrieving content: ' + str(e))
 
-            # Get Date
-            date_abbr = post.find_element_by_css_selector('.livetimestamp')            
-            date = date_abbr.get_attribute("title")
-
-            # Segementation
-            entities = retrieve_entity(post_text)
-
-            # Author Name
-            author_name = post.find_element_by_css_selector('.fwb.fcg a').text
-
-
-             # Retrieve Images
+              # Get Date
+            timestamp = ''
             try:
-                
-                # Try clicking on the images
-                image_holder = post.find_element_by_class_name(
-                    'mtm').find_element_by_css_selector('a[rel="theater"]')
-                image_holder.click()
+                date_obj = post.find_element_by_css_selector('._5ptz')
+                # date =  date_obj.get_attribute("title")
 
-                WebDriverWait(self.browser, 10).until(
-                    EC.presence_of_element_located(
-                        (By.CLASS_NAME, "spotlight"))
-                )
+                timestamp = date_obj.get_attribute("data-utime")
+            except Exception as e:
+                print("Error retrieving date " + str(e))
 
+            # Check timestamp if the page is already scanned before            
+            # if(timestamp < "1576813657"):
+            if(True):
+                # Author Name
+                author_name = ''
+                try:
+                    author_name = post.find_element_by_css_selector('.fwb.fcg a').text         
+                except Exception as e:
+                    print("Error retrieving author name" + str(e))
+
+                images =  self.extract_all_images(post)
+                # images = []
+
+
+                # Retrieve comments from the post content
                 
-                images = []
-                count = 0
-                while(count < 20):  
-                    self.browser.implicitly_wait(100)                 
+
+                dataObj = {
+                    'post_detail': post_text,
+                    'post_url' : 'https://www.facebook.com/pg/CarsNET-102005471291910/posts/?ref=page_internal',
+                    'page_name' : 'Cars Net',
+                    'published_at' : timestamp,
+                    'author_name' : author_name,
+                    'post_images' : images,                
+                    'segmentation' : entities,                
+                    'comments_count' : 0,
+                    'likes_count' : 0,
+                    'shares_count' : 0
+                }
+                if post_text is not '':
+                    all_content.append(dataObj)
+                    self.sent_to_digizaay(all_content)
+
+            # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
+        try:
+            print("End of processing")
+            # self.sent_to_digizaay(all_content)
+        except Exception as e:
+            print("Issue in sending content to digizaay server" + str(e))
+
+    def click_see_more_button(self,post):
+        try:
+            seemore = post.find_element_by_link_text("See more")
+            seemore.send_keys(Keys.ENTER)
+        except:
+            pass
+
+    def extract_all_images(self,post):
+
+        images = []
+        try:                
+            # Try clicking on the images
+            image_holder = post.find_element_by_class_name(
+                'mtm').find_element_by_css_selector('a[rel="theater"]')
+            image_holder.click()
+
+            WebDriverWait(self.browser, 2).until(
+                EC.presence_of_element_located(
+                    (By.CLASS_NAME, "spotlight"))
+            )
+
+            
+            
+            count = 0
+            while(count < 15):  
+                     
+                try:          
                     spotlight = self.browser.find_element_by_class_name(
                         'spotlight')
 
@@ -197,31 +245,25 @@ class Crawler:
                         '.snowliftPager.prev')
                     next_btn.click()
                     count += 1
+                except Exception as ex:
+                    print("Issue retrieving image"+str(ex))
+                    count += 1
+                    time.sleep(1)
+            self.click_esc_key()
+            
                 
-            except Exception as e:
-                # No image holder or images here
-                print('Issue retrieving the images: ' + str(e))
-                pass
-
-            dataObj = {
-                'post_detail': post_text,
-                'post_url' : 'https://www.facebook.com/pg/CarsNET-102005471291910/posts/?ref=page_internal',
-                'page_name' : 'Cars Net',
-                'published_at' : date,
-                'author_name' : author_name,
-                'post_images' : images,                
-                'segmentation' : [],                
-            }
-            all_content.append(dataObj)
-            print(all_content)            
-
-            #self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
-        # self.sent_to_digizaay(all_content)
+        except Exception as e:
+            # No image holder or images here
+            print('Issue retrieving the images: ' + str(e))
+            pass
+        
+        return images
 
     def sent_to_digizaay(self, content):
         url = 'https://carsnet-staging.mm-digital-solutions.com/api/v1/crawl-data-store'
         # print(content)
         data = json.dumps({'crawl_posts': content})
+        print(data)
         # print(data)
         # x = requests.post(url, data = data)
 
