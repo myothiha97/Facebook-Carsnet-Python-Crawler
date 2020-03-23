@@ -192,3 +192,6 @@ Setup a cron job for the created .sh script.
 ### Transferring data
 
 Update POST_URL from config with the API URL which can store the data in chunks.
+
+
+### Env on main server

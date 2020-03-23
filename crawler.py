@@ -38,7 +38,6 @@ class Crawler:
 
         for url in objects:
             self.select_types(type, url.strip())
-
             if type == "search":
                 self.click_store_overview_posts(url)
                 time.sleep(self.delay)
@@ -66,10 +65,12 @@ class Crawler:
 
     def select_types(self, type, url):
         if type == "page":
-            self.browser.get(
-                'https://www.facebook.com/pg/{}/posts/?ref=page_internal'.format(url))
+            url_for_page = 'https://www.facebook.com/pg/{}'.format(url)
+            print(url_for_page)
+            result = self.browser.get(url_for_page)
+            print(result)
             self.table = config('DB_NAME_PAGES')
-            self.table_img = config('DB_NAME_PAGES_IMG')
+            self.table_img = config('DB_NAME_PAGES_IMG')            
 
         elif type == "group":
             self.browser.get('https://www.facebook.com/groups/{}/'.format(url))
@@ -77,13 +78,14 @@ class Crawler:
             self.table_img = config('DB_NAME_GROUPS_IMG')
 
         elif type == "search":
-            self.browser.get(
-                'https://www.facebook.com/search/posts/?q={}&epa=SEARCH_BOX'.format(url.strip().lower()))
+            self.browser.get('https://www.facebook.com/search/posts/?q={}&epa=SEARCH_BOX'.format(url.strip().lower()))
             self.table = config('DB_NAME_SEARCHES')
             self.table_img = config('DB_NAME_SEARCHES_IMG')
 
         elif type == "comment":
             pass
+
+        print(self.browser.current_url)
 
     def take_screenshot(self, count, timestamp, url):
         return self.browser.save_screenshot('./screenshots/{}_{}_{}.png'.format(count, url, timestamp))
@@ -181,15 +183,17 @@ class Crawler:
 
                 dataObj = {
                     'post_detail': post_text,
-                    'post_url' : 'https://www.facebook.com/pg/CarsNET-102005471291910/posts/?ref=page_internal',
-                    'page_name' : 'Cars Net',
-                    'published_at' : timestamp,
+                    # 'post_url' : 'https://www.facebook.com/groups/824818357601140/?ref=share',
+                    # 'page_name' : 'ကားအမြန်ရောင်းဝယ်ရေး',
+                    'published_at': timestamp,
                     'author_name' : author_name,
                     'post_images' : images,                
                     'segmentation' : entities,                
                     'comments_count' : 0,
                     'likes_count' : 0,
-                    'shares_count' : 0
+                    'shares_count' : 0,
+                    'page_id': 1,
+                    'crawl_history_id' : 28
                 }
                 if post_text is not '':
                     all_content.append(dataObj)
@@ -260,7 +264,7 @@ class Crawler:
         return images
 
     def sent_to_digizaay(self, content):
-        url = 'https://carsnet-staging.mm-digital-solutions.com/api/v1/crawl-data-store'
+        url = config('DIGIZAAY_URL')
         # print(content)
         data = json.dumps({'crawl_posts': content})
         print(data)
@@ -268,18 +272,21 @@ class Crawler:
         # x = requests.post(url, data = data)
 
         # data = {'crawl_posts': [dataObj]})
+        token = f"Bearer {config('TOKEN')}"
         headers = {
             'Content-Type': "application/json",
             'Accept': "*/*",
             'Cache-Control': "no-cache",
-            'Host': "carsnet-staging.mm-digital-solutions.com",
+            'Host': config('DIGIZAAY_HOST'),
             'Accept-Encoding': "gzip, deflate",
             'Content-Length': "45",
             'Connection': "keep-alive",
-            'cache-control': "no-cache"
+            'cache-control': "no-cache",
+            'Authorization': token
         }
+        print(token)
         x = requests.post(url, data=data, headers=headers)
-        print(x)
+        # print(x)
         print(x.text)
 
     def remove_emoji(self, string):

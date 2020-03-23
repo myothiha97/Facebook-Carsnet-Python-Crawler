@@ -18,7 +18,7 @@ mileage_reg   = r'km|kilo|mileage|milage|ကိလို|ကီလို'
 gear_reg      = r'auto|manual|gear'
 region_reg    = r'ygn|mdy|shn|sgg|bgo|shn|npw|ayy'
 seater_reg    = r'seater|seaters|seating'
-hand_reg      = r'ဘယ်မောင်း|ညာမောင်း'
+hand_reg      = r'ဘယ်မောင်း|ညာမောင်း|l.h.d|r.h.d|lhd|rhd'
 license_reg   = r'number|license|licence|လိုင်စင်|ygn|mdy|sgg|bgo|'
 price_reg     = r'price|သိန်း'
     
@@ -198,9 +198,9 @@ def get_entity(post_text):
             if (segment['hand_drive'] == '-') and (re.search(hand_reg,line)):
                 drive_postion = re.search(hand_reg,line).group()
                 
-                if drive_position == 'ဘယ်မောင်း':
+                if drive_position == 'ဘယ်မောင်း' or drive_postion == "l.h.d" or drive_postion == "lhd":
                     segment['hand_drive'] = 'L.H.D'
-                if drive_position == 'ညာမောင်း':
+                if drive_position == 'ညာမောင်း' or drive_postion == "r.h.d" or drive_postion == "rhd":
                     segment['hand_drive'] = 'R.H.D'
                     
             if (re.search(license_reg,line)):
