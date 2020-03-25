@@ -141,7 +141,9 @@ class DBHandler:
     def save_timestamp_for_page(self,page_id,timestamp):
         sql = f"insert into page set timestamp = {timestamp}  where id = {page_id}"
         self.commit_db(sql)
-
+        
+   
+    
     def store_post_to_db(self, table, post,has_filter):
         
         sql = "INSERT INTO {} (post, img_id) VALUES (%s, (SELECT id FROM {} WHERE id = {}))".format(table, table + "_img", self.img_id)

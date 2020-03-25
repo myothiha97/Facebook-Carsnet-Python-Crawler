@@ -35,8 +35,8 @@ class Crawler:
     def collect(self, type):
         # Create list for string of ("seameochat, facebookapp")
         objects = self.ids.strip().split(',')
-
-        for url in objects:
+        ### store page_ids from page table from crawler_db ###
+        for i in objects:
             self.select_types(type, url.strip())
             if type == "search":
                 self.click_store_overview_posts(url)
@@ -135,9 +135,11 @@ class Crawler:
             text = comment.text
 
     def save_post_to_db(self):
+        
         posts = self.browser.find_elements_by_class_name("userContentWrapper")
         all_content = []
         already_saved_start_timestamp = False
+        
         for post in posts:
             all_content = []
             # Click See More Button if exist          
@@ -162,7 +164,7 @@ class Crawler:
                 # date =  date_obj.get_attribute("title")
 
                 timestamp = date_obj.get_attribute("data-utime")
-                if(already_saved_start_timestamp):
+                if not already_saved_start_timestamp:
                     # Save to the database
                     self.db.save_timestamp_for_page(page_id,timestamp)
                     already_saved_start_timestamp = True
