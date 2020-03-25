@@ -36,7 +36,8 @@ class Crawler:
         # Create list for string of ("seameochat, facebookapp")
         objects = self.ids.strip().split(',')
         ### store page_ids from page table from crawler_db ###
-        for i in objects:
+        ids = self.db.extract_page_ids_from_page()
+        for i in ids:
             self.select_types(type, url.strip())
             if type == "search":
                 self.click_store_overview_posts(url)
@@ -59,7 +60,7 @@ class Crawler:
 
                     # self.save_img_to_db(scroll, timestamp, url)
 
-                self.save_post_to_db()
+                self.save_post_to_db(i)
 
     # Select types and return sql query for post and imges
 
@@ -134,7 +135,7 @@ class Crawler:
             comment.send_keys(Keys.ENTER)
             text = comment.text
 
-    def save_post_to_db(self):
+    def save_post_to_db(self,page_id):
         
         posts = self.browser.find_elements_by_class_name("userContentWrapper")
         all_content = []

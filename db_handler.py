@@ -142,7 +142,13 @@ class DBHandler:
         sql = f"insert into page set timestamp = {timestamp}  where id = {page_id}"
         self.commit_db(sql)
         
-   
+    def extract_page_ids_from_page():
+        sql = f"SELECT original_id FROM `page`"
+        self.cursor.execute(sql)
+        page_ids = []
+        for i in self.cursor:
+            page_ids.append(i)
+        return page_ids
     
     def store_post_to_db(self, table, post,has_filter):
         
