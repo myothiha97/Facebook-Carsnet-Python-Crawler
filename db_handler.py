@@ -36,7 +36,14 @@ class DBHandler:
             auth_plugin=config('DB_AUTH_PLUGIN')
         )
         self.cursor = self.db.cursor()
-        self.img_id = None        
+        self.img_id = None
+        self.image_tables = [config('DB_NAME_PAGES_IMG'),
+                             config('DB_NAME_GROUPS_IMG'),
+                             config('DB_NAME_SEARCHES_IMG')]
+        
+        self.default_tables = ['default_fbpages', 
+                               'default_fbgroups',
+                               'default_fbsearches',]   
 
     def retrieve_filter_keyword(self):
         keyword_list = []
@@ -91,7 +98,7 @@ class DBHandler:
 
 
         self.cursor.execute(f"CREATE TABLE IF NOT EXISTS screenshots (id INT NOT NULL AUTO_INCREMENT, img_url LONGTEXT, PRIMARY KEY(id)); ")
-        self.cursor.execute(f"CREATE TABLE IF NOT EXISTS post_content (id INT NOT NULL AUTO_INCREMENT, post LONGTEXT, img_id INT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (img_id) REFERENCES {table}_img(id), PRIMARY KEY(id));")
+        self.cursor.execute(f"CREATE TABLE IF NOT EXISTS post_content (id INT NOT NULL AUTO_INCREMENT, post LONGTEXT, img_id INT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(id));")
         for image_table, table, default_table in zip(self.image_tables, self.tables, self.default_tables):
             sql = self.create_default_tables(image_table, table, default_table)
             # Execute Multiple queries            
@@ -140,8 +147,18 @@ class DBHandler:
 
     def save_timestamp_for_page(self,page_id,timestamp):
         sql = f"insert into page set timestamp = {timestamp}  where id = {page_id}"
-        self.commit_db(sql)
-
+        # self.commit_db(sql)
+        self.cursor.execute(sql)
+        self.db.commit()
+        
+    def extract_page_ids_from_page(self):
+        sql = f"SELECT original_id FROM `page`"
+        self.cursor.execute(sql)
+        page_ids = []
+        for i in self.cursor:
+            page_ids.append(i)
+        return page_ids
+    
     def store_post_to_db(self, table, post,has_filter):
         
         sql = "INSERT INTO {} (post, img_id) VALUES (%s, (SELECT id FROM {} WHERE id = {}))".format(table, table + "_img", self.img_id)
@@ -175,8 +192,9 @@ if __name__ == '__main__':
 
     parser.add_argument("-m", "--migrate",  action="store_true",   help="Table you want to create")
 
-    parser.add_argument("-d", "--drop", action="store_true", help="Table you want to create")
-
+    parser.add_argument("-d", "--drop", action="store_true", help="Table you want to drop")
+    
+    parser.add_argument("-p","--create_table" , action="store_true",help="use this command if u dont have require tables ")
     args = parser.parse_args()
 
     g = DBHandler()
@@ -188,3 +206,5 @@ if __name__ == '__main__':
     if args.drop:
         g.drop_table()
 
+    if args.create_table:
+        g.create_table()

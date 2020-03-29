@@ -35,9 +35,10 @@ class Crawler:
     def collect(self, type):
         # Create list for string of ("seameochat, facebookapp")
         objects = self.ids.strip().split(',')
+        pages_ids = self.db.extract_page_ids_from_page()
 
-        for url in objects:
-            self.select_types(type, url.strip())
+        for ids in pages_ids:
+            # self.select_types(type, url.strip())
             if type == "search":
                 self.click_store_overview_posts(url)
                 time.sleep(self.delay)
@@ -59,7 +60,7 @@ class Crawler:
 
                     # self.save_img_to_db(scroll, timestamp, url)
 
-                self.save_post_to_db()
+                self.save_post_to_db(ids)
 
     # Select types and return sql query for post and imges
 
@@ -134,10 +135,10 @@ class Crawler:
             comment.send_keys(Keys.ENTER)
             text = comment.text
 
-    def save_post_to_db(self):
+    def save_post_to_db(self,page):
         posts = self.browser.find_elements_by_class_name("userContentWrapper")
         all_content = []
-        already_saved_start_timestamp = False
+        check_already_safe_stimestamp = False
         for post in posts:
             all_content = []
             # Click See More Button if exist          
@@ -162,14 +163,16 @@ class Crawler:
                 # date =  date_obj.get_attribute("title")
 
                 timestamp = date_obj.get_attribute("data-utime")
-                if(already_saved_start_timestamp):
-                    # Save to the database
-                    self.db.save_timestamp_for_page(page_id,timestamp)
-                    already_saved_start_timestamp = True
+                
+            # Check timestamp if the page is already scanned before            
+                if not check_already_safe_stimestamp:
+                    self.db.save_timestamp_for_page(page,timestamp) ### store timestamp to the page table
+                    check_already_safe_stimestamp = True
+                    
+                print("Time stamp {}".format(timestamp))
             except Exception as e:
                 print("Error retrieving date " + str(e))
-
-            # Check timestamp if the page is already scanned before            
+                
             # if(timestamp < "1576813657"):
             if(True):
                 # Author Name
@@ -318,7 +321,7 @@ class Crawler:
         emailbox = self.browser.find_element_by_name("email")
         emailbox.clear()
         emailbox.send_keys(email)
-
+ 
         emailbox = self.browser.find_element_by_name("pass")
         emailbox.clear()
         emailbox.send_keys(password)
