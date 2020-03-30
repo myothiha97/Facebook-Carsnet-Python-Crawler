@@ -202,26 +202,21 @@ class Crawler:
                 else:   
                     print("Time stamp {}".format(timestamp))
                     self.db.save_timestamp_for_page(page,timestamp)
+                    author_name = ''
+                    try:
+                        author_name = post.find_element_by_css_selector('.fwb.fcg a').text         
+                    except Exception as e:
+                        print("Error retrieving author name" + str(e))
+                    images =  self.extract_all_images(post)
             except Exception as e:
                 print("Error retrieving date " + str(e))
                 
             # if(timestamp < "1576813657"):
-            # if(True):
-            if timestamp not in time_stamps:
+            if(True):
+            # if timestamp not in time_stamps:
                 # Author Name
-                author_name = ''
-                try:
-                    author_name = post.find_element_by_css_selector('.fwb.fcg a').text         
-                except Exception as e:
-                    print("Error retrieving author name" + str(e))
-
-                images =  self.extract_all_images(post)
                 # images = []
-
-
                 # Retrieve comments from the post content
-                
-
                 dataObj = {
                     'post_detail': post_text,
                     # 'post_url' : 'https://www.facebook.com/groups/824818357601140/?ref=share',
