@@ -112,7 +112,7 @@ python db_handler.py -d
 
 ### Running the application
 
-Create an environment wit h python 3.6 and above (3.7 prefer)
+Create an environment with python 3.6 and above (3.7 prefer)
 
 There are 3 main options
 
@@ -153,6 +153,16 @@ As default, it will wait 5 seconds
 
 ```
 python main.py -k=6 # wait for 6 seconds after 1 scroll
+```
+-sd option for storing api datas to page table and schedule table from database .This command will only store datas that are not existed in database.
+
+```
+python main.py -sd 
+```
+-C option for checking whether it's time to crawl or not by checking with schedule table from database.You also need to pass operation type in command.Three main operations are 'page','group'and 'search'
+
+```
+python main.py -C="page" 
 ```
 
 ### Filtering the data

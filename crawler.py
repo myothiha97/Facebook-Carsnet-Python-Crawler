@@ -61,7 +61,36 @@ class Crawler:
                     # self.save_img_to_db(scroll, timestamp, url)
 
                 self.save_post_to_db(ids)
+                
+    def collect_by_ids(self,type,page_ids):
+        # objects = self.ids.strip().split(',')
+        objects = page_ids
+        # pages_ids = self.db.extract_page_ids_from_page()
 
+        for ids in objects:
+            # self.select_types(type, url.strip())
+            if type == "search":
+                self.click_store_overview_posts(url)
+                time.sleep(self.delay)
+            else:
+                # Scroll down by depth count e.g 4
+                for scroll in range(self.depth):
+                    timestamp = calendar.timegm(time.gmtime())
+                    # Click Esc Key to prevent browser notification
+                    self.click_esc_key()
+
+                    time.sleep(self.delay)
+                    # self.click_see_more()
+
+                    # Scrolling
+                    self.browser.execute_script(
+                        "window.scrollBy(0, document.body.scrollHeight)")
+
+                    # time.sleep(self.delay)
+
+                    # self.save_img_to_db(scroll, timestamp, url)
+
+                self.save_post_to_db(ids)
     # Select types and return sql query for post and imges
 
     def select_types(self, type, url):
@@ -163,18 +192,22 @@ class Crawler:
                 # date =  date_obj.get_attribute("title")
 
                 timestamp = date_obj.get_attribute("data-utime")
-                
+                time_stamps = self.db.extract_timestamp_from_page()
+                if timestamp in time_stamps:
             # Check timestamp if the page is already scanned before            
-                if not check_already_safe_stimestamp:
-                    self.db.save_timestamp_for_page(page,timestamp) ### store timestamp to the page table
-                    check_already_safe_stimestamp = True
-                    
-                print("Time stamp {}".format(timestamp))
+                    print("The page is already scannced before")
+                # if not check_already_safe_stimestamp:
+                #     self.db.save_timestamp_for_page(page,timestamp) ### store timestamp to the page table
+                #     check_already_safe_stimestamp = True
+                else:   
+                    print("Time stamp {}".format(timestamp))
+                    self.db.save_timestamp_for_page(page,timestamp)
             except Exception as e:
                 print("Error retrieving date " + str(e))
                 
             # if(timestamp < "1576813657"):
-            if(True):
+            # if(True):
+            if timestamp not in time_stamps:
                 # Author Name
                 author_name = ''
                 try:

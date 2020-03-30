@@ -146,13 +146,45 @@ class DBHandler:
 
 
     def save_timestamp_for_page(self,page_id,timestamp):
-        sql = f"insert into page set timestamp = {timestamp}  where id = {page_id}"
+        p_id = int(page_id[0])
+        # sql = f"INSERT INTO `page` set `time_stamp` = {timestamp}  where `original_id` = {p_id}"
+        # sql = f"INSERT INTO `page`(time_stamp) VALUES({timestamp}) WHERE id = {p_id}"
+        sql = f"UPDATE `page` SET `time_stamp` = {timestamp} WHERE id = {p_id}"
         # self.commit_db(sql)
         self.cursor.execute(sql)
         self.db.commit()
         
     def extract_page_ids_from_page(self):
-        sql = f"SELECT original_id FROM `page`"
+        sql = f"SELECT id FROM `page`"
+        self.cursor.execute(sql)
+        page_ids = []
+        for i in self.cursor:
+            page_ids.append(i)
+        return page_ids
+    
+    def extract_timestamp_from_page(self):
+        sql=f"SELECT time_stamp FROM `page`"
+        self.cursor.execute(sql)
+        page_time_stamps = []
+        for i in self.cursor:
+            page_time_stamps.append(i)
+        return page_time_stamps
+    
+    def extract_times_and_crawldays_from_schedule(self):
+        sql1=f"SELECT crawl_time FROM `schedule`"
+        sql2=f"SELECT crawl_day FROM `schedule`"
+        self.cursor.execute(sql1)
+        crawl_times=[]
+        for i in self.cursor:
+            crawl_times.append(i[0])
+        self.cursor.execute(sql2)
+        crawl_days = []
+        for i in self.cursor:
+            crawl_days.append(i[0])
+        return crawl_times,crawl_days
+    
+    def page_ids_from_schedule(self):
+        sql = f"SELECT page_id FROM `schedule`"
         self.cursor.execute(sql)
         page_ids = []
         for i in self.cursor:
