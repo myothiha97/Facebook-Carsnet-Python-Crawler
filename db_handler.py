@@ -106,6 +106,32 @@ class DBHandler:
 
         self.cursor.execute('CREATE TABLE IF NOT EXISTS keywords (id INT NOT NULL AUTO_INCREMENT, keyword varchar(100), PRIMARY KEY(id));')
         
+                
+    def insert_tables(self,table_name):
+        if table_name == "page":
+            try:
+                self.db.execute("CREATE TABLE IF NOT EXISTS `page`(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,original_id int, page_url varchar(200),page_name varchar(200),last_crawled_date date, page_status boolean,icon varchar(200),time_stamp VARCHAR(50))")
+            except:
+                print("Page table already exist")
+            else:
+                print("table created")
+                self.db.commit()
+        elif table_name == "schedule":
+            try:
+                self.db.execute("CREATE TABLE IF NOT EXISTS `schedule`(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,original_id int,page_id int,crawl_day int,crawl_time TIME(0) NOT NULL)")
+            except:
+                print("Schedule table already exist")
+            else:
+                print("table created")
+                self.db.commit()
+        elif table_name == "history":
+            try:
+                self.db.execute("CREATE TABLE IF NOT EXISTS `history`(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,page_id int,schedule_id int,start_time TIME (0) NOT NULL,end_time TIME (0) NOT NULL,crawled_date date)")
+            except:
+                print("History table already exists")
+            else:
+                print("Table created")
+                self.db.commit()
 
 
     def drop_table(self, tablename=None):        
@@ -227,6 +253,8 @@ if __name__ == '__main__':
     parser.add_argument("-d", "--drop", action="store_true", help="Table you want to drop")
     
     parser.add_argument("-p","--create_table" , action="store_true",help="use this command if u dont have require tables ")
+    
+    parser.add_argument("-i","--insert_table",type=str,action="store",help="use this command to insert require tables to database")
     args = parser.parse_args()
 
     g = DBHandler()
@@ -240,3 +268,11 @@ if __name__ == '__main__':
 
     if args.create_table:
         g.create_table()
+        
+    if args.insert_table:
+        commands = ["page","schedule","history"]
+        if args.insert_table not in commands:
+            print("Invalid table")
+            print("The available tables are [page,schedule,history]")
+        else:
+            g.insert_tables(args.insert_table)
