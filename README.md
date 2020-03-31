@@ -109,7 +109,11 @@ in case of dropping databases
 ```
 python db_handler.py -d
 ```
+For adding tables which manage the crawl time of crawler.Necessary tables are 'page' , 'scheduel' and 'history'.
 
+```
+python db_handler.py -i="page"
+```
 ### Running the application
 
 Create an environment with python 3.6 and above (3.7 prefer)
