@@ -40,7 +40,8 @@ class Crawler:
         for ids in pages_ids:
             # self.select_types(type, url.strip())
             if type == "search":
-                self.click_store_overview_posts(url)
+                # self.click_store_overview_posts(url)
+                self.click_store_overview_posts(ids)
                 time.sleep(self.delay)
             else:
                 # Scroll down by depth count e.g 4
@@ -62,35 +63,34 @@ class Crawler:
 
                 self.save_post_to_db(ids)
                 
-    def collect_by_ids(self,type,page_ids):
+    def collect_by_ids(self,type,page_id):
         # objects = self.ids.strip().split(',')
-        objects = page_ids
         # pages_ids = self.db.extract_page_ids_from_page()
-
-        for ids in objects:
+        # for ids in objects:
             # self.select_types(type, url.strip())
-            if type == "search":
-                self.click_store_overview_posts(url)
+        if type == "search":
+            # self.click_store_overview_posts(url)
+            self.click_store_overview_posts(page_id)
+            time.sleep(self.delay)
+        else:
+            # Scroll down by depth count e.g 4
+            for scroll in range(self.depth):
+                timestamp = calendar.timegm(time.gmtime())
+                # Click Esc Key to prevent browser notification
+                self.click_esc_key()
+
                 time.sleep(self.delay)
-            else:
-                # Scroll down by depth count e.g 4
-                for scroll in range(self.depth):
-                    timestamp = calendar.timegm(time.gmtime())
-                    # Click Esc Key to prevent browser notification
-                    self.click_esc_key()
+                # self.click_see_more()
 
-                    time.sleep(self.delay)
-                    # self.click_see_more()
+                # Scrolling
+                self.browser.execute_script(
+                    "window.scrollBy(0, document.body.scrollHeight)")
 
-                    # Scrolling
-                    self.browser.execute_script(
-                        "window.scrollBy(0, document.body.scrollHeight)")
+                # time.sleep(self.delay)
 
-                    # time.sleep(self.delay)
+                # self.save_img_to_db(scroll, timestamp, url)
 
-                    # self.save_img_to_db(scroll, timestamp, url)
-
-                self.save_post_to_db(ids)
+            self.save_post_to_db(page_id)
     # Select types and return sql query for post and imges
 
     def select_types(self, type, url):
@@ -202,17 +202,17 @@ class Crawler:
                 else:   
                     print("Time stamp {}".format(timestamp))
                     self.db.save_timestamp_for_page(page,timestamp)
-                    author_name = ''
-                    try:
-                        author_name = post.find_element_by_css_selector('.fwb.fcg a').text         
-                    except Exception as e:
-                        print("Error retrieving author name" + str(e))
-                    images =  self.extract_all_images(post)
             except Exception as e:
                 print("Error retrieving date " + str(e))
                 
             # if(timestamp < "1576813657"):
             if(True):
+                images =  self.extract_all_images(post)
+                author_name = ''
+                try:
+                    author_name = post.find_element_by_css_selector('.fwb.fcg a').text         
+                except Exception as e:
+                    print("Error retrieving author name" + str(e))
             # if timestamp not in time_stamps:
                 # Author Name
                 # images = []
