@@ -94,10 +94,21 @@ if __name__ == '__main__':
         # import main2.py
         # print("Start crawling ")
         weekday = datetime.datetime.today().isoweekday()
-        print(weekday , type(weekday))
+        # print(weekday , type(weekday))
         current_time = time.strftime('%H:%M:%S')
+        print("current time",current_time,type(current_time))
         crawltimes,crawldays=DATABASE.extract_times_and_crawldays_from_schedule()
         to_crawl_times = [str(i) for i in crawltimes]
+        crawl_hrs=[]
+        crawl_mins=[]
+        crawl_secs=[]
+        for x in range(len(to_crawl_times)):
+            crawl_hr,crawl_min,crawl_sec = to_crawl_times[x].split(':')
+            crawl_hrs.append(crawl_hr)
+            crawl_mins.append(crawl_min)
+            crawl_secs.append(crawl_sec)
+            
+        current_hr,current_min,current_sec = current_time.split(":")          
         # to_crawl_times = []
         # for i in crawltimes:
             
@@ -105,12 +116,14 @@ if __name__ == '__main__':
         # print(to_crawl_times,to_crawl_days)
         p_ids = DATABASE.extract_page_ids_from_page()
         # print(to_crawl_times[0])
-        for i in range(len(to_crawl_times)):
-            if weekday == to_crawl_days[i] and current_time == to_crawl_times[i]:
-                print(f"start crawling at weekday : {weekday} and time : {current_time}")
-                p.collect_by_ids(args.crawl,p_ids)
+        for i in range(len(crawl_hrs)):
+            if weekday == to_crawl_days[i] and current_hr == crawl_hrs[i]:
+                print(f"start crawling at weekday : {weekday} and time : {current_hr} hr")
+                print(f"Crawl page id : {p_ids[i][0]}")
+                p.collect_by_ids(args.crawl,p_ids[i][0])
             else:
                 print("Crawl time and day doesn't match yet!!")
+                # print(f"Crawl time : {crawl_hr[i]} and crawl weekday : {to_crawl_days[i]}")
     
     if args.store_db:
         # print("Store data to database")
