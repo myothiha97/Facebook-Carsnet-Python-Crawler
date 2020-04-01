@@ -34,13 +34,14 @@ class Crawler:
 
     def collect(self, type):
         # Create list for string of ("seameochat, facebookapp")
-        objects = self.ids.strip().split(',')
+        # objects = self.ids.strip().split(',')
         pages_ids = self.db.extract_page_ids_from_page()
-
         for ids in pages_ids:
             # self.select_types(type, url.strip())
             if type == "search":
-                self.click_store_overview_posts(url)
+                # objects = self.ids.strip().split(',')
+                # self.click_store_overview_posts(url)
+                self.click_store_overview_posts(ids)
                 time.sleep(self.delay)
             else:
                 # Scroll down by depth count e.g 4
@@ -60,8 +61,35 @@ class Crawler:
 
                     # self.save_img_to_db(scroll, timestamp, url)
 
-                self.save_post_to_db(ids)
+                self.save_post_to_db(ids)             
+    def collect_by_page_ids(self,type,page_id):
+        # objects = self.ids.strip().split(',')
+        # pages_ids = self.db.extract_page_ids_from_page()
+        # for ids in objects:
+            # self.select_types(type, url.strip())
+        if type == "search":
+            # self.click_store_overview_posts(url)
+            self.click_store_overview_posts(page_id)
+            time.sleep(self.delay)
+        else:
+            # Scroll down by depth count e.g 4
+            for scroll in range(self.depth):
+                timestamp = calendar.timegm(time.gmtime())
+                # Click Esc Key to prevent browser notification
+                self.click_esc_key()
 
+                time.sleep(self.delay)
+                # self.click_see_more()
+
+                # Scrolling
+                self.browser.execute_script(
+                    "window.scrollBy(0, document.body.scrollHeight)")
+
+                # time.sleep(self.delay)
+
+                # self.save_img_to_db(scroll, timestamp, url)
+
+            self.save_post_to_db(page_id)
     # Select types and return sql query for post and imges
 
     def select_types(self, type, url):
@@ -100,7 +128,7 @@ class Crawler:
     def click_store_overview_posts(self, url):
         overview_posts = self.browser.find_elements_by_css_selector(
             '._5bl2._401d')
-        url = url.replace('/', '_')
+        # url = url.replace('/', '_')
 
         for count, overview_post in enumerate(overview_posts):
             timestamp = calendar.timegm(time.gmtime())
@@ -163,32 +191,31 @@ class Crawler:
                 # date =  date_obj.get_attribute("title")
 
                 timestamp = date_obj.get_attribute("data-utime")
-                
+                time_stamps = self.db.extract_timestamp_from_page()
+                if timestamp in time_stamps:
             # Check timestamp if the page is already scanned before            
-                if not check_already_safe_stimestamp:
-                    self.db.save_timestamp_for_page(page,timestamp) ### store timestamp to the page table
-                    check_already_safe_stimestamp = True
-                    
-                print("Time stamp {}".format(timestamp))
+                    print("The page is already scannced before")
+                # if not check_already_safe_stimestamp:
+                #     self.db.save_timestamp_for_page(page,timestamp) ### store timestamp to the page table
+                #     check_already_safe_stimestamp = True
+                else:   
+                    print("Time stamp {}".format(timestamp))
+                    self.db.save_timestamp_for_page(page,timestamp)
             except Exception as e:
                 print("Error retrieving date " + str(e))
                 
             # if(timestamp < "1576813657"):
             if(True):
-                # Author Name
+                images =  self.extract_all_images(post)
                 author_name = ''
                 try:
                     author_name = post.find_element_by_css_selector('.fwb.fcg a').text         
                 except Exception as e:
                     print("Error retrieving author name" + str(e))
-
-                images =  self.extract_all_images(post)
+            # if timestamp not in time_stamps:
+                # Author Name
                 # images = []
-
-
                 # Retrieve comments from the post content
-                
-
                 dataObj = {
                     'post_detail': post_text,
                     # 'post_url' : 'https://www.facebook.com/groups/824818357601140/?ref=share',

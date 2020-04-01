@@ -2,6 +2,7 @@ from decouple import config
 import mysql.connector
 import argparse
 import re
+# from mysql.connector import errorcode
 
 
 class DBHandler:
@@ -106,6 +107,32 @@ class DBHandler:
 
         self.cursor.execute('CREATE TABLE IF NOT EXISTS keywords (id INT NOT NULL AUTO_INCREMENT, keyword varchar(100), PRIMARY KEY(id));')
         
+                
+    def insert_tables(self,table_name):
+        if table_name == "page":
+            try:
+                self.cursor.execute("CREATE TABLE IF NOT EXISTS `page`(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,original_id int, page_url varchar(200),page_name varchar(200),last_crawled_date date, page_status boolean,icon varchar(200),time_stamp VARCHAR(50))")
+            except:
+                print("Page table already exist")
+            else:
+                print("table created")
+                self.db.commit()
+        elif table_name == "schedule":
+            try:
+                self.cursor.execute("CREATE TABLE IF NOT EXISTS `schedule`(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,original_id int,page_id int,crawl_day int,crawl_time TIME(0) NOT NULL)")
+            except:
+                print("Schedule table already exist")
+            else:
+                print("table created")
+                self.db.commit()
+        elif table_name == "history":
+            try:
+                self.cursor.execute("CREATE TABLE IF NOT EXISTS `history`(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,page_id int,schedule_id int,start_time VARCHAR(50),end_time VARCHAR(50),crawled_date VARCHAR(50))")
+            except:
+                print("History table already exists")
+            else:
+                print("Table created")
+                self.db.commit()
 
 
     def drop_table(self, tablename=None):        
@@ -146,18 +173,65 @@ class DBHandler:
 
 
     def save_timestamp_for_page(self,page_id,timestamp):
-        sql = f"insert into page set timestamp = {timestamp}  where id = {page_id}"
+        p_id = int(page_id[0])
+        # sql = f"INSERT INTO `page` set `time_stamp` = {timestamp}  where `original_id` = {p_id}"
+        # sql = f"INSERT INTO `page`(time_stamp) VALUES({timestamp}) WHERE id = {p_id}"
+        sql = f"UPDATE `page` SET `time_stamp` = {timestamp} WHERE id = {p_id}"
         # self.commit_db(sql)
         self.cursor.execute(sql)
         self.db.commit()
         
     def extract_page_ids_from_page(self):
-        sql = f"SELECT original_id FROM `page`"
+        sql = f"SELECT id FROM `page`"
         self.cursor.execute(sql)
         page_ids = []
         for i in self.cursor:
-            page_ids.append(i)
+            page_ids.append(i[0])
         return page_ids
+    
+    def extract_timestamp_from_page(self):
+        sql=f"SELECT time_stamp FROM `page`"
+        self.cursor.execute(sql)
+        page_time_stamps = []
+        for i in self.cursor:
+            page_time_stamps.append(i)
+        return page_time_stamps
+    
+    def extract_times_and_crawldays_from_schedule(self):
+        sql1=f"SELECT crawl_time FROM `schedule`"
+        sql2=f"SELECT crawl_day FROM `schedule`"
+        self.cursor.execute(sql1)
+        crawl_times=[]
+        for i in self.cursor:
+            crawl_times.append(i[0])
+        self.cursor.execute(sql2)
+        crawl_days = []
+        for i in self.cursor:
+            crawl_days.append(i[0])
+        return crawl_times,crawl_days
+    
+    def extract_page_ids_from_schedule(self):
+        sql = f"SELECT page_id FROM `schedule`"
+        self.cursor.execute(sql)
+        schedule_page_ids = []
+        for i in self.cursor:
+            schedule_page_ids.append(i[0])
+        return schedule_page_ids
+    
+    def insert_data_to_history(self,page_id,schedule_id,start_time,end_time,date):
+        command = f"INSERT INTO `history`(page_id,schedule_id,start_time,end_time,crawled_date) VALUES(%s,%s,%s,%s,%s)"
+        val=(page_id,schedule_id,start_time,end_time,date)
+        self.cursor.execute(command,val)
+        self.db.commit()
+    
+    def extract_schedule_ids_from_schedule(self):
+        sql=f"SELECT id FROM `schedule`"
+        self.cursor.execute(sql)
+        schedule_id=[]
+        for i in self.cursor:
+            schedule_id.append(i[0])
+        return schedule_id
+        
     
     def store_post_to_db(self, table, post,has_filter):
         
@@ -195,10 +269,14 @@ if __name__ == '__main__':
     parser.add_argument("-d", "--drop", action="store_true", help="Table you want to drop")
     
     parser.add_argument("-p","--create_table" , action="store_true",help="use this command if u dont have require tables ")
+    
+    parser.add_argument("-i","--insert_table",type=str,action="store",help="use this command to insert require tables to database")
     args = parser.parse_args()
 
     g = DBHandler()
-
+    # g.insert_data_to_history(page_id = 1,schedule_id=2,start_time="12:30:40",end_time="13:30:40",date="31/3/2020")
+    # g.extract_schedule_ids_from_schedule()
+    g.extract_page_ids_from_schedule()
     if args.migrate:
         g.create_table()
         g.import_default_data()
@@ -208,3 +286,11 @@ if __name__ == '__main__':
 
     if args.create_table:
         g.create_table()
+        
+    if args.insert_table:
+        commands = ["page","schedule","history"]
+        if args.insert_table not in commands:
+            print("Invalid table")
+            print("The available tables are [page,schedule,history]")
+        else:
+            g.insert_tables(args.insert_table)
