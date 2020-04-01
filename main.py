@@ -67,7 +67,12 @@ if __name__ == '__main__':
         setattr(p, 'ids', args.page)
 
         # set type for page
-        p.collect("page") 
+        start_time = time.strftime("%H:%M:%S")
+        print(f"start_time --> {start_time}")
+        time.sleep(2)
+        p.collect("page")
+        end_time = time.strftime("%H:%M:%S")
+        print(f"end_time --> {end_time}")
     if args.group:
         # set attribute for argument parameters eg. ("2283833765077318, 2283833765077318")
         setattr(p, 'ids', args.group)
@@ -77,10 +82,8 @@ if __name__ == '__main__':
     if args.search:
         # set attribute for argument parameters eg. ("12/PAZATA, 12/OUKATA")
         setattr(p, 'ids', args.search)
-
         # set type for group
         p.collect("search")
-    
     # For all commands
     if args.all:
         setattr(p, 'ids', PAGES)
@@ -97,7 +100,10 @@ if __name__ == '__main__':
         # print(weekday , type(weekday))
         current_time = time.strftime('%H:%M:%S')
         print("current time",current_time,type(current_time))
+        schedule_ids=DATABASE.extract_schedule_ids_from_schedule()
+        
         crawltimes,crawldays=DATABASE.extract_times_and_crawldays_from_schedule()
+        
         to_crawl_times = [str(i) for i in crawltimes]
         crawl_hrs=[]
         crawl_mins=[]
@@ -106,21 +112,25 @@ if __name__ == '__main__':
             crawl_hr,crawl_min,crawl_sec = to_crawl_times[x].split(':')
             crawl_hrs.append(crawl_hr)
             crawl_mins.append(crawl_min)
-            crawl_secs.append(crawl_sec)
-            
+            crawl_secs.append(crawl_sec)  
         current_hr,current_min,current_sec = current_time.split(":")          
         # to_crawl_times = []
         # for i in crawltimes:
             
         to_crawl_days =  [int(str(i)) for i in crawldays]
         # print(to_crawl_times,to_crawl_days)
-        p_ids = DATABASE.extract_page_ids_from_page()
+        p_ids = DATABASE.extract_page_ids_from_schedule()
         # print(to_crawl_times[0])
         for i in range(len(crawl_hrs)):
             if weekday == to_crawl_days[i] and current_hr == crawl_hrs[i]:
                 print(f"start crawling at weekday : {weekday} and time : {current_hr} hr")
-                print(f"Crawl page id : {p_ids[i][0]}")
-                p.collect_by_ids(args.crawl,p_ids[i][0])
+                print(f"Crawl page id : {p_ids[i]}")
+                c_time = time.strftime('%H:%M:%S')
+                p.collect_by_page_ids(args.crawl,p_ids[i])
+                e_time = time.strftime('%H:%M:%S')
+                time_stamp = datetime.datetime.now()
+                e_date= time_stamp.strftime("%d/%m/%Y")
+                DATABASE.insert_data_to_history(page_id=p_ids[i],schedule_id=schedule_ids[i],start_time=c_time,end_time=e_time,date=e_date)
             else:
                 print("Crawl time and day doesn't match yet!!")
                 # print(f"Crawl time : {crawl_hr[i]} and crawl weekday : {to_crawl_days[i]}")

@@ -34,12 +34,12 @@ class Crawler:
 
     def collect(self, type):
         # Create list for string of ("seameochat, facebookapp")
-        objects = self.ids.strip().split(',')
+        # objects = self.ids.strip().split(',')
         pages_ids = self.db.extract_page_ids_from_page()
-
         for ids in pages_ids:
             # self.select_types(type, url.strip())
             if type == "search":
+                # objects = self.ids.strip().split(',')
                 # self.click_store_overview_posts(url)
                 self.click_store_overview_posts(ids)
                 time.sleep(self.delay)
@@ -61,9 +61,8 @@ class Crawler:
 
                     # self.save_img_to_db(scroll, timestamp, url)
 
-                self.save_post_to_db(ids)
-                
-    def collect_by_ids(self,type,page_id):
+                self.save_post_to_db(ids)             
+    def collect_by_page_ids(self,type,page_id):
         # objects = self.ids.strip().split(',')
         # pages_ids = self.db.extract_page_ids_from_page()
         # for ids in objects:
@@ -129,7 +128,7 @@ class Crawler:
     def click_store_overview_posts(self, url):
         overview_posts = self.browser.find_elements_by_css_selector(
             '._5bl2._401d')
-        url = url.replace('/', '_')
+        # url = url.replace('/', '_')
 
         for count, overview_post in enumerate(overview_posts):
             timestamp = calendar.timegm(time.gmtime())

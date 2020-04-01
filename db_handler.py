@@ -2,6 +2,7 @@ from decouple import config
 import mysql.connector
 import argparse
 import re
+# from mysql.connector import errorcode
 
 
 class DBHandler:
@@ -110,7 +111,7 @@ class DBHandler:
     def insert_tables(self,table_name):
         if table_name == "page":
             try:
-                self.db.execute("CREATE TABLE IF NOT EXISTS `page`(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,original_id int, page_url varchar(200),page_name varchar(200),last_crawled_date date, page_status boolean,icon varchar(200),time_stamp VARCHAR(50))")
+                self.cursor.execute("CREATE TABLE IF NOT EXISTS `page`(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,original_id int, page_url varchar(200),page_name varchar(200),last_crawled_date date, page_status boolean,icon varchar(200),time_stamp VARCHAR(50))")
             except:
                 print("Page table already exist")
             else:
@@ -118,7 +119,7 @@ class DBHandler:
                 self.db.commit()
         elif table_name == "schedule":
             try:
-                self.db.execute("CREATE TABLE IF NOT EXISTS `schedule`(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,original_id int,page_id int,crawl_day int,crawl_time TIME(0) NOT NULL)")
+                self.cursor.execute("CREATE TABLE IF NOT EXISTS `schedule`(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,original_id int,page_id int,crawl_day int,crawl_time TIME(0) NOT NULL)")
             except:
                 print("Schedule table already exist")
             else:
@@ -126,7 +127,7 @@ class DBHandler:
                 self.db.commit()
         elif table_name == "history":
             try:
-                self.db.execute("CREATE TABLE IF NOT EXISTS `history`(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,page_id int,schedule_id int,start_time TIME (0) NOT NULL,end_time TIME (0) NOT NULL,crawled_date date)")
+                self.cursor.execute("CREATE TABLE IF NOT EXISTS `history`(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,page_id int,schedule_id int,start_time VARCHAR(50),end_time VARCHAR(50),crawled_date VARCHAR(50))")
             except:
                 print("History table already exists")
             else:
@@ -185,7 +186,7 @@ class DBHandler:
         self.cursor.execute(sql)
         page_ids = []
         for i in self.cursor:
-            page_ids.append(i)
+            page_ids.append(i[0])
         return page_ids
     
     def extract_timestamp_from_page(self):
@@ -209,13 +210,28 @@ class DBHandler:
             crawl_days.append(i[0])
         return crawl_times,crawl_days
     
-    def page_ids_from_schedule(self):
+    def extract_page_ids_from_schedule(self):
         sql = f"SELECT page_id FROM `schedule`"
         self.cursor.execute(sql)
-        page_ids = []
+        schedule_page_ids = []
         for i in self.cursor:
-            page_ids.append(i)
-        return page_ids
+            schedule_page_ids.append(i[0])
+        return schedule_page_ids
+    
+    def insert_data_to_history(self,page_id,schedule_id,start_time,end_time,date):
+        command = f"INSERT INTO `history`(page_id,schedule_id,start_time,end_time,crawled_date) VALUES(%s,%s,%s,%s,%s)"
+        val=(page_id,schedule_id,start_time,end_time,date)
+        self.cursor.execute(command,val)
+        self.db.commit()
+    
+    def extract_schedule_ids_from_schedule(self):
+        sql=f"SELECT id FROM `schedule`"
+        self.cursor.execute(sql)
+        schedule_id=[]
+        for i in self.cursor:
+            schedule_id.append(i[0])
+        return schedule_id
+        
     
     def store_post_to_db(self, table, post,has_filter):
         
@@ -258,7 +274,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     g = DBHandler()
-
+    # g.insert_data_to_history(page_id = 1,schedule_id=2,start_time="12:30:40",end_time="13:30:40",date="31/3/2020")
+    # g.extract_schedule_ids_from_schedule()
+    g.extract_page_ids_from_schedule()
     if args.migrate:
         g.create_table()
         g.import_default_data()
