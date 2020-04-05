@@ -64,28 +64,38 @@ class Crawler:
     # Select types and return sql query for post and imges
 
     def select_types(self, type, url):
+
+        # Wait till the current browser is already login and reach home page
+        WebDriverWait(self.browser, 10).until(
+                EC.presence_of_element_located(
+                    (By.ID, "findFriendsNav"))
+            )
+
+        url_to_crawl = ""
+        print(f"Type is {type}")
         if type == "page":
-            url_for_page = 'https://www.facebook.com/pg/{}'.format(url)
-            print(url_for_page)
-            result = self.browser.get(url_for_page)
-            print(result)
-            self.table = config('DB_NAME_PAGES')
-            self.table_img = config('DB_NAME_PAGES_IMG')            
+            url_to_crawl = 'https://www.facebook.com/pg/{}'.format(url)
+            print(url_to_crawl)          
 
         elif type == "group":
-            self.browser.get('https://www.facebook.com/groups/{}/'.format(url))
-            self.table = config('DB_NAME_GROUPS')
-            self.table_img = config('DB_NAME_GROUPS_IMG')
+            url_to_crawl = 'https://www.facebook.com/groups/{}/'.format(url)
+            print(url_to_crawl)
+            print("selecting group")
 
-        elif type == "search":
-            self.browser.get('https://www.facebook.com/search/posts/?q={}&epa=SEARCH_BOX'.format(url.strip().lower()))
-            self.table = config('DB_NAME_SEARCHES')
-            self.table_img = config('DB_NAME_SEARCHES_IMG')
+        result = self.browser.get(url_to_crawl)
+        print(result)
+        self.table = config('DB_NAME_GROUPS')
+        self.table_img = config('DB_NAME_GROUPS_IMG')
 
-        elif type == "comment":
-            pass
+        # elif type == "search":
+        #     self.browser.get('https://www.facebook.com/search/posts/?q={}&epa=SEARCH_BOX'.format(url.strip().lower()))
+        #     self.table = config('DB_NAME_SEARCHES')
+        #     self.table_img = config('DB_NAME_SEARCHES_IMG')
 
-        print(self.browser.current_url)
+        # elif type == "comment":
+        #     pass
+
+        print(f"Showing current url {self.browser.current_url}")
 
     def take_screenshot(self, count, timestamp, url):
         return self.browser.save_screenshot('./screenshots/{}_{}_{}.png'.format(count, url, timestamp))
@@ -192,12 +202,12 @@ class Crawler:
                     'comments_count' : 0,
                     'likes_count' : 0,
                     'shares_count' : 0,
-                    'page_id': 1,
-                    'crawl_history_id' : 28
+                    'page_id': 3,
+                    'crawl_history_id' : 31
                 }
                 if post_text is not '':
                     all_content.append(dataObj)
-                    self.sent_to_digizaay(all_content)
+                    # self.sent_to_digizaay(all_content)
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
         try:
@@ -230,8 +240,7 @@ class Crawler:
             
             
             count = 0
-            while(count < 15):  
-                     
+            while(count < 15):                       
                 try:          
                     spotlight = self.browser.find_element_by_class_name(
                         'spotlight')
@@ -259,6 +268,42 @@ class Crawler:
         except Exception as e:
             # No image holder or images here
             print('Issue retrieving the images: ' + str(e))
+
+            # Might be a seller group            
+            image_holder = post.find_element_by_class_name(
+                'mtm').find_element_by_css_selector('a._xcx')
+            image_holder.click()
+
+            WebDriverWait(self.browser, 2).until(
+                EC.presence_of_element_located(
+                    (By.ID, "marketplace-modal-dialog-title"))
+            )
+            
+            count = 0
+            while(count < 15):                       
+                try:          
+                    spotlight = self.browser.find_element_by_class_name(
+                        'spotlight')
+
+                    # print('---------------------------------')                    
+                    image_url = spotlight.get_attribute("src")
+                    # print(image_url)
+                    if image_url in images:
+                        pass
+                        # print('same image already')
+                        # hasMore = False
+                    else:
+                        images.append(image_url)                                     
+                    next_btn = self.browser.find_element_by_css_selector(
+                        '.snowliftPager.prev')
+                    next_btn.click()
+                    count += 1
+                except Exception as ex:
+                    print("Issue retrieving image"+str(ex))
+                    count += 1
+                    time.sleep(1)
+            self.click_esc_key()
+
             pass
         
         return images
@@ -284,7 +329,6 @@ class Crawler:
             'cache-control': "no-cache",
             'Authorization': token
         }
-        print(token)
         x = requests.post(url, data=data, headers=headers)
         # print(x)
         print(x.text)
