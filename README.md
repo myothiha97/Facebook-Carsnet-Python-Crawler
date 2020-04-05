@@ -118,7 +118,7 @@ There are 3 main options
 
 source ~/VirtualEnvs/FB_Crawler/bin/activate
 
--p for page
+-p for page\
 
 ```
 python main.py -p="CarsNET-102005471291910" # pages you want to crawl
