@@ -116,6 +116,8 @@ Create an environment wit h python 3.6 and above (3.7 prefer)
 
 There are 3 main options
 
+source ~/VirtualEnvs/FB_Crawler/bin/activate
+
 -p for page
 
 ```

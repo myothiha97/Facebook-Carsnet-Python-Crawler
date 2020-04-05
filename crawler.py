@@ -202,12 +202,12 @@ class Crawler:
                     'comments_count' : 0,
                     'likes_count' : 0,
                     'shares_count' : 0,
-                    'page_id': 3,
-                    'crawl_history_id' : 31
+                    'page_id': 1,
+                    'crawl_history_id' : 32
                 }
                 if post_text is not '':
                     all_content.append(dataObj)
-                    # self.sent_to_digizaay(all_content)
+                    self.sent_to_digizaay(all_content)
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
         try:
@@ -235,9 +235,7 @@ class Crawler:
             WebDriverWait(self.browser, 2).until(
                 EC.presence_of_element_located(
                     (By.CLASS_NAME, "spotlight"))
-            )
-
-            
+            )            
             
             count = 0
             while(count < 15):                       
@@ -254,9 +252,11 @@ class Crawler:
                         # hasMore = False
                     else:
                         images.append(image_url)                                     
-                    next_btn = self.browser.find_element_by_css_selector(
-                        '.snowliftPager.prev')
-                    next_btn.click()
+                    # next_btn = self.browser.find_element_by_css_selector(
+                    #     '.snowliftPager.prev')
+                    # next_btn.click()
+                    
+
                     count += 1
                 except Exception as ex:
                     print("Issue retrieving image"+str(ex))
@@ -265,47 +265,55 @@ class Crawler:
             self.click_esc_key()
             
                 
+        # except Exception as e:
+        #     No image holder or images here
+
+        #     print('Issue retrieving the images: ' + str(e))
+                # try:
+                #     # Might be a seller group            
+                #     image_holder = post.find_element_by_class_name(
+                #         'mtm').find_element_by_css_selector('a._xcx')
+                #     image_holder.click()
+
+                #     WebDriverWait(self.browser, 5).until(
+                #         EC.presence_of_element_located(
+                #             (By.ID, "marketplace-modal-dialog-title"))
+                #     )
+
+                    
+                #     # count = post.find_element_by_class_name(
+                #     #     'mtm').find_element_by_css_selector('div._52db').text
+                #     self.browser.implicitly_wait(10)
+                #     count = 0
+                #     while(count < 15):                       
+                #         try:          
+                #             spotlight = self.browser.find_element_by_css_selector(
+                #                 'div[data-testid="marketplace_pdp_component"] .uiScaledImageContainer .img')
+
+                #             # print('---------------------------------')                    
+                #             image_url = spotlight.get_attribute("src")
+                #             print(image_url)
+                #             # print(image_url)
+                #             if image_url not in images:
+                #                 images.append(image_url)      
+
+                #             # self.browser.send_keys(Keys.RIGHT);                               
+                #             webdriver.ActionChains(self.browser).send_keys(Keys.ARROW_RIGHT).perform()
+                #             self.browser.implicitly_wait(3)
+                #             count += 1
+                # except Exception as ex:
+                #     print("Issue retrieving image"+str(ex))
+                #     count += 1
+                #     time.sleep(1)
+            # self.click_esc_key()
+
         except Exception as e:
             # No image holder or images here
+
             print('Issue retrieving the images: ' + str(e))
-
-            # Might be a seller group            
-            image_holder = post.find_element_by_class_name(
-                'mtm').find_element_by_css_selector('a._xcx')
-            image_holder.click()
-
-            WebDriverWait(self.browser, 2).until(
-                EC.presence_of_element_located(
-                    (By.ID, "marketplace-modal-dialog-title"))
-            )
-            
-            count = 0
-            while(count < 15):                       
-                try:          
-                    spotlight = self.browser.find_element_by_class_name(
-                        'spotlight')
-
-                    # print('---------------------------------')                    
-                    image_url = spotlight.get_attribute("src")
-                    # print(image_url)
-                    if image_url in images:
-                        pass
-                        # print('same image already')
-                        # hasMore = False
-                    else:
-                        images.append(image_url)                                     
-                    next_btn = self.browser.find_element_by_css_selector(
-                        '.snowliftPager.prev')
-                    next_btn.click()
-                    count += 1
-                except Exception as ex:
-                    print("Issue retrieving image"+str(ex))
-                    count += 1
-                    time.sleep(1)
             self.click_esc_key()
-
-            pass
         
+        print(images)
         return images
 
     def sent_to_digizaay(self, content):
