@@ -202,8 +202,8 @@ class Crawler:
                     'comments_count' : 0,
                     'likes_count' : 0,
                     'shares_count' : 0,
-                    'page_id': 1,
-                    'crawl_history_id' : 32
+                    'page_id': 22,
+                    'crawl_history_id' : 33
                 }
                 if post_text is not '':
                     all_content.append(dataObj)
@@ -252,9 +252,9 @@ class Crawler:
                         # hasMore = False
                     else:
                         images.append(image_url)                                     
-                    # next_btn = self.browser.find_element_by_css_selector(
-                    #     '.snowliftPager.prev')
-                    # next_btn.click()
+                    next_btn = self.browser.find_element_by_css_selector(
+                        '.snowliftPager.prev')
+                    next_btn.click()
                     
 
                     count += 1
