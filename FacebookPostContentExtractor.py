@@ -1,7 +1,8 @@
- from Utility import remove_emoji
+from Utility import remove_emoji
+
  
- def get_post_time_stamp(post):
-     # Get Date
+def get_post_time_stamp(post):
+    # Get Date
     timestamp = ''
     try:
         date_obj = post.find_element_by_css_selector('._5ptz')

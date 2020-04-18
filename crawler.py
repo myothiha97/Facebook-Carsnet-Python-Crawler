@@ -12,13 +12,11 @@ import time
 import calendar
 import argparse
 import uuid
-import re
-import requests
 
-from DigiZaayAPI import sent_to_digizaay,convert_digizaay_object
+from DigiZaayAPI import DigiZaayApiConnector
 from FacebookPostAction import click_see_more_button
-import json
-import requests
+
+
 
 
 class Crawler:
@@ -33,6 +31,7 @@ class Crawler:
         self.table = None
         self.filter = filter
         self.table_img = None
+        self.api_connector = DigiZaayApiConnector()
 
     def collect(self, type):
         # Create list for string of ("seameochat, facebookapp")
@@ -67,6 +66,7 @@ class Crawler:
     def select_types(self, type, url):
 
         # Wait till the current browser is already login and reach home page
+        # Verify by findFrindsNav
         WebDriverWait(self.browser, 10).until(
                 EC.presence_of_element_located(
                     (By.ID, "findFriendsNav"))
@@ -150,12 +150,12 @@ class Crawler:
             # Check timestamp if the page is already scanned before            
             # if(timestamp < "1576813657"):
             if(True):               
-                dataObj = convert_digizaay_object(post)
-                print(dataObj)
-                print(dataObj.post_detail)
-                if dataObj.post_detail is not '':
-                    all_content.append(dataObj)
-                    # sent_to_digizaay(all_content)
+                dataObj = self.api_connector.convert_digizaay_object(post,self.browser)
+                print(dataObj.items())
+                
+                if dataObj['post_detail'] is not '':
+                    all_content.append(dataObj)                    
+                    self.api_connector.sent_to_digizaay(all_content)
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
 
