@@ -202,8 +202,8 @@ class Crawler:
                     'comments_count' : 0,
                     'likes_count' : 0,
                     'shares_count' : 0,
-                    'page_id': 22,
-                    'crawl_history_id' : 33
+                    'page_id': 2,
+                    'crawl_history_id' : 40
                 }
                 if post_text is not '':
                     all_content.append(dataObj)
