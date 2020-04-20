@@ -120,7 +120,9 @@ Create an environment with python 3.6 and above (3.7 prefer)
 
 There are 3 main options
 
--p for page
+source ~/VirtualEnvs/FB_Crawler/bin/activate
+
+-p for page\
 
 ```
 python main.py -p="CarsNET-102005471291910" # pages you want to crawl
