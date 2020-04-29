@@ -61,6 +61,7 @@ if __name__ == '__main__':
 
     # Login into Facebook Account
     p.login(config('EMAIL'), config('PASSWORD'))
+    time.sleep(5)
 
     if args.page:
         # set attribute for argument parameters eg. ("seameochat, facebookapp")
@@ -75,8 +76,11 @@ if __name__ == '__main__':
         print(f"end_time --> {end_time}")
     if args.group:
         # set attribute for argument parameters eg. ("2283833765077318, 2283833765077318")
+        start_time = time.strftime("%H:%M:%S")
+        print(f"start_time --> {start_time}")
         setattr(p, 'ids', args.group)
-
+        end_time = time.strftime("%H:%M:%S")
+        print(f"end_time --> {end_time}")
         # set type for group
         p.collect("group")
     if args.search:
@@ -100,6 +104,7 @@ if __name__ == '__main__':
         # print(weekday , type(weekday))
         current_time = time.strftime('%H:%M:%S')
         print("current time",current_time,type(current_time))
+        print("weekday : ",weekday)
         schedule_ids=DATABASE.extract_schedule_ids_from_schedule()
         
         crawltimes,crawldays=DATABASE.extract_times_and_crawldays_from_schedule()
@@ -116,17 +121,26 @@ if __name__ == '__main__':
         current_hr,current_min,current_sec = current_time.split(":")          
         # to_crawl_times = []
         # for i in crawltimes:
-            
+        strip_hr = ["01",'02','03','04','05','06','07','08','09']
+        if current_hr in strip_hr:
+            current_hr=current_hr.replace("0","")
+            print("current hr :",current_hr)
+        time.sleep(5)
         to_crawl_days =  [int(str(i)) for i in crawldays]
         # print(to_crawl_times,to_crawl_days)
         p_ids = DATABASE.extract_page_ids_from_schedule()
+        
+        p_url = DATABASE.extract_page_url_from_page()
         # print(to_crawl_times[0])
         for i in range(len(crawl_hrs)):
             if weekday == to_crawl_days[i] and current_hr == crawl_hrs[i]:
                 print(f"start crawling at weekday : {weekday} and time : {current_hr} hr")
                 print(f"Crawl page id : {p_ids[i]}")
                 c_time = time.strftime('%H:%M:%S')
-                p.collect_by_page_ids(args.crawl,p_ids[i])
+                crawl_url = p_url[p_ids[i]-1]
+                print("Crawl_url" ,crawl_url)
+                time.sleep(5)
+                p.collect_by_page_ids(args.crawl,p_ids[i],crawl_url)
                 e_time = time.strftime('%H:%M:%S')
                 time_stamp = datetime.datetime.now()
                 e_date= time_stamp.strftime("%d/%m/%Y")
