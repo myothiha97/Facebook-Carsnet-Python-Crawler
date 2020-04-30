@@ -14,8 +14,9 @@ import argparse
 import uuid
 import re
 import requests
-from entity_extraction import retrieve_entity
+# from entity_extraction import retrieve_entity
 import json
+from segmentaion.entity_extractor import Entity_extractor
 
 
 class Crawler:
@@ -189,7 +190,7 @@ class Crawler:
                 clean_emoji = self.remove_emoji(post_text)
                 print(post_text)
                 # Segementation
-                entities = retrieve_entity(post_text)
+                entities = Entity_extractor.retrieve_entity(post_text)
             except Exception as e:
                 print('Issue with retrieving content: ' + str(e))
 
