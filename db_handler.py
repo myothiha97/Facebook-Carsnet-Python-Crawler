@@ -2,7 +2,6 @@ from decouple import config
 import mysql.connector
 import argparse
 import re
-# from mysql.connector import errorcode
 
 
 class DBHandler:
@@ -174,10 +173,7 @@ class DBHandler:
 
     def save_timestamp_for_page(self,page_id,timestamp):
         p_id = int(page_id[0])
-        # sql = f"INSERT INTO `page` set `time_stamp` = {timestamp}  where `original_id` = {p_id}"
-        # sql = f"INSERT INTO `page`(time_stamp) VALUES({timestamp}) WHERE id = {p_id}"
         sql = f"UPDATE `page` SET `time_stamp` = {timestamp} WHERE id = {p_id}"
-        # self.commit_db(sql)
         self.cursor.execute(sql)
         self.db.commit()
         
@@ -274,8 +270,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     g = DBHandler()
-    # g.insert_data_to_history(page_id = 1,schedule_id=2,start_time="12:30:40",end_time="13:30:40",date="31/3/2020")
-    # g.extract_schedule_ids_from_schedule()
     g.extract_page_ids_from_schedule()
     if args.migrate:
         g.create_table()

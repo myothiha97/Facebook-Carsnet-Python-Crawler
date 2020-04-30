@@ -16,7 +16,6 @@ import re
 import requests
 from entity_extraction import retrieve_entity
 import json
-import requests
 
 
 class Crawler:
@@ -372,7 +371,7 @@ class Crawler:
             'cache-control': "no-cache",
             'Authorization': token
         }
-        x = requests.post(url, data=data, headers=headers)
+        # x = requests.post(url, data=data, headers=headers)
         # print(x)
         print(x.text)
 
