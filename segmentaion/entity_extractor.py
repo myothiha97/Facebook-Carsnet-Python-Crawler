@@ -5,7 +5,6 @@ import csv
 import json
 from regex_pattern import *
 from extract_info import Extractor
-
 class Entity_extractor:
     @staticmethod            
     def isZawGyi(text):
@@ -29,15 +28,16 @@ class Entity_extractor:
             check_re = re.findall(zawgyiReg,standard)
             if check_re:
                 standard = cls.toUnicode(standard)
-                # print(standard)
         else:
-            # print("This is unicode")
             standard = sentence
-            print(standard) 
-        entity_list = Extractor.extract(standard)
+            print(standard)
+        print(standard)
+        entity_list = Extractor.extract(str(standard))
         # return entity_list    ### Uncomment this line and comment the below two line if u want to use it in crawler!!! 
         json_data = json.dumps(entity_list,indent=4)
-        print(json_data) ### The phone number will be shown in unicode character when convert to json data !!
+        print(json_data)
+        
+    
         
 if __name__ =="__main__":
     extractor = Entity_extractor()
@@ -46,6 +46,9 @@ $160
 Honda fit gE6
 အျဖဴေရာင္Fတန္း
 2009 model
+095102482
+09420219475
+095102482
 ေစ်းတန္တန္ေလးနဲေရာင္းေပးမယ္
 အတိုက္အခိုက္ကင္းအာမာခံတယ္
 နိနက္ကင္း
