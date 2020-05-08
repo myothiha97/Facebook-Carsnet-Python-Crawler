@@ -12,11 +12,9 @@ import time
 import calendar
 import argparse
 import uuid
-import re
-import requests
-# from entity_extraction import retrieve_entity
-import json
-from segmentaion.entity_extractor import Entity_extractor
+
+from DigiZaayAPI import DigiZaayApiConnector
+from FacebookPostAction import click_see_more_button
 
 
 class Crawler:
@@ -31,6 +29,7 @@ class Crawler:
         self.table = None
         self.filter = filter
         self.table_img = None
+        self.api_connector = DigiZaayApiConnector()
 
     def collect(self, type):
         # Create list for string of ("seameochat, facebookapp")
@@ -51,7 +50,6 @@ class Crawler:
                     self.click_esc_key()
 
                     time.sleep(self.delay)
-                    # self.click_see_more()
 
                     # Scrolling
                     self.browser.execute_script(
@@ -61,40 +59,15 @@ class Crawler:
 
                     # self.save_img_to_db(scroll, timestamp, url)
 
-                self.save_post_to_db(ids)             
-    def collect_by_page_ids(self,type,page_id):
-        # objects = self.ids.strip().split(',')
-        # pages_ids = self.db.extract_page_ids_from_page()
-        # for ids in objects:
-            # self.select_types(type, url.strip())
-        if type == "search":
-            # self.click_store_overview_posts(url)
-            self.click_store_overview_posts(page_id)
-            time.sleep(self.delay)
-        else:
-            # Scroll down by depth count e.g 4
-            for scroll in range(self.depth):
-                timestamp = calendar.timegm(time.gmtime())
-                # Click Esc Key to prevent browser notification
-                self.click_esc_key()
-
-                time.sleep(self.delay)
-                # self.click_see_more()
-
-                # Scrolling
-                self.browser.execute_script(
-                    "window.scrollBy(0, document.body.scrollHeight)")
-
-                # time.sleep(self.delay)
-
-                # self.save_img_to_db(scroll, timestamp, url)
-
+                self.crawl_posts()
+                
             self.save_post_to_db(page_id)
     # Select types and return sql query for post and imges
 
     def select_types(self, type, url):
 
         # Wait till the current browser is already login and reach home page
+        # Verify by findFrindsNav
         WebDriverWait(self.browser, 10).until(
                 EC.presence_of_element_located(
                     (By.ID, "findFriendsNav"))
@@ -128,12 +101,6 @@ class Crawler:
 
     def take_screenshot(self, count, timestamp, url):
         return self.browser.save_screenshot('./screenshots/{}_{}_{}.png'.format(count, url, timestamp))
-
-    def click_see_more(self):
-        seemores = self.browser.find_elements_by_link_text("See more")
-        for seemore in seemores:
-            print("clicking a see more button")
-            return seemore.send_keys(Keys.ENTER)
 
     def click_store_overview_posts(self, url):
         overview_posts = self.browser.find_elements_by_css_selector(
@@ -173,219 +140,28 @@ class Crawler:
             comment.send_keys(Keys.ENTER)
             text = comment.text
 
-    def save_post_to_db(self,page):
+    def crawl_posts(self):
+
         posts = self.browser.find_elements_by_class_name("userContentWrapper")
         all_content = []
         check_already_safe_stimestamp = False
         for post in posts:
             all_content = []
             # Click See More Button if exist          
-            self.click_see_more_button(post)           
+            click_see_more_button(post)           
           
-            # Post content
-            post_text  = ''
-            entities = []            
-            try: 
-                post_text = post.find_element_by_class_name('userContent').text
-                clean_emoji = self.remove_emoji(post_text)
-                print(post_text)
-                # Segementation
-                entities = Entity_extractor.retrieve_entity(post_text)
-            except Exception as e:
-                print('Issue with retrieving content: ' + str(e))
-
-              # Get Date
-            timestamp = ''
-            try:
-                date_obj = post.find_element_by_css_selector('._5ptz')
-                # date =  date_obj.get_attribute("title")
-
-                timestamp = date_obj.get_attribute("data-utime")
-                time_stamps = self.db.extract_timestamp_from_page()
-                if timestamp in time_stamps:
             # Check timestamp if the page is already scanned before            
-                    print("The page is already scannced before")
-                # if not check_already_safe_stimestamp:
-                #     self.db.save_timestamp_for_page(page,timestamp) ### store timestamp to the page table
-                #     check_already_safe_stimestamp = True
-                else:   
-                    print("Time stamp {}".format(timestamp))
-                    self.db.save_timestamp_for_page(page,timestamp)
-            except Exception as e:
-                print("Error retrieving date " + str(e))
-                
             # if(timestamp < "1576813657"):
-            if(True):
-                images =  self.extract_all_images(post)
-                author_name = ''
-                try:
-                    author_name = post.find_element_by_css_selector('.fwb.fcg a').text         
-                except Exception as e:
-                    print("Error retrieving author name" + str(e))
-            # if timestamp not in time_stamps:
-                # Author Name
-                # images = []
-                # Retrieve comments from the post content
-                dataObj = {
-                    'post_detail': post_text,
-                    # 'post_url' : 'https://www.facebook.com/groups/824818357601140/?ref=share',
-                    # 'page_name' : 'ကားအမြန်ရောင်းဝယ်ရေး',
-                    'published_at': timestamp,
-                    'author_name' : author_name,
-                    'post_images' : images,                
-                    'segmentation' : entities,                
-                    'comments_count' : 0,
-                    'likes_count' : 0,
-                    'shares_count' : 0,
-                    'page_id': 2,
-                    'crawl_history_id' : 40
-                }
-                if post_text is not '':
-                    all_content.append(dataObj)
-                    # self.sent_to_digizaay(all_content)
+            if(True):               
+                dataObj = self.api_connector.convert_digizaay_object(post,self.browser)
+                print(dataObj.items())
+                
+                if dataObj['post_detail'] is not '':
+                    all_content.append(dataObj)                    
+                    self.api_connector.sent_to_digizaay(all_content)
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
-        try:
-            print("End of processing")
-            # self.sent_to_digizaay(all_content)
-        except Exception as e:
-            print("Issue in sending content to digizaay server" + str(e))
 
-    def click_see_more_button(self,post):
-        try:
-            seemore = post.find_element_by_link_text("See more")
-            seemore.send_keys(Keys.ENTER)
-        except:
-            pass
-
-    def extract_all_images(self,post):
-
-        images = []
-        try:                
-            # Try clicking on the images
-            image_holder = post.find_element_by_class_name(
-                'mtm').find_element_by_css_selector('a[rel="theater"]')
-            image_holder.click()
-
-            WebDriverWait(self.browser, 2).until(
-                EC.presence_of_element_located(
-                    (By.CLASS_NAME, "spotlight"))
-            )            
-            
-            count = 0
-            while(count < 15):                       
-                try:          
-                    spotlight = self.browser.find_element_by_class_name(
-                        'spotlight')
-
-                    # print('---------------------------------')                    
-                    image_url = spotlight.get_attribute("src")
-                    # print(image_url)
-                    if image_url in images:
-                        pass
-                        # print('same image already')
-                        # hasMore = False
-                    else:
-                        images.append(image_url)                                     
-                    next_btn = self.browser.find_element_by_css_selector(
-                        '.snowliftPager.prev')
-                    next_btn.click()
-                    
-
-                    count += 1
-                except Exception as ex:
-                    print("Issue retrieving image"+str(ex))
-                    count += 1
-                    time.sleep(1)
-            self.click_esc_key()
-            
-                
-        # except Exception as e:
-        #     No image holder or images here
-
-        #     print('Issue retrieving the images: ' + str(e))
-                # try:
-                #     # Might be a seller group            
-                #     image_holder = post.find_element_by_class_name(
-                #         'mtm').find_element_by_css_selector('a._xcx')
-                #     image_holder.click()
-
-                #     WebDriverWait(self.browser, 5).until(
-                #         EC.presence_of_element_located(
-                #             (By.ID, "marketplace-modal-dialog-title"))
-                #     )
-
-                    
-                #     # count = post.find_element_by_class_name(
-                #     #     'mtm').find_element_by_css_selector('div._52db').text
-                #     self.browser.implicitly_wait(10)
-                #     count = 0
-                #     while(count < 15):                       
-                #         try:          
-                #             spotlight = self.browser.find_element_by_css_selector(
-                #                 'div[data-testid="marketplace_pdp_component"] .uiScaledImageContainer .img')
-
-                #             # print('---------------------------------')                    
-                #             image_url = spotlight.get_attribute("src")
-                #             print(image_url)
-                #             # print(image_url)
-                #             if image_url not in images:
-                #                 images.append(image_url)      
-
-                #             # self.browser.send_keys(Keys.RIGHT);                               
-                #             webdriver.ActionChains(self.browser).send_keys(Keys.ARROW_RIGHT).perform()
-                #             self.browser.implicitly_wait(3)
-                #             count += 1
-                # except Exception as ex:
-                #     print("Issue retrieving image"+str(ex))
-                #     count += 1
-                #     time.sleep(1)
-            # self.click_esc_key()
-
-        except Exception as e:
-            # No image holder or images here
-
-            print('Issue retrieving the images: ' + str(e))
-            self.click_esc_key()
-        
-        print(images)
-        return images
-
-    def sent_to_digizaay(self, content):
-        url = config('DIGIZAAY_URL')
-        # print(content)
-        data = json.dumps({'crawl_posts': content})
-        print(data)
-        # print(data)
-        # x = requests.post(url, data = data)
-
-        # data = {'crawl_posts': [dataObj]})
-        token = f"Bearer {config('TOKEN')}"
-        headers = {
-            'Content-Type': "application/json",
-            'Accept': "*/*",
-            'Cache-Control': "no-cache",
-            'Host': config('DIGIZAAY_HOST'),
-            'Accept-Encoding': "gzip, deflate",
-            'Content-Length': "45",
-            'Connection': "keep-alive",
-            'cache-control': "no-cache",
-            'Authorization': token
-        }
-        # x = requests.post(url, data=data, headers=headers)
-        # print(x)
-        print(x.text)
-
-    def remove_emoji(self, string):
-        emoji_pattern = re.compile("["
-                                   u"\U0001F600-\U0001F64F"  # emoticons
-                                   u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-                                   u"\U0001F680-\U0001F6FF"  # transport & map symbols
-                                   u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-                                   u"\U00002702-\U000027B0"
-                                   u"\U000024C2-\U0001F251"
-                                   "]+", flags=re.UNICODE)
-        return emoji_pattern.sub(r'', string)
 
     def save_img_to_db(self, count, timestamp, url):
         # Store image and Get image URL from friebase
