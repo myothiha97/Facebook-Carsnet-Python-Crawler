@@ -17,8 +17,6 @@ from DigiZaayAPI import DigiZaayApiConnector
 from FacebookPostAction import click_see_more_button
 
 
-
-
 class Crawler:
     def __init__(self, database, storage, depth, keep, filter):
 
@@ -35,12 +33,14 @@ class Crawler:
 
     def collect(self, type):
         # Create list for string of ("seameochat, facebookapp")
-        objects = self.ids.strip().split(',')
-
-        for url in objects:
-            self.select_types(type, url.strip())
+        # objects = self.ids.strip().split(',')
+        pages_ids = self.db.extract_page_ids_from_page()
+        for ids in pages_ids:
+            # self.select_types(type, url.strip())
             if type == "search":
-                self.click_store_overview_posts(url)
+                # objects = self.ids.strip().split(',')
+                # self.click_store_overview_posts(url)
+                self.click_store_overview_posts(ids)
                 time.sleep(self.delay)
             else:
                 # Scroll down by depth count e.g 4
@@ -60,7 +60,8 @@ class Crawler:
                     # self.save_img_to_db(scroll, timestamp, url)
 
                 self.crawl_posts()
-
+                
+            self.save_post_to_db(page_id)
     # Select types and return sql query for post and imges
 
     def select_types(self, type, url):
@@ -104,7 +105,7 @@ class Crawler:
     def click_store_overview_posts(self, url):
         overview_posts = self.browser.find_elements_by_css_selector(
             '._5bl2._401d')
-        url = url.replace('/', '_')
+        # url = url.replace('/', '_')
 
         for count, overview_post in enumerate(overview_posts):
             timestamp = calendar.timegm(time.gmtime())
@@ -140,8 +141,10 @@ class Crawler:
             text = comment.text
 
     def crawl_posts(self):
+
         posts = self.browser.find_elements_by_class_name("userContentWrapper")
         all_content = []
+        check_already_safe_stimestamp = False
         for post in posts:
             all_content = []
             # Click See More Button if exist          
@@ -159,6 +162,7 @@ class Crawler:
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
 
+
     def save_img_to_db(self, count, timestamp, url):
         # Store image and Get image URL from friebase
         self.take_screenshot(count, timestamp, url)
@@ -172,7 +176,7 @@ class Crawler:
         emailbox = self.browser.find_element_by_name("email")
         emailbox.clear()
         emailbox.send_keys(email)
-
+ 
         emailbox = self.browser.find_element_by_name("pass")
         emailbox.clear()
         emailbox.send_keys(password)
