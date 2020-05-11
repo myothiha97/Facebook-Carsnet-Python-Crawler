@@ -42,11 +42,11 @@ class FacebookImageExtractor():
                     print("Issue from ImageExtractor : "+str(ex))
                     count += 1
                     time.sleep(1)
-            KeyBoard.click_esc_key()
+            KeyBoard.click_esc_key(browser)
         except Exception as e:
             # No image holder or images here
             print('Issue from ImageExtractor : ' + str(e))
-            KeyBoard.click_esc_key()
+            KeyBoard.click_esc_key(browser)
         return images
 
     def extract_images_from_normal_gallary(post,browser):

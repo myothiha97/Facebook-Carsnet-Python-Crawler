@@ -132,7 +132,10 @@ class DBHandler:
             else:
                 print("Table created")
                 self.db.commit()
-
+    def drop_crawler_tables(self,table_name):
+        sql=f"DROP TABLE {table_name}"
+        self.cursor.execute(sql)
+        self.db.commit()
 
     def drop_table(self, tablename=None):        
         self.cursor.execute(self.drop('keywords'))
@@ -180,39 +183,35 @@ class DBHandler:
     def extract_page_ids_from_page(self):
         sql = f"SELECT id FROM `page`"
         self.cursor.execute(sql)
-        page_ids = []
-        for i in self.cursor:
-            page_ids.append(i[0])
+        page_ids = [i for i in self.cursor]
         return page_ids
     
     def extract_timestamp_from_page(self):
         sql=f"SELECT time_stamp FROM `page`"
         self.cursor.execute(sql)
-        page_time_stamps = []
-        for i in self.cursor:
-            page_time_stamps.append(i)
+        page_time_stamps = [i for i in self.cursor]
         return page_time_stamps
     
     def extract_times_and_crawldays_from_schedule(self):
         sql1=f"SELECT crawl_time FROM `schedule`"
         sql2=f"SELECT crawl_day FROM `schedule`"
         self.cursor.execute(sql1)
-        crawl_times=[]
-        for i in self.cursor:
-            crawl_times.append(i[0])
+        crawl_times=[i[0] for i in self.cursor]
         self.cursor.execute(sql2)
-        crawl_days = []
-        for i in self.cursor:
-            crawl_days.append(i[0])
+        crawl_days = [i[0] for i in self.cursor]
         return crawl_times,crawl_days
     
     def extract_page_ids_from_schedule(self):
         sql = f"SELECT page_id FROM `schedule`"
         self.cursor.execute(sql)
-        schedule_page_ids = []
-        for i in self.cursor:
-            schedule_page_ids.append(i[0])
+        schedule_page_ids = [i[0] for i in self.cursor]
         return schedule_page_ids
+    
+    def extract_page_url_from_page(self):
+        sql = f"SELECT page_url FROM `page`"
+        self.cursor.execute(sql)
+        page_urls = [i[0] for i in self.cursor]
+        return page_urls
     
     def insert_data_to_history(self,page_id,schedule_id,start_time,end_time,date):
         command = f"INSERT INTO `history`(page_id,schedule_id,start_time,end_time,crawled_date) VALUES(%s,%s,%s,%s,%s)"
@@ -223,9 +222,7 @@ class DBHandler:
     def extract_schedule_ids_from_schedule(self):
         sql=f"SELECT id FROM `schedule`"
         self.cursor.execute(sql)
-        schedule_id=[]
-        for i in self.cursor:
-            schedule_id.append(i[0])
+        schedule_id=[i[0] for i in self.cursor]
         return schedule_id
         
     
@@ -267,10 +264,11 @@ if __name__ == '__main__':
     parser.add_argument("-p","--create_table" , action="store_true",help="use this command if u dont have require tables ")
     
     parser.add_argument("-i","--insert_table",type=str,action="store",help="use this command to insert require tables to database")
+    
+    parser.add_argument("-D","--drop_crawl_tables",action="store",type=str,help="use this command to drop the crawler table u want")
     args = parser.parse_args()
 
     g = DBHandler()
-    g.extract_page_ids_from_schedule()
     if args.migrate:
         g.create_table()
         g.import_default_data()
@@ -288,3 +286,12 @@ if __name__ == '__main__':
             print("The available tables are [page,schedule,history]")
         else:
             g.insert_tables(args.insert_table)
+    
+    if args.drop_crawl_tables:
+        tables=["page","schedule","history"]
+        if args.drop_crawl_tables not in tables:
+            print("Unknown table")
+            print("The available tables are [page,schedule,history]")
+        else:
+            g.drop_crawler_tables(args.drop_crawl_tables)
+            print(f"{args.drop_crawl_tables} table dropped!")

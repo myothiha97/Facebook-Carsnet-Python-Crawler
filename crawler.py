@@ -33,9 +33,9 @@ class Crawler:
 
     def collect(self, type):
         # Create list for string of ("seameochat, facebookapp")
-        # objects = self.ids.strip().split(',')
-        pages_ids = self.db.extract_page_ids_from_page()
-        for ids in pages_ids:
+        objects = self.ids.strip().split(',')
+        # pages_ids = self.db.extract_page_ids_from_page()
+        for ids in objects:
             # self.select_types(type, url.strip())
             if type == "search":
                 # objects = self.ids.strip().split(',')
@@ -43,6 +43,8 @@ class Crawler:
                 self.click_store_overview_posts(ids)
                 time.sleep(self.delay)
             else:
+                self.select_types(type,ids)
+                time.sleep(4)
                 # Scroll down by depth count e.g 4
                 for scroll in range(self.depth):
                     timestamp = calendar.timegm(time.gmtime())
@@ -61,8 +63,23 @@ class Crawler:
 
                 self.crawl_posts()
                 
-            self.save_post_to_db(page_id)
+            # self.save_post_to_db(page_id)
     # Select types and return sql query for post and imges
+    
+    def collect_from_api(self,ids,url,market_place):
+        self.browser.get(url)
+        time.sleep(4)
+        for scroll in range(self.depth):
+            timestamp = calendar.timegm(time.gmtime())
+            # Click Esc Key to prevent browser notification
+            self.click_esc_key()
+
+            time.sleep(self.delay)
+
+            # Scrolling
+            self.browser.execute_script(
+                "window.scrollBy(0, document.body.scrollHeight)")
+        self.crawl_posts(ids,market_place)
 
     def select_types(self, type, url):
 
@@ -140,7 +157,7 @@ class Crawler:
             comment.send_keys(Keys.ENTER)
             text = comment.text
 
-    def crawl_posts(self):
+    def crawl_posts(self,ids=1,market_place=0):
 
         posts = self.browser.find_elements_by_class_name("userContentWrapper")
         all_content = []
@@ -153,14 +170,16 @@ class Crawler:
             # Check timestamp if the page is already scanned before            
             # if(timestamp < "1576813657"):
             if(True):               
-                dataObj = self.api_connector.convert_digizaay_object(post,self.browser)
+                dataObj = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place)
                 print(dataObj.items())
                 
                 if dataObj['post_detail'] is not '':
-                    all_content.append(dataObj)                    
-                    self.api_connector.sent_to_digizaay(all_content)
+                    all_content.append(dataObj)
+                                
+                    # self.api_connector.sent_to_digizaay(all_content)
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
+        print(all_content)    
 
 
     def save_img_to_db(self, count, timestamp, url):

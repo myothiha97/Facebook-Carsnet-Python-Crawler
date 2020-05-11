@@ -47,7 +47,7 @@ parser.add_argument("-f", "--filter",  action="store_true", help="With or withou
 
 parser.add_argument("-sd","--store_db",action="store_true",help="Use this command to store api data to page table and scheduel table from database")
 
-parser.add_argument("-C","--crawl",type=str,action="store",help="Use this command to check whether it's time to crawl or not by checking with schedule table from database")
+parser.add_argument("-C","--crawl",action="store_true",help="Use this command to check whether it's time to crawl or not by checking with schedule table from database")
 
 args = parser.parse_args()
    
@@ -98,57 +98,15 @@ if __name__ == '__main__':
         p.collect("search")
 
     if args.crawl:
-        # import main2.py
-        # print("Start crawling ")
-        weekday = datetime.datetime.today().isoweekday()
-        # print(weekday , type(weekday))
-        current_time = time.strftime('%H:%M:%S')
-        print("current time",current_time,type(current_time))
-        print("weekday : ",weekday)
-        schedule_ids=DATABASE.extract_schedule_ids_from_schedule()
-        
-        crawltimes,crawldays=DATABASE.extract_times_and_crawldays_from_schedule()
-        
-        to_crawl_times = [str(i) for i in crawltimes]
-        crawl_hrs=[]
-        crawl_mins=[]
-        crawl_secs=[]
-        for x in range(len(to_crawl_times)):
-            crawl_hr,crawl_min,crawl_sec = to_crawl_times[x].split(':')
-            crawl_hrs.append(crawl_hr)
-            crawl_mins.append(crawl_min)
-            crawl_secs.append(crawl_sec)  
-        current_hr,current_min,current_sec = current_time.split(":")          
-        # to_crawl_times = []
-        # for i in crawltimes:
-        strip_hr = ["01",'02','03','04','05','06','07','08','09']
-        if current_hr in strip_hr:
-            current_hr=current_hr.replace("0","")
-            print("current hr :",current_hr)
-        time.sleep(5)
-        to_crawl_days =  [int(str(i)) for i in crawldays]
-        # print(to_crawl_times,to_crawl_days)
-        p_ids = DATABASE.extract_page_ids_from_schedule()
-        
-        p_url = DATABASE.extract_page_url_from_page()
-        # print(to_crawl_times[0])
-        for i in range(len(crawl_hrs)):
-            if weekday == to_crawl_days[i] and current_hr == crawl_hrs[i]:
-                print(f"start crawling at weekday : {weekday} and time : {current_hr} hr")
-                print(f"Crawl page id : {p_ids[i]}")
-                c_time = time.strftime('%H:%M:%S')
-                crawl_url = p_url[p_ids[i]-1]
-                print("Crawl_url" ,crawl_url)
-                time.sleep(5)
-                p.collect_by_page_ids(args.crawl,p_ids[i],crawl_url)
-                e_time = time.strftime('%H:%M:%S')
-                time_stamp = datetime.datetime.now()
-                e_date= time_stamp.strftime("%d/%m/%Y")
-                DATABASE.insert_data_to_history(page_id=p_ids[i],schedule_id=schedule_ids[i],start_time=c_time,end_time=e_time,date=e_date)
-            else:
-                print("Crawl time and day doesn't match yet!!")
-                # print(f"Crawl time : {crawl_hr[i]} and crawl weekday : {to_crawl_days[i]}")
-    
+        url = config('CURRENT_CRAWL_PAGES')
+        pages = requests.get(url,headers=headers)
+        pages = pages.json()
+        if pages:
+            print(f"Total {len(pages)} page to crawl")
+            for page in pages:
+                p.collect_from_api(ids=page['id'],url=page['url'],market_place=page['is_marketplace'])
+        else:
+            print("There is no page to crawl")
     if args.store_db:
         # print("Store data to database")
         url = config('ALL_PAGES_URL')

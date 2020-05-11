@@ -3,8 +3,10 @@ import pandas as pd
 from converter import zg12uni51
 import csv
 import json
-from regex_pattern import *
-from extract_info import Extractor
+# from regex_pattern import *
+from segmentation.regex_pattern import *
+from segmentation.extract_info import Extractor
+# from extract_info import Extractor
 from myanmartools import ZawgyiDetector
 
 class Entity_extractor:

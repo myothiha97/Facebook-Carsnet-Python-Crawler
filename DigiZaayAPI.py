@@ -1,6 +1,6 @@
 from ImageExtractor import FacebookImageExtractor
-from entity_extration.carsnet import retrieve_entity
-from FacebookPostContentExtractor import get_post_time_stamp,get_post_text,get_author_name
+from segmentation.carsnet import Entity_extractor
+from FacebookPostContentExtractor import ContentExtractor
 import json
 import requests
 from decouple import config
@@ -37,19 +37,22 @@ class DigiZaayApiConnector():
         print(x.text)
 
     @classmethod
-    def convert_digizaay_object(self,post,browser):
-        post_text = get_post_text(post)
-
+    def convert_digizaay_object(self,post,browser,page_id,market_place):
+        post_text = ContentExtractor.get_post_text(post)
+        if market_place == 0:
+            images = FacebookImageExtractor.extract_images_from_normal_gallary(post,browser)
+        else:
+            images = FacebookImageExtractor.extract_images_from_market_gallary(post,browser)
         dataObj = {
             'post_detail': post_text,
-            'published_at': get_post_time_stamp(post),
-            'author_name': get_author_name(post),
-            'post_images': FacebookImageExtractor.extract_images_from_normal_gallary(post,browser),
-            'segmentation': retrieve_entity(post_text),
+            'published_at': ContentExtractor.get_post_time_stamp(post),
+            'author_name': ContentExtractor.get_author_name(post),
+            'post_images': images,
+            'segmentation': Entity_extractor.retrieve_entity(post_text), 
             'comments_count': 0,
             'likes_count': 0,
             'shares_count': 0,
-            'page_id': 1,
+            'page_id': page_id,
             'crawl_history_id': 41
         }
 

@@ -1,5 +1,6 @@
 import re
-from regex_pattern import *
+# from regex_pattern import *
+from segmentation.regex_pattern import *
 class Extractor:
     segment = {}
     segment['brand']        = '-'   

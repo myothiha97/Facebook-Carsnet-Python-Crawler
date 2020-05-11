@@ -1,15 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
-# from get_pages import data
-# fro
-# m get_pages import sort_by_time
-# from get_pages import history_data , start_time , end_time
 import json
-# import main
-
-
-# org_id = info['id']
-# insert_data = f"INSERT INTO `page`(original_id) VALUES({org_id})"
 def insert_data_to_page(datas,cursors):
     for i in range(len(datas)):
         info = datas[i]
