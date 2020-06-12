@@ -3,11 +3,14 @@ import pandas as pd
 from converter import zg12uni51
 import csv
 import json
-# from regex_pattern import *
 from segmentation.regex_pattern import *
 from segmentation.extract_info import Extractor
 # from extract_info import Extractor
 from myanmartools import ZawgyiDetector
+import time
+# from regex_pattern import *
+# from extract_info import Extractor
+# from myanmartools import ZawgyiDetector
 
 class Entity_extractor:
     @staticmethod            
@@ -23,36 +26,65 @@ class Entity_extractor:
         return (zg12uni51(input_text = text))    
     @classmethod
     def retrieve_entity(cls,post):
+        # print(post)
         sentence = (str(post)+'\n\n')
         zawgyi = cls.isZawGyi(sentence)
         if zawgyi:
+            # print("This is zawgyi")
             standard = cls.toUnicode(post)
+            # print(standard)
+            # time.sleep(60)
         else:
-            standard = sentence
-        entity_list = Extractor.extract(str(standard))
-        return entity_list  
+            # print("This is unicode!")
+            standard = post
+            # print(standard)
+            # time.sleep(60)
+        print(standard,"\n")
+        print("----------------------------")
+        extractor = Extractor()
+        entity_list = extractor.extract(str(standard))
+        print(entity_list)
+        return entity_list
        
-        
-    
         
 if __name__ =="__main__":
     extractor = Entity_extractor()
-    str1="""5-5-2020 အဂၤါ ညေန ( 4:30 ) အတြက္
-(စာကို ဆံုတိုင္ေအာင္္ ဖက္ပါ)
-မန္ဘာေၾကး မရွိ ဂဏန္းေရာင္းမစားဘူး
-ေငြႀကိဳ လႊဲစရာ မလိုဘူးမိတ္ေဆြ
-အတြက္ အထူး (ကလယ္နာဆိုဒ္) ေအာတစ္ကြက္
-( 1 )ကြက္ထဲ အပိုင္ ထုိးရမယ္ (100%%)အာမခံတယ္
-(2)ကြက္ ( 3 )ဆုိမထုိးန႔ဲ အာမခံနဲ႔ေပးမွာေနာ္
-အပိုမေျပာဘူးယံုၾကည္ရင္ေတာ hi ထား
-ဆရာအတြက္ေတာ့ ပိုထိုးေပးပါ။ ပိုထိုးေပးနိုင္မွ လာယူ
-ေပါက္ေပး စနစ္ျဖင့္သာ ကူညီးမယ္
-ဆႏၵရွိမွ လာေတာင္း
-ok မျပန္ႏိူင္ရင္ လာမေတာင္းပါနဲ႔
-ေပါက္သီး အမွန္ 100% အာမခံတယ္
-( 09 250320473)- ဖုန္​းကို ႐ိုး႐ိုး ဖုန္းမက္ေဆ့ကေန
-ျမင္ျမင္ျခင္း hi ထားပါ အခု hi ထား
-5...ရက္ ညေန အပိုင္ေပါက္ေစရမယ္။
-မေပါက္ ထိုးရင္းပါျပန္ေရာ္ လိုက္မယ္"""
+    str1="""အရောင်း/ အလဲ
+ကားအသန့်လေးကို (၁၂၇ သိန်း) ဖြင့်တန်တန်လေး
+လေးရောင်းမည် မြန်မြန်လေးဝယ်ထားနော်
+ကားကောင်းစျေးတန်ဆိုတော့မြန်တယ်နော်
+ကားကတော့ရှယ်လေးဗျာ org kilo 50000 ကျော်
+အကြမ်း/အ​ချောလား မြို့တွင်း/​ဟိုင်းဝေး
+ဆီ(10000)ဖိုးနဲ့နေပြည်တော်အသွားပြန်ရတယ်ဗျာ
+လူကြီးလူငယ်မရွေး ပါကင်အတွက်စိတ်ပူစရာမလို
+စတိုင်ကျကျလေးစီးဗျာ
+🚗SUZUKI SWIFT 🇯🇵
+🚘2008
+🚘SMART KEY/ digital aircon
+🚗4X2 ဒိုက်ခွက်နီကယ်
+🚘ဓါတ်ဆီ engine (1300 CC )
+🚗air con ရှယ် (စောင်ခြုံဂရိတ်)
+🚘အော်ရီဂျင်နယ် TV&back AUDIO
+အသံထွက်ရှယ်မိုက်သည်
+🚘အတွင်းသန့် ထိုင်ခုံအပြောင်း
+🚘အဲကွန်းအေးစိမ့်
+🚗အင်ဂျင်ရှယ်
+🚘အောက်ပိုင်း အသံ လုံးဝ မရှိ
+🚗တာယာ ၄ လုံးအသစ်
+🚘YGN-3E
+🚗ရှေ့ HDမီးသီး fong lamp မီး
+🚘အလွိုင်းဂွေထည့်ထားသည် တာယာဆိုက်ကြီး
+☀️☀️☀️☀️☀️☀️☀️☀️☀️☀️☀️☀️
+လိုင်စင်တော့ဝင်ရမည်
+အတိုက်ခိုက်ရှင်း အရိုးဆစ်ရှယ်လှသည်
+မှန်ချိုးမှန်ခေါက်မှန်ချိန်မီးချိန် မီးအလှဆင်ထားသည် Airbag(2)လုံး လုပ်ချက်မရှိပါ
+လည်သာကူရှင်စွပ်ထည့်ထားသည် အင်ဂျင်ရှယ်
+ဂွေဆိုက်ကြီးထည့်ထားတော့အောက်ပိုင်း
+လွတ်သည် လက်တင်စီးယုံဘဲ
+ထည့်စရာကတော့ဆီပါဘဲ
+💵 ၁၂၇ သိန်း (အပြောကောင်းလျှင်နည်းနည်းလျော့ပေးမည်)
+📱 095091405
+Wai Yan"""
     Entity_extractor.retrieve_entity(str1)
     
+  

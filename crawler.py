@@ -60,7 +60,8 @@ class Crawler:
                     # time.sleep(self.delay)
 
                     # self.save_img_to_db(scroll, timestamp, url)
-
+                self.browser.execute_script("window.scrollTo(document.body.scrollHeight,0)")
+                time.sleep(5)
                 self.crawl_posts()
                 
             # self.save_post_to_db(page_id)
@@ -87,9 +88,9 @@ class Crawler:
         # Verify by findFrindsNav
         WebDriverWait(self.browser, 10).until(
                 EC.presence_of_element_located(
-                    (By.ID, "findFriendsNav"))
+                    (By.CSS_SELECTOR, "a[aria-label='Friends']"))
             )
-
+        # time.sleep(5)
         url_to_crawl = ""
         print(f"Type is {type}")
         if type == "page":
@@ -159,19 +160,19 @@ class Crawler:
 
     def crawl_posts(self,ids=1,market_place=0):
 
-        posts = self.browser.find_elements_by_class_name("userContentWrapper")
+        posts = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")
         all_content = []
         check_already_safe_stimestamp = False
         for post in posts:
             all_content = []
             # Click See More Button if exist          
-            click_see_more_button(post)           
+            click_see_more_button(post)     
           
             # Check timestamp if the page is already scanned before            
             # if(timestamp < "1576813657"):
             if(True):               
                 dataObj = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place)
-                print(dataObj.items())
+                # print(dataObj.items())
                 
                 if dataObj['post_detail'] is not '':
                     all_content.append(dataObj)
@@ -179,7 +180,7 @@ class Crawler:
                     # self.api_connector.sent_to_digizaay(all_content)
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
-        print(all_content)    
+        print(all_content)
 
 
     def save_img_to_db(self, count, timestamp, url):

@@ -62,6 +62,15 @@ if __name__ == '__main__':
     # Login into Facebook Account
     p.login(config('EMAIL'), config('PASSWORD'))
     time.sleep(5)
+    try:
+        acc = browser.find_element_by_xpath('//*[@id="mount_0_0"]/div/div/div[2]/div[4]/div[1]/span/div/div[1]')
+        acc.click()
+        time.sleep(2)
+        change_fb = browser.find_element_by_xpath('/html/body/div[1]/div/div/div[2]/div[4]/div[2]/div/div/div[1]/div[1]/div/div/div/div/div/div/div/div[1]/div[3]/div/div[4]/div')
+        change_fb.click()
+    except:
+        print("This is an old faceboook")
+
 
     if args.page:
         # set attribute for argument parameters eg. ("seameochat, facebookapp")

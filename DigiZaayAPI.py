@@ -39,6 +39,11 @@ class DigiZaayApiConnector():
     @classmethod
     def convert_digizaay_object(self,post,browser,page_id,market_place):
         post_text = ContentExtractor.get_post_text(post)
+        # print(post_text)
+        # print("post text for segementation ----------> ")
+        segments = Entity_extractor.retrieve_entity(post_text)
+        authorname = ContentExtractor.get_author_name(post)
+        
         if market_place == 0:
             images = FacebookImageExtractor.extract_images_from_normal_gallary(post,browser)
         else:
@@ -46,9 +51,9 @@ class DigiZaayApiConnector():
         dataObj = {
             'post_detail': post_text,
             'published_at': ContentExtractor.get_post_time_stamp(post),
-            'author_name': ContentExtractor.get_author_name(post),
+            'author_name': authorname,
             'post_images': images,
-            'segmentation': Entity_extractor.retrieve_entity(post_text), 
+            'segmentation': segments, 
             'comments_count': 0,
             'likes_count': 0,
             'shares_count': 0,

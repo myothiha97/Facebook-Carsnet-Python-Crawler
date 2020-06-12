@@ -82,6 +82,12 @@ Install pyrebase4
 pip install pyrebase4
 ```
 
+Install myanmartools
+
+```
+pip install myanmartools
+```
+
 Download relative chrome driver from https://chromedriver.chromium.org/ and place it on drivers folder.
 
 Change the path of the driver in .env if necessary.
