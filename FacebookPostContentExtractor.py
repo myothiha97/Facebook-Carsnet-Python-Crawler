@@ -34,14 +34,21 @@ class ContentExtractor:
     @classmethod
     def get_author_name(cls,post):
         # Author Name
+        try:
+            author_name = post.find_element_by_xpath("//*[contains(@id,'jsc_c')]/div/a/strong/span").get_property('innerText') 
+            print(f"Author name ----------> {author_name}")        
+        except Exception as e:
+            print("Error retrieving author name" + str(e))  
+        return author_name
+    
+    @classmethod
+    def get_author_name_for_group(cls,post):
         author_name = ''
         try:
-            author_name = post.find_element_by_xpath("//*[contains(@id,'jsc_c')]/div/a/strong/span").get_property('innerText')         
+            # author_name = post.find_element_by_xpath("//*[contains(@id,'jsc_c')]/span/div/a/strong/span").get_property("innerText")
+            # author_name = post.find_element_by_xpath("//h2[contains(@id,'jsc_c')]").get_property("textContent")
+            author_name = post.find_element_by_css_selector("h2.gmql0nx0.l94mrbxd.p1ri9a11.lzcic4wl.aahdfvyu.hzawbc8m").get_property("textContent")
+            print(f"Author name --------> {author_name}")
         except Exception as e:
-            print("Error retrieving author name" + str(e))
-            try:
-                author_name = post.find_element_by_xpath("//*[contains(@id,'jsc_c')]/span/div/a/strong/span").text
-            except Exception as e:
-                print("Error retrieving author name : ",str(e))
-                
+            print("Error retrieving author name : ",str(e))
         return author_name

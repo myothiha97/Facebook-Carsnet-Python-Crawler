@@ -21,7 +21,7 @@ class FacebookImageExtractor():
             )
             
             count = 0
-            while(count < 15):                       
+            while(count < 20):                       
                 try:          
                     spotlight = browser.find_element_by_css_selector("div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn").find_element_by_tag_name("img")
 
@@ -41,7 +41,7 @@ class FacebookImageExtractor():
                         if image_url == images[0]:
                             print("the image is already crawled")
                             count = 22
-                            continue
+                            # continue
                             
                     # print(image_url)
                     if image_url in images:
@@ -92,7 +92,7 @@ class FacebookImageExtractor():
                     i = 0
                     if len(images) > 0:
                         print(f'last image url is { images[-1]}')
-                        while image_url == images[-1] and i < 8:
+                        while image_url == images[-1] and i < 5:
                             time.sleep(0.2)
                             i+=1
                             print(f'image url is {image_url}')

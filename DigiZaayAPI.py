@@ -42,12 +42,13 @@ class DigiZaayApiConnector():
         # print(post_text)
         # print("post text for segementation ----------> ")
         segments = Entity_extractor.retrieve_entity(post_text)
-        authorname = ContentExtractor.get_author_name(post)
         
         if market_place == 0:
             images = FacebookImageExtractor.extract_images_from_normal_gallary(post,browser)
+            authorname = ContentExtractor.get_author_name(post)
         else:
             images = FacebookImageExtractor.extract_images_from_market_gallary(post,browser)
+            authorname = ContentExtractor.get_author_name_for_group(post)
         dataObj = {
             'post_detail': post_text,
             'published_at': ContentExtractor.get_post_time_stamp(post),
