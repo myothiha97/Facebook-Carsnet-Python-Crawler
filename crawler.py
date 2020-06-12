@@ -44,6 +44,7 @@ class Crawler:
                 time.sleep(self.delay)
             else:
                 self.select_types(type,ids)
+                
                 time.sleep(4)
                 # Scroll down by depth count e.g 4
                 for scroll in range(self.depth):
@@ -61,8 +62,14 @@ class Crawler:
 
                     # self.save_img_to_db(scroll, timestamp, url)
                 self.browser.execute_script("window.scrollTo(document.body.scrollHeight,0)")
+                print(f"This is {type}")
                 time.sleep(5)
-                self.crawl_posts()
+                if type == "page":
+                    print("crawling with page type")
+                    self.crawl_posts()
+                if type == "group":
+                    print("This is market place")
+                    self.crawl_posts(market_place=1)
                 
             # self.save_post_to_db(page_id)
     # Select types and return sql query for post and imges
