@@ -166,7 +166,7 @@ class ContentExtractor:
                 print("comment count ----------> ",comment_count)
                 return comment_count
             # print("raw comments ----------------> ",comments)
-            reg = r"\d+ | \d+\.\d+"
+            reg = r"\d+|\d+\.\d+"
             if re.search(r"k|K",comments):
                 comment = re.search(reg,comments).group()
                 comment_count = int(float(comment) * 1000)
