@@ -24,6 +24,7 @@ class Crawler:
         self.depth = depth
         self.delay = keep
         self.browser = webdriver.Chrome(executable_path=config('CHROMEDRIVER'))
+        # self.browser = webdriver.Firefox(executable_path="./drivers/geckodriver.exe")
         self.db = database
         self.storage = storage
         self.table = None
@@ -68,8 +69,14 @@ class Crawler:
                     print("crawling with page type")
                     self.crawl_posts()
                 if type == "group":
-                    print("This is market place")
-                    self.crawl_posts(market_place=1)
+                    # print("This is market place")
+                    gp_type = self.browser.find_element_by_css_selector("div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span").text
+                    if gp_type == "Discussion":
+                        print("This group is normal gp")
+                        self.crawl_posts(market_place=0,g_type = 1)
+                    else:
+                        print("This group is market place")
+                        self.crawl_posts(market_place=1)
                 
             # self.save_post_to_db(page_id)
     # Select types and return sql query for post and imges
@@ -87,7 +94,21 @@ class Crawler:
             # Scrolling
             self.browser.execute_script(
                 "window.scrollBy(0, document.body.scrollHeight)")
-        self.crawl_posts(ids,market_place)
+        time.sleep(0.5)
+        self.browser.execute_script("window.scrollTo(document.body.scrollHeight,0)")
+        time.sleep(0.5)
+        if market_place == 0:
+            print("This is page")
+            self.crawl_posts(ids)
+        else:
+            gp_type = self.browser.find_element_by_css_selector("div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span").text
+            if gp_type == "Discussion":
+                print("This group is normal gp")
+                self.crawl_posts(market_place=0, g_type = 1)
+            else:
+                print("This group is market place")
+                self.crawl_posts(market_place=1)
+        # self.crawl_posts(ids,market_place)
 
     def select_types(self, type, url):
 
@@ -165,29 +186,43 @@ class Crawler:
             comment.send_keys(Keys.ENTER)
             text = comment.text
 
-    def crawl_posts(self,ids=1,market_place=0):
+    def crawl_posts(self,ids=1,market_place=0,g_type=0):
 
         posts = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")
         all_content = []
         check_already_safe_stimestamp = False
-        for post in posts:
-            all_content = []
+        for g,post in enumerate(posts):
             # Click See More Button if exist          
             click_see_more_button(post)     
           
             # Check timestamp if the page is already scanned before            
             # if(timestamp < "1576813657"):
-            if(True):               
-                dataObj = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place)
+            # if(True):
+            dataObj , status = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type)
+
+            count = 0
+            while status and count  < 3:               
                 # print(dataObj.items())
+                # time.sleep(3)
+                time.sleep(0.5)
+                self.click_esc_key()
+                time.sleep(1)
+                dataObj , status  = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type)
+                print("")
+                print(f"--------------recrawling post {g}----------------")
+                print("")
+                count+=1
                 
-                if dataObj['post_detail'] is not '':
-                    all_content.append(dataObj)
+            if dataObj['post_detail'] is not '':
+                all_content.append(dataObj)
+            print(f"------------------finished crawling post {g}--------------------------")
                                 
                     # self.api_connector.sent_to_digizaay(all_content)
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
         print(all_content)
+        print("The number of data  ", len(all_content))
+        print("The number of posts ",len(posts))
 
 
     def save_img_to_db(self, count, timestamp, url):

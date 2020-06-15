@@ -1,4 +1,6 @@
 from utility.KeyBoard import KeyBoard
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -21,7 +23,7 @@ class FacebookImageExtractor():
             )
             
             count = 0
-            while(count < 20):                       
+            while(count < 30):                       
                 try:          
                     spotlight = browser.find_element_by_css_selector("div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn").find_element_by_tag_name("img")
 
@@ -40,7 +42,7 @@ class FacebookImageExtractor():
                             
                         if image_url == images[0]:
                             print("the image is already crawled")
-                            count = 22
+                            count = 31
                             # continue
                             
                     # print(image_url)
@@ -62,7 +64,7 @@ class FacebookImageExtractor():
         except Exception as e:
             # No image holder or images here
             print('Issue from ImageExtractor : ' + str(e))
-            # KeyBoard.click_esc_key(browser)
+            KeyBoard.click_esc_key(browser)
         return images
 
     def extract_images_from_normal_gallary(post,browser):
@@ -80,9 +82,8 @@ class FacebookImageExtractor():
                     (By.CSS_SELECTOR, "img.ji94ytn4"))
             )
             count = 0
-            while(count < 20):            
-                try:
-                             
+            while(count < 40):            
+                try:     
                     WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.ji94ytn4")))
                     # time.sleep(0.3)
                     spotlight = browser.find_element_by_css_selector("img.ji94ytn4")
@@ -105,30 +106,31 @@ class FacebookImageExtractor():
                         # hasMore = False
                     else:
                         images.append(image_url)
-                                                            
                     next_btn = browser.find_element_by_css_selector(
                         "div[aria-label='Next photo']")
                     next_btn.click()
+                    # webdriver.ActionChains(browser).send_keys(Keys.ARROW_RIGHT).perform()
                     # time.sleep(1.2)
-                    # time.sleep(0.2)
                     count += 1
                 except Exception as ex:
                     print("Issue from ImageExtractor : "+str(ex))
-                    # print(f"Error message -------> {ex.message}")
+                    
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     print("error type : ",exc_type)
                     print(f"Error message ---------> {exc_value} & data type --------> {type(exc_value)} ")
                     if exc_type == ElementNotInteractableException:
-                        count = 22
+                        count = 41
                     count += 1
-                    time.sleep(1)
+                    time.sleep(0.5)
+            print("******* done crawling images for post*************")
+            # time.sleep(0.5)
             KeyBoard.click_esc_key(browser)
             
                 
         except Exception as e:
             # No image holder or images here
             print('Issue from ImageHolder : ' + str(e))
-            # KeyBoard.click_esc_key(browser)
+            KeyBoard.click_esc_key(browser)
         
         return images
 

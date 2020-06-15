@@ -1,10 +1,11 @@
 from ImageExtractor import FacebookImageExtractor
 from segmentation.carsnet import Entity_extractor
 from FacebookPostContentExtractor import ContentExtractor
+from FacebookPostAction import click_see_more_button
 import json
 import requests
 from decouple import config
-
+import time
 class DigiZaayApiConnector():
 
     api_url = config('DIGIZAAY_URL')
@@ -37,29 +38,49 @@ class DigiZaayApiConnector():
         print(x.text)
 
     @classmethod
-    def convert_digizaay_object(self,post,browser,page_id,market_place):
-        post_text = ContentExtractor.get_post_text(post)
-        # print(post_text)
-        # print("post text for segementation ----------> ")
-        segments = Entity_extractor.retrieve_entity(post_text)
-        
-        if market_place == 0:
+    def convert_digizaay_object(self,post,browser,page_id,market_place,g_type):
+        if market_place == 0 and g_type ==0:
+            post_text = ContentExtractor.get_post_text(post)
+            segments = Entity_extractor.retrieve_entity(post_text)
             images = FacebookImageExtractor.extract_images_from_normal_gallary(post,browser)
             authorname = ContentExtractor.get_author_name(post)
-        else:
+            
+        if market_place == 1:
+            post_text = ContentExtractor.get_post_text_for_gp(post)
+            if "See more" in post_text:
+                click_see_more_button(post)
+                post_text = ContentExtractor.get_post_text_for_gp(post)
+                time.sleep(0.5)
+                
+            segments = Entity_extractor.retrieve_entity(post_text)
             images = FacebookImageExtractor.extract_images_from_market_gallary(post,browser)
             authorname = ContentExtractor.get_author_name_for_group(post)
+            
+        if market_place == 0 and g_type == 1:
+            post_text = ContentExtractor.get_post_text_for_gp(post)
+            if "See more" in post_text:
+                click_see_more_button(post)
+                post_text = ContentExtractor.get_post_text_for_gp(post)
+                time.sleep(0.5)
+            segments = Entity_extractor.retrieve_entity(post_text)
+            images = FacebookImageExtractor.extract_images_from_normal_gallary(post,browser)
+            authorname=ContentExtractor.get_author_name_for_group(post)
+        # images = 0
+        if post_text == '':
+            status = True
+        else:
+            status = False
         dataObj = {
             'post_detail': post_text,
             'published_at': ContentExtractor.get_post_time_stamp(post),
             'author_name': authorname,
             'post_images': images,
             'segmentation': segments, 
-            'comments_count': 0,
-            'likes_count': 0,
-            'shares_count': 0,
+            'comments_count': ContentExtractor.get_comment_count(post),
+            'likes_count': ContentExtractor.get_like_count(post),
+            'shares_count': ContentExtractor.get_share_count(post),
             'page_id': page_id,
             'crawl_history_id': 41
         }
 
-        return dataObj
+        return dataObj , status

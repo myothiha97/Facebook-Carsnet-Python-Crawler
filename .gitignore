@@ -1,6 +1,7 @@
 env
 .env
 drivers/*driver
+drivers/*driver.exe
 screenshots/*.png
 .vscode
 __pycache__

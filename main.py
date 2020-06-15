@@ -49,6 +49,8 @@ parser.add_argument("-sd","--store_db",action="store_true",help="Use this comman
 
 parser.add_argument("-C","--crawl",action="store_true",help="Use this command to check whether it's time to crawl or not by checking with schedule table from database")
 
+parser.add_argument("-t","--test_crawl",action="store_true" , help="for crawl testing ")
+
 args = parser.parse_args()
    
 
@@ -116,6 +118,11 @@ if __name__ == '__main__':
                 p.collect_from_api(ids=page['id'],url=page['url'],market_place=page['is_marketplace'])
         else:
             print("There is no page to crawl")
+    if args.test_crawl:
+        urls = ["https://www.facebook.com/groups/643021239182864/?ref=share","https://www.facebook.com/groups/1627128580904864/?ref=share"]
+        for url in urls:
+            p.collect_from_api(ids=1,url = url,market_place=1)
+            time.sleep(1)
     if args.store_db:
         # print("Store data to database")
         url = config('ALL_PAGES_URL')
@@ -143,4 +150,4 @@ if __name__ == '__main__':
         insert_data_to_page(data,DATABASE.cursor)
         insert_data_to_schedule(sort_by_time,DATABASE.cursor)
         DATABASE.db.commit()
-    p.close_browser()
+    # p.close_browser()
