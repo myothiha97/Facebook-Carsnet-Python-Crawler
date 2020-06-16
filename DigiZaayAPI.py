@@ -70,7 +70,7 @@ class DigiZaayApiConnector():
             status = True
         else:
             status = False
-        time_stamps = ContentExtractor.get_post_time_stamp(post)
+        # time_stamps = ContentExtractor.get_post_time_stamp(post)
         # print(time_stamps)
         # print("Getting time stamp ")
         # time.sleep(60)
