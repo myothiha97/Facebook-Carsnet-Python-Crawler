@@ -57,10 +57,10 @@ class DigiZaayApiConnector():
             authorname = ContentExtractor.get_author_name_for_group(post)
             
         if market_place == 0 and g_type == 1:
-            post_text = ContentExtractor.get_post_text_for_gp(post)
+            post_text = ContentExtractor.get_post_text(post)
             if "See more" in post_text:
                 click_see_more_button(post)
-                post_text = ContentExtractor.get_post_text_for_gp(post)
+                post_text = ContentExtractor.get_post_text(post)
                 time.sleep(0.5)
             segments = Entity_extractor.retrieve_entity(post_text)
             images = FacebookImageExtractor.extract_images_from_normal_gallary(post,browser)
@@ -70,6 +70,10 @@ class DigiZaayApiConnector():
             status = True
         else:
             status = False
+        time_stamps = ContentExtractor.get_post_time_stamp(post)
+        # print(time_stamps)
+        # print("Getting time stamp ")
+        # time.sleep(60)
         dataObj = {
             'post_detail': post_text,
             'published_at': ContentExtractor.get_post_time_stamp(post),

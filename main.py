@@ -21,19 +21,19 @@ headers = {
             'cache-control': "no-cache",
             'Authorization':token
         }
-DATABASE = DBHandler()
-STORAGE = FirebaseHandler()
+# DATABASE = DBHandler()
+# STORAGE = FirebaseHandler()
 
 # Get Default types from db_handler
-PAGES, GROUPS, SEARCHES = DATABASE.select_defaults()
+# PAGES, GROUPS, SEARCHES = DATABASE.select_defaults()
 
 parser = argparse.ArgumentParser(description="Facebook Crawler for pages, groups and searches")
 
-parser.add_argument("-p", "--page", type=str, action="store", nargs="?", metavar="",  const=PAGES, help="Pages You want to crawl")
+parser.add_argument("-p", "--page", type=str, action="store", nargs="?", metavar="",  const=0, help="Pages You want to crawl")
 
-parser.add_argument("-g", "--group", type=str,  action="store", nargs="?", metavar="",  const=GROUPS, help="Groups You want to crawl")
+parser.add_argument("-g", "--group", type=str,  action="store", nargs="?", metavar="",  const=0, help="Groups You want to crawl")
 
-parser.add_argument("-s", "--search", type=str,  action="store", nargs="?", metavar="",  const=SEARCHES, help="Search posts you want to crawl")
+parser.add_argument("-s", "--search", type=str,  action="store", nargs="?", metavar="",  const=0, help="Search posts you want to crawl")
 
 parser.add_argument("-a", "--all", action="store_true",   help="All default pages, groups and searches")
 
@@ -56,7 +56,7 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
     # Initializer Crawler
-    p = Crawler(DATABASE, STORAGE, args.depth, args.keep,args.filter)
+    p = Crawler(database=None, storage=None, depth=args.depth, keep=args.keep,filter=args.filter)
 
     setattr(p, 'depth', args.depth)
     setattr(p, 'delay', args.keep)

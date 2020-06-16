@@ -12,6 +12,7 @@ import time
 import calendar
 import argparse
 import uuid
+import re
 
 from DigiZaayAPI import DigiZaayApiConnector
 from FacebookPostAction import click_see_more_button
@@ -101,6 +102,7 @@ class Crawler:
             print("This is page")
             self.crawl_posts(ids)
         else:
+            WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span")))
             gp_type = self.browser.find_element_by_css_selector("div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span").text
             if gp_type == "Discussion":
                 print("This group is normal gp")
@@ -192,6 +194,11 @@ class Crawler:
         all_content = []
         check_already_safe_stimestamp = False
         for g,post in enumerate(posts):
+            share_check = post.find_element_by_css_selector('div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
+            if re.search(r"shared|share|Shared|Share|shares|Shares",share_check):
+                print("This is a shared post")
+                time.sleep(1)
+                continue
             # Click See More Button if exist          
             click_see_more_button(post)     
           
@@ -201,12 +208,13 @@ class Crawler:
             dataObj , status = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type)
 
             count = 0
-            while status and count  < 3:               
+            while status and count  < 2:               
                 # print(dataObj.items())
                 # time.sleep(3)
                 time.sleep(0.5)
                 self.click_esc_key()
-                time.sleep(1)
+                time.sleep(0.5)
+                click_see_more_button(post)
                 dataObj , status  = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type)
                 print("")
                 print(f"--------------recrawling post {g}----------------")
