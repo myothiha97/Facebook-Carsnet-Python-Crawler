@@ -86,7 +86,7 @@ class ContentExtractor:
             print("Error retrieving date : " + str(e))
             error_info = sys.exc_info()[2]  
             print("Error line number : ",error_info.tb_lineno)
-            time.sleep(60)
+            # time.sleep(60)
             return timestamp
         return timestamp
     @classmethod
