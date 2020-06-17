@@ -21,8 +21,9 @@ cd your_project
 Within your project, create virtual environment
 
 ```
-virtualenv env
+virtualenv env -p python_path\python.exe
 ```
+Note : Only use python version 3.7 and above.
 
 And activate your environment
 
@@ -58,7 +59,7 @@ Add in firebase information to setup server to store images.
 
 ## Installation
 
-Install mysql connector for python
+Install mysql connector for python 
 
 ```
 pip install mysql-connector-python
@@ -75,6 +76,11 @@ Install python-decouple
 ```
 pip install python-decouple
 ```
+Install argparse
+
+```
+pip install argparse
+```
 
 Install pyrebase4
 
@@ -87,7 +93,6 @@ Install myanmartools
 ```
 pip install myanmartools
 ```
-
 Download relative chrome driver from https://chromedriver.chromium.org/ and place it on drivers folder.
 
 Change the path of the driver in .env if necessary.
@@ -128,13 +133,13 @@ There are 3 main options
 
 source ~/VirtualEnvs/FB_Crawler/bin/activate
 
--p for page\
+-p for page
 
 ```
 python main.py -p="CarsNET-102005471291910" # pages you want to crawl
 ```
 
--g for group and
+-g for group 
 
 ```
 python main.py -g="2283833765077318" # groups you want to crawl
@@ -166,15 +171,11 @@ As default, it will wait 5 seconds
 ```
 python main.py -k=6 # wait for 6 seconds after 1 scroll
 ```
--sd option for storing api datas to page table and schedule table from database .This command will only store datas that are not existed in database.
+
+-C option for crawling pages/groups from api'
 
 ```
-python main.py -sd 
-```
--C option for checking whether it's time to crawl or not by checking with schedule table from database.You also need to pass operation type in command.Three main operations are 'page','group'and 'search'
-
-```
-python main.py -C="page" 
+python main.py -C
 ```
 
 ### Filtering the data
@@ -214,6 +215,5 @@ Setup a cron job for the created .sh script.
 ### Transferring data
 
 Update POST_URL from config with the API URL which can store the data in chunks.
-
 
 ### Env on main server

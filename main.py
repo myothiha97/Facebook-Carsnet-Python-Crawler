@@ -64,15 +64,6 @@ if __name__ == '__main__':
     # Login into Facebook Account
     p.login(config('EMAIL'), config('PASSWORD'))
     time.sleep(5)
-    try:
-        acc = browser.find_element_by_xpath('//*[@id="mount_0_0"]/div/div/div[2]/div[4]/div[1]/span/div/div[1]')
-        acc.click()
-        time.sleep(2)
-        change_fb = browser.find_element_by_xpath('/html/body/div[1]/div/div/div[2]/div[4]/div[2]/div/div/div[1]/div[1]/div/div/div/div/div/div/div/div[1]/div[3]/div/div[4]/div')
-        change_fb.click()
-    except:
-        print("This is an old faceboook")
-
 
     if args.page:
         # set attribute for argument parameters eg. ("seameochat, facebookapp")
@@ -91,9 +82,9 @@ if __name__ == '__main__':
         print(f"start_time --> {start_time}")
         setattr(p, 'ids', args.group)
         end_time = time.strftime("%H:%M:%S")
-        print(f"end_time --> {end_time}")
         # set type for group
         p.collect("group")
+        print(f"end_time --> {end_time}")
     if args.search:
         # set attribute for argument parameters eg. ("12/PAZATA, 12/OUKATA")
         setattr(p, 'ids', args.search)
@@ -118,36 +109,40 @@ if __name__ == '__main__':
                 p.collect_from_api(ids=page['id'],url=page['url'],market_place=page['is_marketplace'])
         else:
             print("There is no page to crawl")
+    
     if args.test_crawl:
         urls = ["https://www.facebook.com/groups/643021239182864/?ref=share","https://www.facebook.com/groups/1627128580904864/?ref=share"]
         for url in urls:
             p.collect_from_api(ids=1,url = url,market_place=1)
             time.sleep(1)
-    if args.store_db:
-        # print("Store data to database")
-        url = config('ALL_PAGES_URL')
-        r = requests.get(url, headers = headers )
-        data = r.json()
-        weekday = datetime.datetime.today().weekday()
-        print("Today : ",weekday)
-        weekday = weekday + 1
-        timestamp = time.strftime('%H:%M:%S')
+    
+    ### uncomment the following codes only when involving with databases. ###
+    
+    # if args.store_db:
+    #     # print("Store data to database")
+    #     url = config('ALL_PAGES_URL')
+    #     r = requests.get(url, headers = headers )
+    #     data = r.json()
+    #     weekday = datetime.datetime.today().weekday()
+    #     print("Today : ",weekday)
+    #     weekday = weekday + 1
+    #     timestamp = time.strftime('%H:%M:%S')
 
-        today_schedules = []
+    #     today_schedules = []
 
-        for page in data:
-            # print(page['schedules'])    
+    #     for page in data:
+    #         # print(page['schedules'])    
 
-            if page['is_active'] == 1:
-                for item in page['schedules']:
-                    print('Crawled on WeekDay ',item['day'])
+    #         if page['is_active'] == 1:
+    #             for item in page['schedules']:
+    #                 print('Crawled on WeekDay ',item['day'])
                     
-                    ### Check WeekDay Here , If matches, append it to today_schedules
-                    if item['day'] == weekday or item['day'] == 7:
-                        today_schedules.append(item)
-        sort_by_time= sorted(today_schedules, key = lambda i: int(i['time'].replace(':','')))
-        from insert_data_to_database import insert_data_to_page , insert_data_to_schedule
-        insert_data_to_page(data,DATABASE.cursor)
-        insert_data_to_schedule(sort_by_time,DATABASE.cursor)
-        DATABASE.db.commit()
+    #                 ### Check WeekDay Here , If matches, append it to today_schedules
+    #                 if item['day'] == weekday or item['day'] == 7:
+    #                     today_schedules.append(item)
+    #     sort_by_time= sorted(today_schedules, key = lambda i: int(i['time'].replace(':','')))
+    #     from insert_data_to_database import insert_data_to_page , insert_data_to_schedule
+    #     insert_data_to_page(data,DATABASE.cursor)
+    #     insert_data_to_schedule(sort_by_time,DATABASE.cursor)
+    #     DATABASE.db.commit()
     p.close_browser()
