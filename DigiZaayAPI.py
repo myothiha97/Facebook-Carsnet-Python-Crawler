@@ -9,7 +9,23 @@ import time
 class DigiZaayApiConnector():
 
     api_url = config('DIGIZAAY_URL')
-    token = f"Bearer {config('TOKEN')}"
+    # token = f"Bearer {config('TOKEN')}"
+    # headers = {
+    #         'Content-Type': "application/json",
+    #         'Accept': "*/*",
+    #         'Cache-Control': "no-cache",
+    #         'Host': config('DIGIZAAY_HOST'),
+    #         'Accept-Encoding': "gzip, deflate",
+    #         'Content-Length': "45",
+    #         'Connection': "keep-alive",
+    #         'cache-control': "no-cache",
+    #         'Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiNzI2ZDU4NzE2OTJhMzVjNjg5NDUwMjUzYzlmMDgwOTRmN2VhMWVjZDQ5MGZhMTNhZjFmNTA4NDFmYTJhM2QzMDc4NzY5NDlkNDdhYWVkMWYiLCJpYXQiOjE1ODQ5NjExMzEsIm5iZiI6MTU4NDk2MTEzMSwiZXhwIjoxNjE2NDk3MTMxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.VThupbO-JgoSuU_JdyaW27H3DL9yYv8SxCZn_kwkpVcUy13R0dLBPhhh9yx9wFj1zU0q9-GIO4sskdHM1QJ3EtGVh8mHged01cpLkxxQ7dz-vgEGtZUcl6u8QWelqcKUqUjPXJJFNeekTJGHHTsywGEv8pJWZ0-rt9ljfLtSE9PzOy4hWgITyooRshLMEemtwKBs-ctY-QexfVRtaqhGYNCdFZNqWO3pBJRly_sD0b-oSBdArFMqUp_IkyXIKJe4hfdoBmdIF47TU7rImEC2K1RlaMdRKiYlmOXtvw1e0YO29mBIQJfVrXKH8wxC3WWtqg_Z-sC3MWrTfNjn1UPHRF0264YBMc2sFrEp3eI35Y5gelzpC_ciPh6XUKJxvivF6cNNeXTReRZZF2gssoMo-fyneh5TXZpN3_0YJuhl7NpA43lXsTqnabkpZRCooke4ERHGtXDLuQCpLw2zsg6EZ9J0QGIHnlGNpO6aZvceo_fkZJ_E989XR4Ul-INAC-K00lAXB-cC8Evhl81YzGCTn1Lk90zMjk-KgBjQ0KdFEkMxwZE2CJf7b9UKtpuzBrq-A4TgIJLvfWsRYAUzqR470hlqUNGAdZeqGtg7fMN2zgPRame90sXZJUmbna4YEy9uq45wSJyvK8-AklY7InNjIxkmAo1HV2JkGt92Q5b_T20'
+    #         # 'Authorization': f"Bearer {config('TOKEN')}"
+    #     }
+
+    headers = {
+        'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiNzI2ZDU4NzE2OTJhMzVjNjg5NDUwMjUzYzlmMDgwOTRmN2VhMWVjZDQ5MGZhMTNhZjFmNTA4NDFmYTJhM2QzMDc4NzY5NDlkNDdhYWVkMWYiLCJpYXQiOjE1ODQ5NjExMzEsIm5iZiI6MTU4NDk2MTEzMSwiZXhwIjoxNjE2NDk3MTMxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.VThupbO-JgoSuU_JdyaW27H3DL9yYv8SxCZn_kwkpVcUy13R0dLBPhhh9yx9wFj1zU0q9-GIO4sskdHM1QJ3EtGVh8mHged01cpLkxxQ7dz-vgEGtZUcl6u8QWelqcKUqUjPXJJFNeekTJGHHTsywGEv8pJWZ0-rt9ljfLtSE9PzOy4hWgITyooRshLMEemtwKBs-ctY-QexfVRtaqhGYNCdFZNqWO3pBJRly_sD0b-oSBdArFMqUp_IkyXIKJe4hfdoBmdIF47TU7rImEC2K1RlaMdRKiYlmOXtvw1e0YO29mBIQJfVrXKH8wxC3WWtqg_Z-sC3MWrTfNjn1UPHRF0264YBMc2sFrEp3eI35Y5gelzpC_ciPh6XUKJxvivF6cNNeXTReRZZF2gssoMo-fyneh5TXZpN3_0YJuhl7NpA43lXsTqnabkpZRCooke4ERHGtXDLuQCpLw2zsg6EZ9J0QGIHnlGNpO6aZvceo_fkZJ_E989XR4Ul-INAC-K00lAXB-cC8Evhl81YzGCTn1Lk90zMjk-KgBjQ0KdFEkMxwZE2CJf7b9UKtpuzBrq-A4TgIJLvfWsRYAUzqR470hlqUNGAdZeqGtg7fMN2zgPRame90sXZJUmbna4YEy9uq45wSJyvK8-AklY7InNjIxkmAo1HV2JkGt92Q5b_T20'
+    }
 
     @classmethod
     def sent_to_digizaay(self,content):
@@ -20,25 +36,30 @@ class DigiZaayApiConnector():
         # x = requests.post(url, data = data)
 
         # data = {'crawl_posts': [dataObj]})
-        headers = {
-            'Content-Type': "application/json",
-            'Accept': "*/*",
-            'Cache-Control': "no-cache",
-            'Host': config('DIGIZAAY_HOST'),
-            'Accept-Encoding': "gzip, deflate",
-            'Content-Length': "45",
-            'Connection': "keep-alive",
-            'cache-control': "no-cache",
-            'Authorization': self.token
-        }
+        
         print(self.api_url)
 
-        x = requests.post(self.api_url, data=data, headers=headers)
+        x = requests.post(self.api_url, data=data, headers=self.headers)
         # print(x)
         print(x.text)
 
     @classmethod
-    def convert_digizaay_object(self,post,browser,page_id,market_place,g_type):
+    def get_crawl_history_id(self,id):
+        url = config('DIGIZAAY_CRAWL_HISTORY_START')
+        pload = {'crawl_page_id':id,'start_at':time.strftime('%H:%M:%S')}
+        crawl_history = requests.post(url,data = pload,headers=self.headers)
+        print(crawl_history.text)
+        json_obj =  crawl_history.json()        
+        return json_obj['id']
+
+    @classmethod
+    def end_crawling(self,crawl_history_id):
+        url = config('DIGIZAAY_CRAWL_HISTORY_END').replace('{id}', str(crawl_history_id))
+        pload = {'end_at':time.strftime('%H:%M:%S')}
+        result = requests.post(url,data = pload,headers=self.headers)
+
+    @classmethod
+    def convert_digizaay_object(self,post,browser,page_id,market_place,g_type,crawl_history_id):
         if market_place == 0 and g_type ==0:
             post_text = ContentExtractor.get_post_text(post)
             segments = Entity_extractor.retrieve_entity(post_text)
@@ -84,7 +105,7 @@ class DigiZaayApiConnector():
             'likes_count': ContentExtractor.get_like_count(post),
             'shares_count': ContentExtractor.get_share_count(post),
             'page_id': page_id,
-            'crawl_history_id': 41
+            'crawl_history_id': crawl_history_id
         }
 
         return dataObj , status

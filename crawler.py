@@ -13,6 +13,7 @@ import calendar
 import argparse
 import uuid
 import re
+import requests
 
 from DigiZaayAPI import DigiZaayApiConnector
 from FacebookPostAction import click_see_more_button
@@ -81,10 +82,12 @@ class Crawler:
                 
             # self.save_post_to_db(page_id)
     # Select types and return sql query for post and imges
-    
+
     def collect_from_api(self,ids,url,market_place):
         self.browser.get(url)
         time.sleep(4)
+
+        crawl_history_id = self.api_connector.get_crawl_history_id(ids)
         for scroll in range(self.depth):
             timestamp = calendar.timegm(time.gmtime())
             # Click Esc Key to prevent browser notification
@@ -100,16 +103,16 @@ class Crawler:
         time.sleep(0.5)
         if market_place == 0:
             print("This is page")
-            self.crawl_posts(ids)
+            self.crawl_posts(ids,crawl_history_id=crawl_history_id)
         else:
             WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span")))
             gp_type = self.browser.find_element_by_css_selector("div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span").text
             if gp_type == "Discussion":
                 print("This group is normal gp")
-                self.crawl_posts(market_place=0, g_type = 1)
+                self.crawl_posts(ids,crawl_history_id=crawl_history_id,market_place=0, g_type = 1)
             else:
                 print("This group is market place")
-                self.crawl_posts(market_place=1)
+                self.crawl_posts(ids,crawl_history_id=crawl_history_id,market_place=1)
         # self.crawl_posts(ids,market_place)
 
     def select_types(self, type, url):
@@ -188,7 +191,7 @@ class Crawler:
             comment.send_keys(Keys.ENTER)
             text = comment.text
 
-    def crawl_posts(self,ids=1,market_place=0,g_type=0):
+    def crawl_posts(self,ids,crawl_history_id,market_place=0,g_type=0):
 
         posts = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")
         all_content = []
@@ -205,7 +208,7 @@ class Crawler:
             # Check timestamp if the page is already scanned before            
             # if(timestamp < "1576813657"):
             # if(True):
-            dataObj , status = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type)
+            dataObj , status = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type,crawl_history_id=crawl_history_id)
 
             count = 0
             while status and count  < 2:               
@@ -215,23 +218,26 @@ class Crawler:
                 self.click_esc_key()
                 time.sleep(0.5)
                 click_see_more_button(post)
-                dataObj , status  = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type)
+                dataObj , status  = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type,crawl_history_id=crawl_history_id)
                 print("")
                 print(f"--------------recrawling post {g}----------------")
                 print("")
                 count+=1
                 
-            if dataObj['post_detail'] is not '':
+            if dataObj['post_detail'] != '':
                 all_content.append(dataObj)
+                self.api_connector.sent_to_digizaay([dataObj])
             print(f"------------------finished crawling post {g}--------------------------")
                                 
-                    # self.api_connector.sent_to_digizaay(all_content)
+                    
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
-        print(all_content)
+        # print(all_content)
+        self.api_connector.end_crawling(crawl_history_id)
         print("The number of data  ", len(all_content))
         print("The number of posts ",len(posts))
 
+    
 
     def save_img_to_db(self, count, timestamp, url):
         # Store image and Get image URL from friebase

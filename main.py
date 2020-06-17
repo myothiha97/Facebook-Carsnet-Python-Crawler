@@ -71,6 +71,9 @@ if __name__ == '__main__':
         url = config('CURRENT_CRAWL_PAGES')
         pages = requests.get(url,headers=headers)
         pages = pages.json()
+        
+        print('--- pages to crawl ---')
+        print(pages)
         if pages:
             print(f"Total {len(pages)} page to crawl")
             for page in pages:
