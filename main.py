@@ -1,7 +1,7 @@
 import argparse
 from decouple import config
-from db_handler import DBHandler
-from firebase import FirebaseHandler
+# from db_handler import DBHandler
+# from firebase import FirebaseHandler
 from crawler import Crawler
 import requests
 import mysql.connector
@@ -21,11 +21,12 @@ headers = {
             'cache-control': "no-cache",
             'Authorization':token
         }
-DATABASE = DBHandler()
-STORAGE = FirebaseHandler()
+# DATABASE = DBHandler()
+# STORAGE = FirebaseHandler()
 
 # Get Default types from db_handler
-PAGES, GROUPS, SEARCHES = DATABASE.select_defaults()
+PAGES, GROUPS, SEARCHES = None , None , None
+# PAGES, GROUPS, SEARCHES = DATABASE.select_defaults()
 
 parser = argparse.ArgumentParser(description="Facebook Crawler for pages, groups and searches")
 
@@ -35,7 +36,6 @@ parser.add_argument("-g", "--group", type=str,  action="store", nargs="?", metav
 
 parser.add_argument("-s", "--search", type=str,  action="store", nargs="?", metavar="",  const=SEARCHES, help="Search posts you want to crawl")
 
-parser.add_argument("-a", "--all", action="store_true",   help="All default pages, groups and searches")
 
 # parser.add_argument("-c", "--comment", type=bool, default=False,  metavar="", help="Comments included")
 
@@ -45,9 +45,8 @@ parser.add_argument("-k", "--keep", type=int, default=5, metavar="", help="Secon
 
 parser.add_argument("-f", "--filter",  action="store_true", help="With or without keyword filter")
 
-parser.add_argument("-sd","--store_db",action="store_true",help="Use this command to store api data to page table and scheduel table from database")
 
-parser.add_argument("-C","--crawl",action="store_true",help="Use this command to check whether it's time to crawl or not by checking with schedule table from database")
+parser.add_argument("-C","--crawl",action="store_true",help="Use this command to crawl pages/groups from api")
 
 parser.add_argument("-t","--test_crawl",action="store_true" , help="for crawl testing ")
 
@@ -91,13 +90,6 @@ if __name__ == '__main__':
         # set type for group
         p.collect("search")
     # For all commands
-    if args.all:
-        setattr(p, 'ids', PAGES)
-        p.collect("page")
-        setattr(p, 'ids', GROUPS)
-        p.collect("group")
-        setattr(p, 'ids', SEARCHES)
-        p.collect("search")
 
     if args.crawl:
         url = config('CURRENT_CRAWL_PAGES')
@@ -116,33 +108,5 @@ if __name__ == '__main__':
             p.collect_from_api(ids=1,url = url,market_place=1)
             time.sleep(1)
     
-    ### uncomment the following codes only when involving with databases. ###
     
-    # if args.store_db:
-    #     # print("Store data to database")
-    #     url = config('ALL_PAGES_URL')
-    #     r = requests.get(url, headers = headers )
-    #     data = r.json()
-    #     weekday = datetime.datetime.today().weekday()
-    #     print("Today : ",weekday)
-    #     weekday = weekday + 1
-    #     timestamp = time.strftime('%H:%M:%S')
-
-    #     today_schedules = []
-
-    #     for page in data:
-    #         # print(page['schedules'])    
-
-    #         if page['is_active'] == 1:
-    #             for item in page['schedules']:
-    #                 print('Crawled on WeekDay ',item['day'])
-                    
-    #                 ### Check WeekDay Here , If matches, append it to today_schedules
-    #                 if item['day'] == weekday or item['day'] == 7:
-    #                     today_schedules.append(item)
-    #     sort_by_time= sorted(today_schedules, key = lambda i: int(i['time'].replace(':','')))
-    #     from insert_data_to_database import insert_data_to_page , insert_data_to_schedule
-    #     insert_data_to_page(data,DATABASE.cursor)
-    #     insert_data_to_schedule(sort_by_time,DATABASE.cursor)
-    #     DATABASE.db.commit()
     p.close_browser()
