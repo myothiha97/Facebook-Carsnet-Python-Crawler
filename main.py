@@ -1,6 +1,6 @@
 import argparse
 from decouple import config
-from db_handler import DBHandler
+# from db_handler import DBHandler
 from firebase import FirebaseHandler
 from crawler import Crawler
 import requests
@@ -21,19 +21,19 @@ headers = {
             'cache-control': "no-cache",
             'Authorization':token
         }
-DATABASE = DBHandler()
-STORAGE = FirebaseHandler()
+# DATABASE = DBHandler()
+# STORAGE = FirebaseHandler()
 
 # Get Default types from db_handler
-PAGES, GROUPS, SEARCHES = DATABASE.select_defaults()
+# PAGES, GROUPS, SEARCHES = DATABASE.select_defaults()
 
 parser = argparse.ArgumentParser(description="Facebook Crawler for pages, groups and searches")
 
-parser.add_argument("-p", "--page", type=str, action="store", nargs="?", metavar="",  const=PAGES, help="Pages You want to crawl")
+# parser.add_argument("-p", "--page", type=str, action="store", nargs="?", metavar="",  const=PAGES, help="Pages You want to crawl")
 
-parser.add_argument("-g", "--group", type=str,  action="store", nargs="?", metavar="",  const=GROUPS, help="Groups You want to crawl")
+# parser.add_argument("-g", "--group", type=str,  action="store", nargs="?", metavar="",  const=GROUPS, help="Groups You want to crawl")
 
-parser.add_argument("-s", "--search", type=str,  action="store", nargs="?", metavar="",  const=SEARCHES, help="Search posts you want to crawl")
+# parser.add_argument("-s", "--search", type=str,  action="store", nargs="?", metavar="",  const=SEARCHES, help="Search posts you want to crawl")
 
 parser.add_argument("-a", "--all", action="store_true",   help="All default pages, groups and searches")
 
@@ -65,39 +65,7 @@ if __name__ == '__main__':
     p.login(config('EMAIL'), config('PASSWORD'))
     time.sleep(5)
 
-    if args.page:
-        # set attribute for argument parameters eg. ("seameochat, facebookapp")
-        setattr(p, 'ids', args.page)
-
-        # set type for page
-        start_time = time.strftime("%H:%M:%S")
-        print(f"start_time --> {start_time}")
-        time.sleep(2)
-        p.collect("page")
-        end_time = time.strftime("%H:%M:%S")
-        print(f"end_time --> {end_time}")
-    if args.group:
-        # set attribute for argument parameters eg. ("2283833765077318, 2283833765077318")
-        start_time = time.strftime("%H:%M:%S")
-        print(f"start_time --> {start_time}")
-        setattr(p, 'ids', args.group)
-        end_time = time.strftime("%H:%M:%S")
-        # set type for group
-        p.collect("group")
-        print(f"end_time --> {end_time}")
-    if args.search:
-        # set attribute for argument parameters eg. ("12/PAZATA, 12/OUKATA")
-        setattr(p, 'ids', args.search)
-        # set type for group
-        p.collect("search")
-    # For all commands
-    if args.all:
-        setattr(p, 'ids', PAGES)
-        p.collect("page")
-        setattr(p, 'ids', GROUPS)
-        p.collect("group")
-        setattr(p, 'ids', SEARCHES)
-        p.collect("search")
+    
 
     if args.crawl:
         url = config('CURRENT_CRAWL_PAGES')
