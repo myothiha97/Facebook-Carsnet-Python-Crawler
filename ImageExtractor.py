@@ -68,7 +68,7 @@ class FacebookImageExtractor():
         return images
 
     def extract_images_from_normal_gallary(post,browser):
-        actions = ActionChains(browser)
+        # actions = ActionChains(browser)
         
         images = []
         try:                

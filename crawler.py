@@ -17,7 +17,9 @@ import requests
 
 from DigiZaayAPI import DigiZaayApiConnector
 from FacebookPostAction import click_see_more_button
-
+from FacebookPostContentExtractor import ContentExtractor
+from ImageExtractor import FacebookImageExtractor
+from segmentation.carsnet import Entity_extractor
 
 class Crawler:
     def __init__(self, database, storage, depth, keep, filter):
@@ -38,13 +40,26 @@ class Crawler:
         # Create list for string of ("seameochat, facebookapp")
         objects = self.ids.strip().split(',')
         # pages_ids = self.db.extract_page_ids_from_page()
+        # print(objects)
+        # time.sleep(60)
         for ids in objects:
             # self.select_types(type, url.strip())
             if type == "search":
                 # objects = self.ids.strip().split(',')
                 # self.click_store_overview_posts(url)
-                self.click_store_overview_posts(ids)
-                time.sleep(self.delay)
+                # self.click_store_overview_posts(ids)
+                txt = ids
+                self.browser.get("https://www.facebook.com/CarsNET-102005471291910")
+                # time.sleep(self.delay)
+                WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div[aria-label = 'Search']")))
+                search_box = self.browser.find_element_by_css_selector("div[aria-label = 'Search']")
+                search_box.click()
+                time.sleep(1)
+                webdriver.ActionChains(self.browser).send_keys(txt).perform()
+                # search_box.send_keys(txt)
+                webdriver.ActionChains(self.browser).send_keys(Keys.ENTER).perform()
+                time.sleep(2)
+                self.crawl_search_posts()
             else:
                 self.select_types(type,ids)
                 
@@ -240,7 +255,90 @@ class Crawler:
         print("The number of data  ", len(all_content))
         print("The number of posts ",len(posts))
 
-    
+    def crawl_search_posts(self):
+        print("Reach search crawl post")
+        time.sleep(5)
+        all_content=[]
+        search_url = str(self.browser.current_url)
+        posts = self.browser.find_elements_by_css_selector("div.jb3vyjys.hv4rvrfc.ihqw7lf3.dati1w0a > a")
+        time.sleep(1)
+        crawl_post_url=[]
+        for post in posts:
+            post_url = post.get_attribute("href")
+            crawl_post_url.append(post_url)
+        print("len posts ---------> ",len(posts))
+        print("len urls ---------> ",len(crawl_post_url))
+        for url in crawl_post_url:
+            # WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div.jb3vyjys.hv4rvrfc.ihqw7lf3.dati1w0a > a")))
+            # time.sleep(10)
+            self.browser.get(url)
+            
+            # self.browser.get(post_url)
+            WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div[data-testid='Keycommand_wrapper_feed_story']")))
+            # self.click_esc_key()
+            # time.sleep(3)
+            crawl_post = self.browser.find_element_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")
+            share_check = crawl_post.find_element_by_css_selector('div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
+            if re.search(r"shared|share|Shared|Share|shares|Shares",share_check):
+                print("This is a shared post")
+                time.sleep(1)
+                self.browser.get(search_url)
+                WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div.jb3vyjys.hv4rvrfc.ihqw7lf3.dati1w0a > a")))
+                continue
+            else:
+                print("This is not a share post")
+            print(crawl_post)
+            # time.sleep(5)
+            WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.XPATH,"//div[contains(text(),'See more')]")))
+            
+            click_see_more_button(crawl_post)
+            # data_obj , status = self.api_connector.convert_digizaay_object(crawl_post,browser=self.browser,page_id=None,market_place=0,g_type=0)
+            post_texts = ContentExtractor.get_post_text(crawl_post)
+            if "See more" in post_texts:
+                try:
+                    crawl_post.find_element_by_xpath("//div[contains(text(),'See more')]").send_keys(Keys.ENTER)
+                    post_texts = ContentExtractor.get_post_text(crawl_post)
+                except Exception as e:
+                    print("An error occur while retrying to click see_more ",str(e))
+            segments = Entity_extractor.retrieve_entity(post_texts)
+            print(post_texts)
+            post_images = FacebookImageExtractor.extract_images_from_normal_gallary(browser= self.browser,post=crawl_post)
+            if post_texts == '':
+                count = 0
+                while post_texts != '' and count  < 2:               
+                    # print(dataObj.items())
+                    # time.sleep(3)
+                    time.sleep(0.5)
+                    self.click_esc_key()
+                    time.sleep(0.5)
+                    click_see_more_button(post)
+                    # dataObj , status  = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=None,market_place=0,g_type=0)
+                    post_texts = ContentExtractor.get_post_text(crawl_post)
+                    print("")
+                    print(f"--------------recrawling post----------------")
+                    print("")
+                    count+=1
+            # if data_obj['post_detail'] is not '':
+            #     all_content.append(data_obj)
+            print(f"------------------finished crawling post--------------------------")
+            dataobj =  {
+            'post_detail': post_texts,
+            'published_at': None,
+            'author_name': None,
+            'post_images': post_images,
+            'segmentation': segments, 
+            'comments_count': None,
+            'likes_count': None , 
+            'shares_count': None,
+            'page_id': 1,
+            'crawl_history_id': 41
+        }
+            if dataobj['post_detail'] != '':
+                all_content.append(dataobj)
+            time.sleep(3)
+
+        print(all_content)
+        
 
     def save_img_to_db(self, count, timestamp, url):
         # Store image and Get image URL from friebase
