@@ -29,9 +29,10 @@ class DigiZaayApiConnector():
 
     @classmethod
     def sent_to_digizaay(self,content):
-        
-        data = json.dumps({'crawl_posts': content})
-        print(data)
+
+        payload = json.dumps({'crawl_posts': content})
+        print('------------- Data object to send to API --------------')
+        print(payload)
         # print(data)
         # x = requests.post(url, data = data)
 
@@ -48,11 +49,13 @@ class DigiZaayApiConnector():
             'cache-control': "no-cache",
             'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiNzI2ZDU4NzE2OTJhMzVjNjg5NDUwMjUzYzlmMDgwOTRmN2VhMWVjZDQ5MGZhMTNhZjFmNTA4NDFmYTJhM2QzMDc4NzY5NDlkNDdhYWVkMWYiLCJpYXQiOjE1ODQ5NjExMzEsIm5iZiI6MTU4NDk2MTEzMSwiZXhwIjoxNjE2NDk3MTMxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.VThupbO-JgoSuU_JdyaW27H3DL9yYv8SxCZn_kwkpVcUy13R0dLBPhhh9yx9wFj1zU0q9-GIO4sskdHM1QJ3EtGVh8mHged01cpLkxxQ7dz-vgEGtZUcl6u8QWelqcKUqUjPXJJFNeekTJGHHTsywGEv8pJWZ0-rt9ljfLtSE9PzOy4hWgITyooRshLMEemtwKBs-ctY-QexfVRtaqhGYNCdFZNqWO3pBJRly_sD0b-oSBdArFMqUp_IkyXIKJe4hfdoBmdIF47TU7rImEC2K1RlaMdRKiYlmOXtvw1e0YO29mBIQJfVrXKH8wxC3WWtqg_Z-sC3MWrTfNjn1UPHRF0264YBMc2sFrEp3eI35Y5gelzpC_ciPh6XUKJxvivF6cNNeXTReRZZF2gssoMo-fyneh5TXZpN3_0YJuhl7NpA43lXsTqnabkpZRCooke4ERHGtXDLuQCpLw2zsg6EZ9J0QGIHnlGNpO6aZvceo_fkZJ_E989XR4Ul-INAC-K00lAXB-cC8Evhl81YzGCTn1Lk90zMjk-KgBjQ0KdFEkMxwZE2CJf7b9UKtpuzBrq-A4TgIJLvfWsRYAUzqR470hlqUNGAdZeqGtg7fMN2zgPRame90sXZJUmbna4YEy9uq45wSJyvK8-AklY7InNjIxkmAo1HV2JkGt92Q5b_T20'
         }
-        print(self.api_url)
+        print(f'----- Triggering API request to {self.api_url} -----------')
 
-        x = requests.post(self.api_url, data=data, headers=self.headers)
-        # print(x)
-        print(x.text)
+        response = requests.request("POST", self.api_url, headers=headers, data = payload)
+
+        print(f'>>>Return from API<<<')
+        print(response.text.encode('utf8'))
+
 
     @classmethod
     def get_crawl_history_id(self,id):

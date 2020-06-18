@@ -203,7 +203,7 @@ class Crawler:
                 time.sleep(1)
                 continue
             # Click See More Button if exist          
-            click_see_more_button(post)     
+            click_see_more_button(post)
           
             # Check timestamp if the page is already scanned before            
             # if(timestamp < "1576813657"):
@@ -228,6 +228,7 @@ class Crawler:
                 all_content = []
                 print(dataObj)
                 all_content.append(dataObj)
+                print(all_content)
                 self.api_connector.sent_to_digizaay(all_content)
             print(f"------------------finished crawling post {g}--------------------------")
                                 
