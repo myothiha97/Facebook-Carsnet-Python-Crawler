@@ -194,7 +194,7 @@ class Crawler:
     def crawl_posts(self,ids,crawl_history_id,market_place=0,g_type=0):
 
         posts = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")
-        all_content = []
+        
         check_already_safe_stimestamp = False
         for g,post in enumerate(posts):
             share_check = post.find_element_by_css_selector('div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
@@ -225,8 +225,8 @@ class Crawler:
                 count+=1
                 
             if dataObj['post_detail'] != '':
-                all_content.append(dataObj)
-                self.api_connector.sent_to_digizaay([dataObj])
+                all_content = [dataObj]
+                self.api_connector.sent_to_digizaay(all_content)
             print(f"------------------finished crawling post {g}--------------------------")
                                 
                     
