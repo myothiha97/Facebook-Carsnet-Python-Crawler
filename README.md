@@ -135,6 +135,13 @@ There are 3 main options
 
 source ~/VirtualEnvs/FB_Crawler/bin/activate
 
+-C option for crawling pages/groups from api'
+
+```
+python main.py -C
+
+```
+
 -p for page
 
 ```
@@ -147,7 +154,7 @@ python main.py -p="CarsNET-102005471291910" # pages you want to crawl
 python main.py -g="2283833765077318" # groups you want to crawl
 ```
 
--s for search.
+-s for search 
 
 ```
 python main.py -s="12/PAZATA" # searches you want to crawl
@@ -159,7 +166,8 @@ For multiple pages, groups and searches, you can add names by separating commas
 python main.py -p="motherfinancemyanmar, GoogleCrowdsourceMyanmar" -g="2283833765077318, 2283833765077318" -s="12/PAZATA, motherfinance"
 ```
 
-Additionally, adjustable options are
+### Additionally, adjustable options are
+
 -d for depth which control the number of scroll
 As default, it will crawl by 5 scrolls
 
@@ -174,11 +182,6 @@ As default, it will wait 5 seconds
 python main.py -k=6 # wait for 6 seconds after 1 scroll
 ```
 
--C option for crawling pages/groups from api'
-
-```
-python main.py -C
-```
 
 ### Filtering the data
 
