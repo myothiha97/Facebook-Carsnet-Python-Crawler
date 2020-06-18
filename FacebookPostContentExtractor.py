@@ -96,6 +96,8 @@ class ContentExtractor:
         try: 
             # post_text = post.find_element_by_css_selector("div[data-ad-comet-preview='message']").get_property('textContent')
             post_text = post.find_element_by_css_selector("div[data-ad-comet-preview='message']").text
+            print('------------- retrieving text ------------------')
+            print(post_text)
             # clean_emoji = EmojiRemover.remove_emoji(post_text)
         except Exception as e:
             print('Issue with retrieving content: ' + str(e))

@@ -82,10 +82,8 @@ if __name__ == '__main__':
             print("There is no page to crawl")
     
     if args.test_crawl:
-        urls = ["https://www.facebook.com/groups/643021239182864/?ref=share","https://www.facebook.com/groups/1627128580904864/?ref=share"]
-        for url in urls:
-            p.collect_from_api(ids=1,url = url,market_place=1)
-            time.sleep(1)
+        p.collect_from_api(ids=1,url = "https://www.facebook.com/CarsNET-102005471291910/",market_place=0)
+        time.sleep(1)
     
     ### uncomment the following codes only when involving with databases. ###
     
