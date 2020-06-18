@@ -58,8 +58,8 @@ class DigiZaayApiConnector():
     @classmethod
     def get_crawl_history_id(self,id):
         url = config('DIGIZAAY_CRAWL_HISTORY_START')
-        pload = {'crawl_page_id':id,'start_at':time.strftime('%H:%M:%S')}
-        crawl_history = requests.post(url,data = pload,headers=self.headers)
+        payload = {'crawl_page_id':id,'start_at':time.strftime('%H:%M:%S')}
+        crawl_history = requests.post(url,data = payload,headers=self.headers)
         print(crawl_history.text)
         json_obj =  crawl_history.json()        
         return json_obj['id']
@@ -67,8 +67,10 @@ class DigiZaayApiConnector():
     @classmethod
     def end_crawling(self,crawl_history_id):
         url = config('DIGIZAAY_CRAWL_HISTORY_END').replace('{id}', str(crawl_history_id))
-        pload = {'end_at':time.strftime('%H:%M:%S')}
-        result = requests.post(url,data = pload,headers=self.headers)
+        payload = {'end_at':time.strftime('%H:%M:%S')}
+        result = requests.request("PUT", url, headers=self.headers, data = payload)
+        print(f'>>>Return from API {url}<<<')
+        print(result.text.encode('utf8'))
 
     @classmethod
     def convert_digizaay_object(self,post,browser,page_id,market_place,g_type,crawl_history_id):
