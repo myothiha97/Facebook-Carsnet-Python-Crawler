@@ -68,7 +68,8 @@ class DigiZaayApiConnector():
     def end_crawling(self,crawl_history_id):
         url = config('DIGIZAAY_CRAWL_HISTORY_END').replace('{id}', str(crawl_history_id))
         payload = {'end_at':time.strftime('%H:%M:%S')}
-        result = requests.request("PUT", url, headers=self.headers, data = payload)
+        # result = requests.request("PUT", url, headers=self.headers, data = payload)
+        result = requests.put(url, headers=self.headers, data = payload)
         print(f'>>>Return from API {url}<<<')
         print(result.text.encode('utf8'))
 
