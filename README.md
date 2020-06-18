@@ -2,7 +2,7 @@
 
 ## Requirements
 
-Python3.6 and above, Python Request Lib, Pip and Mysql Server
+Python3.7 and above, Python Request Lib, Pip and Mysql Server
 
 ### Environment Setup
 
@@ -23,7 +23,6 @@ Within your project, create virtual environment
 ```
 virtualenv env -p python_path\python.exe
 ```
-Note : Only use python version 3.7 and above.
 
 And activate your environment
 
@@ -58,6 +57,9 @@ Update DB_AUTH_PLUGIN into mysql_native_password if necessary
 Add in firebase information to setup server to store images.
 
 ## Installation
+
+
+# Installing Require Python Packages
 
 Install mysql connector for python 
 
