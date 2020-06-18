@@ -83,7 +83,7 @@ class DigiZaayApiConnector():
         if market_place == 1:
             post_text = ContentExtractor.get_post_text_for_gp(post)
             if "See more" in post_text:
-                click_see_more_button(post)
+                click_see_more_button(browser=browser,post=post)
                 post_text = ContentExtractor.get_post_text_for_gp(post)
                 time.sleep(0.5)
                 
@@ -94,7 +94,7 @@ class DigiZaayApiConnector():
         if market_place == 0 and g_type == 1:
             post_text = ContentExtractor.get_post_text(post)
             if "See more" in post_text:
-                click_see_more_button(post)
+                click_see_more_button(browser = browser , post=post)
                 post_text = ContentExtractor.get_post_text(post)
                 time.sleep(0.5)
             segments = Entity_extractor.retrieve_entity(post_text)

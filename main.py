@@ -34,7 +34,7 @@ parser = argparse.ArgumentParser(description="Facebook Crawler for pages, groups
 
 # parser.add_argument("-g", "--group", type=str,  action="store", nargs="?", metavar="",  const=GROUPS, help="Groups You want to crawl")
 
-# parser.add_argument("-s", "--search", type=str,  action="store", nargs="?", metavar="",  const=SEARCHES, help="Search posts you want to crawl")
+parser.add_argument("-s", "--search", type=str,  action="store", nargs="?", metavar="",  const=SEARCHES, help="Search posts you want to crawl")
 
 
 # parser.add_argument("-c", "--comment", type=bool, default=False,  metavar="", help="Comments included")
@@ -79,6 +79,12 @@ if __name__ == '__main__':
                 p.collect_from_api(ids=page['id'],url=page['url'],market_place=page['is_marketplace'])
         else:
             print("There is no page to crawl")
+
+    if args.search:
+        # set attribute for argument parameters eg. ("12/PAZATA, 12/OUKATA")
+        setattr(p, 'ids', args.search)
+        # set type for group
+        p.collect("search")
     
     if args.test_crawl:
         # ## Carsnet Page Test

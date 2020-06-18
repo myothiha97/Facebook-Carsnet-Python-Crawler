@@ -16,7 +16,8 @@ class FacebookImageExtractor():
         try:                
             # Might be a seller group            
             image_holder = post.find_element_by_css_selector("a.tm8avpzi")
-            image_holder.click()
+            # image_holder.click()
+            webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
             WebDriverWait(browser, 10).until(
                 EC.presence_of_element_located(
                     (By.CSS_SELECTOR, "div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn"))
@@ -75,7 +76,8 @@ class FacebookImageExtractor():
             # Try clicking on the images
             
             image_holder = post.find_element_by_css_selector("a.tm8avpzi")
-            image_holder.click()
+            # image_holder.click()
+            webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
 
             WebDriverWait(browser, 10).until(
                 EC.presence_of_element_located(
