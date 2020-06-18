@@ -59,7 +59,7 @@ Add in firebase information to setup server to store images.
 ## Installation
 
 
-# Installing Require Python Packages
+### Installing Require Python Packages
 
 Install mysql connector for python 
 
