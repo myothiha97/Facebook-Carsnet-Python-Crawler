@@ -31,8 +31,6 @@ class DigiZaayApiConnector():
     def sent_to_digizaay(self,content):
 
         payload = json.dumps({'crawl_posts': content})
-        print('------------- Data object to send to API --------------')
-        print(payload)
         # print(data)
         # x = requests.post(url, data = data)
 

@@ -63,7 +63,7 @@ class FacebookImageExtractor():
             KeyBoard.click_esc_key(browser)
         except Exception as e:
             # No image holder or images here
-            print('Issue from ImageExtractor : ' + str(e))
+            print('Issue from ImageExtractor : ')
             KeyBoard.click_esc_key(browser)
         return images
 
@@ -91,21 +91,21 @@ class FacebookImageExtractor():
                     # print('---------------------------------')                    
                     image_url = spotlight.get_attribute("src")
                     i = 0
-                    if len(images) > 0:
-                        print(f'last image url is { images[-1]}')
+                    if len(images) > 0:                        
                         while image_url == images[-1] and i < 5:
                             time.sleep(0.2)
-                            i+=1
-                            print(f'image url is {image_url}')
+                            i+=1                            
                             image_url = spotlight.get_attribute("src")
                             print(f'the loop count of the image is {i}')
-                    # print(image_url)
-                    if image_url in images:
-                        pass
-                        # print('same image already')
+                    print(f'Successfully retrieve image ${image_url}'')
+                    if image_url in images:                        
+                        print('This image is already retrieved')
                         # hasMore = False
                     else:
+                        print('Appending image into the image list')
                         images.append(image_url)
+
+                    ## Clicking next image    
                     next_btn = browser.find_element_by_css_selector(
                         "div[aria-label='Next photo']")
                     next_btn.click()
@@ -113,7 +113,7 @@ class FacebookImageExtractor():
                     # time.sleep(1.2)
                     count += 1
                 except Exception as ex:
-                    print("Issue from ImageExtractor : "+str(ex))
+                    print("Issue from ImageExtractor : ")
                     
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     print("error type : ",exc_type)
