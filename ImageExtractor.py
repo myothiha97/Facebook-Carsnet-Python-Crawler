@@ -97,7 +97,7 @@ class FacebookImageExtractor():
                             i+=1                            
                             image_url = spotlight.get_attribute("src")
                             print(f'the loop count of the image is {i}')
-                    print(f'Successfully retrieve image ${image_url}'')
+                    print(f'Successfully retrieve image ${image_url}')
                     if image_url in images:                        
                         print('This image is already retrieved')
                         # hasMore = False
