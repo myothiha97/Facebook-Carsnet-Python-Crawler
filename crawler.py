@@ -225,7 +225,9 @@ class Crawler:
                 count+=1
                 
             if dataObj['post_detail'] != '':
-                all_content = [dataObj]
+                all_content = []
+                print(dataObj)
+                all_content.append(dataObj)
                 self.api_connector.sent_to_digizaay(all_content)
             print(f"------------------finished crawling post {g}--------------------------")
                                 
