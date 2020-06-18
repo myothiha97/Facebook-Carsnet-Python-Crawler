@@ -82,9 +82,17 @@ if __name__ == '__main__':
             print("There is no page to crawl")
     
     if args.test_crawl:
+        ## Carsnet Page Test
         p.collect_from_api(ids=1,url = "https://www.facebook.com/CarsNET-102005471291910/",market_place=0)
         time.sleep(1)
-    
+        ## Group Test - Online ကားပြဲစားတန္း ( YGN )
+        p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
+        time.sleep(1)
+        ## Group Test - Online ကားမျိုးစုံရောင်းဝယ်ရေး
+
+        p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
+        time.sleep(1)
+
     ### uncomment the following codes only when involving with databases. ###
     
     # if args.store_db:
