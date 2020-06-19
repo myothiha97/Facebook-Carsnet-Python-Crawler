@@ -52,7 +52,8 @@ class DigiZaayApiConnector():
         response = requests.request("POST", self.api_url, headers=headers, data = payload)
 
         print(f'>>>Return from API<<<')
-        print(response.text.encode('utf8'))
+        # print(response.text.encode('utf8'))
+        print(f"status code ------> ",response.status_code)
 
 
     @classmethod
@@ -63,6 +64,12 @@ class DigiZaayApiConnector():
         print(crawl_history.text)
         json_obj =  crawl_history.json()        
         return json_obj['id']
+    
+    @classmethod
+    def get_pages_from_api(cls,header):
+        url=config('CURRENT_CRAWL_PAGES')
+        pages = requests.get(url,headers = header)
+        return pages
 
     @classmethod
     def end_crawling(self,crawl_history_id):
