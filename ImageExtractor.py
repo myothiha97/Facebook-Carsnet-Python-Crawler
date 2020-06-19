@@ -17,7 +17,8 @@ class FacebookImageExtractor():
             # Might be a seller group            
             image_holder = post.find_element_by_css_selector("a.tm8avpzi")
             # image_holder.click()
-            webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
+            browser.execute_script("arguments[0].click();", image_holder)
+            # webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
             WebDriverWait(browser, 10).until(
                 EC.presence_of_element_located(
                     (By.CSS_SELECTOR, "div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn"))
@@ -64,7 +65,7 @@ class FacebookImageExtractor():
             KeyBoard.click_esc_key(browser)
         except Exception as e:
             # No image holder or images here
-            print('Issue from ImageExtractor : ')
+            print('Issue from ImageExtractor : ',str(e))
             KeyBoard.click_esc_key(browser)
         return images
 
