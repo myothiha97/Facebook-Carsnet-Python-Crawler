@@ -65,7 +65,8 @@ def crawl_search_posts(browser,history_id,page_id):
                     # print(dataObj.items())
                     # time.sleep(3)
                     time.sleep(0.5)
-                    self.click_esc_key()
+                    # self.click_esc_key()
+                    webdriver.ActionChains(browser).send_keys(Keys.ESCAPE).perform()
                     time.sleep(0.5)
                     click_see_more_button(browser = browser,post = crawl_post)
                     # dataObj , status  = self.api_connector.convert_digizaay_object(post,browser=browser,page_id=None,market_place=0,g_type=0)
@@ -77,6 +78,7 @@ def crawl_search_posts(browser,history_id,page_id):
             # if data_obj['post_detail'] is not '':
             #     all_content.append(data_obj)
             print(f"------------------finished crawling post--------------------------")
+
             dataobj =  {
             'post_detail': post_texts,
             'published_at': None,
