@@ -78,6 +78,7 @@ Install python-decouple
 ```
 pip install python-decouple
 ```
+
 Install argparse
 
 ```
@@ -131,9 +132,9 @@ python db_handler.py -i="page"
 
 Create an environment with python 3.6 and above (3.7 prefer)
 
-There are 3 main options
-
 source ~/VirtualEnvs/FB_Crawler/bin/activate
+
+Availabe options are as below
 
 -C option for crawling pages/groups from api'
 
@@ -154,7 +155,7 @@ python main.py -p="CarsNET-102005471291910" # pages you want to crawl
 python main.py -g="2283833765077318" # groups you want to crawl
 ```
 
--s for search 
+-s for searching desire posts in pages
 
 ```
 python main.py -s="12/PAZATA" # searches you want to crawl
