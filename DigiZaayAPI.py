@@ -35,7 +35,9 @@ class DigiZaayApiConnector():
         # x = requests.post(url, data = data)
 
         # data = {'crawl_posts': [dataObj]})
-        
+        # print("--------------------->>> The api object<<<---------------")
+        # print(payload)
+        # time.sleep(60)
         headers = {
             'Content-Type': "application/json",
             'Accept': "*/*",
@@ -83,16 +85,16 @@ class DigiZaayApiConnector():
     @classmethod
     def convert_digizaay_object(self,post,browser,page_id,market_place,g_type,crawl_history_id):
         if market_place == 0 and g_type ==0:
-            post_text = ContentExtractor.get_post_text(post)
+            post_text = ContentExtractor.get_post_text(post,browser=browser)
             segments = Entity_extractor.retrieve_entity(post_text)
             images = FacebookImageExtractor.extract_images_from_normal_gallary(post,browser)
             authorname = ContentExtractor.get_author_name(post)
             
         if market_place == 1:
-            post_text = ContentExtractor.get_post_text_for_gp(post)
+            post_text = ContentExtractor.get_post_text_for_gp(post,browser=browser)
             if "See more" in post_text:
                 click_see_more_button(browser=browser,post=post)
-                post_text = ContentExtractor.get_post_text_for_gp(post)
+                post_text = ContentExtractor.get_post_text_for_gp(post,browser=browser)
                 time.sleep(0.5)
                 
             segments = Entity_extractor.retrieve_entity(post_text)
@@ -100,10 +102,10 @@ class DigiZaayApiConnector():
             authorname = ContentExtractor.get_author_name_for_group(post)
             
         if market_place == 0 and g_type == 1:
-            post_text = ContentExtractor.get_post_text(post)
+            post_text = ContentExtractor.get_post_text(post,browser=browser)
             if "See more" in post_text:
                 click_see_more_button(browser = browser , post=post)
-                post_text = ContentExtractor.get_post_text(post)
+                post_text = ContentExtractor.get_post_text(post,browser=browser)
                 time.sleep(0.5)
             segments = Entity_extractor.retrieve_entity(post_text)
             images = FacebookImageExtractor.extract_images_from_normal_gallary(post,browser)
