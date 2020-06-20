@@ -77,6 +77,7 @@ if __name__ == '__main__':
             print(f"Total {len(pages)} page to crawl")
             for page in pages:
                 p.collect_from_api(ids=page['id'],url=page['url'],market_place=page['is_marketplace'])
+                time.sleep(1)
         else:
             print("There is no page to crawl")
 
@@ -88,20 +89,20 @@ if __name__ == '__main__':
     
     if args.test_crawl:
         # ## Carsnet Page Test
-        # p.collect_from_api(ids=1,url = "https://www.facebook.com/CarsNET-102005471291910/",market_place=0)
-        # time.sleep(1)
+        p.collect_from_api(ids=1,url = "https://www.facebook.com/CarsNET-102005471291910/",market_place=0)
+        time.sleep(1)
 
-        # ## Group Test - Online ကားပြဲစားတန္း ( YGN )
-        # p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
-        # time.sleep(1)
+        ## Group Test - Online ကားပြဲစားတန္း ( YGN )
+        p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
+        time.sleep(1)
 
-        ## Group Test - Online ကားမျိုးစုံရောင်းဝယ်ရေး
-        # p.collect_from_api(ids=3,url = 'https://www.facebook.com/groups/1695736407377955/?ref=share',market_place=1)
-        # time.sleep(1)
+        # Group Test - Online ကားမျိုးစုံရောင်းဝယ်ရေး
+        p.collect_from_api(ids=3,url = 'https://www.facebook.com/groups/1695736407377955/?ref=share',market_place=1)
+        time.sleep(1)
 
-        # ##ကားပွဲစားတန်း(ရန်ကုန်)
-        # p.collect_from_api(ids=4,url = 'https://www.facebook.com/groups/378369752669659/?ref=share',market_place=1)
-        # time.sleep(1)
+        ##ကားပွဲစားတန်း(ရန်ကုန်)
+        p.collect_from_api(ids=4,url = 'https://www.facebook.com/groups/378369752669659/?ref=share',market_place=1)
+        time.sleep(1)
 
         # ##online ကားပွဲစားတန်း
         p.collect_from_api(ids=5,url = 'https://www.facebook.com/groups/carforsale01/?ref=share',market_place=1)
