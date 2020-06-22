@@ -44,8 +44,8 @@ def crawl_search_posts(browser,history_id,page_id):
                 if re.search(r"shared|share|Shared|Share|shares|Shares",share_check):
                     print("This is a shared post")
                     time.sleep(1)
-                    browser.get(search_url)
-                    WebDriverWait(browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div.jb3vyjys.hv4rvrfc.ihqw7lf3.dati1w0a > a")))
+                    # browser.get(search_url)
+                    # WebDriverWait(browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div.jb3vyjys.hv4rvrfc.ihqw7lf3.dati1w0a > a")))
                     continue
                 else:
                     print("This is not a share post")
