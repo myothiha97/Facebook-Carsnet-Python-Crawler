@@ -55,11 +55,11 @@ def crawl_search_posts(browser,history_id,page_id):
                 
                 click_see_more_button(browser = browser,post = crawl_post)
                 # data_obj , status = self.api_connector.convert_digizaay_object(crawl_post,browser=browser,page_id=None,market_place=0,g_type=0)
-                post_texts = ContentExtractor.get_post_text(crawl_post)
+                post_texts = ContentExtractor.get_post_text(crawl_post,browser=browser)
                 if "See more" in post_texts:
                     try:
                         crawl_post.find_element_by_xpath("//div[contains(text(),'See more')]").send_keys(Keys.ENTER)
-                        post_texts = ContentExtractor.get_post_text(crawl_post)
+                        post_texts = ContentExtractor.get_post_text(crawl_post,browser=browser)
                     except Exception as e:
                         print("An error occur while retrying to click see_more ",str(e))
                 segments = Entity_extractor.retrieve_entity(post_texts)
@@ -76,7 +76,7 @@ def crawl_search_posts(browser,history_id,page_id):
                         time.sleep(0.5)
                         click_see_more_button(browser = browser,post = crawl_post)
                         # dataObj , status  = self.api_connector.convert_digizaay_object(post,browser=browser,page_id=None,market_place=0,g_type=0)
-                        post_texts = ContentExtractor.get_post_text(crawl_post)
+                        post_texts = ContentExtractor.get_post_text(crawl_post,browser=browser)
                         print("")
                         print(f"--------------recrawling post----------------")
                         print("")
