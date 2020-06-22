@@ -35,7 +35,9 @@ class DigiZaayApiConnector():
         # x = requests.post(url, data = data)
 
         # data = {'crawl_posts': [dataObj]})
-        
+        # print("--------------------->>> The api object<<<---------------")
+        # print(payload)
+        # time.sleep(60)
         headers = {
             'Content-Type': "application/json",
             'Accept': "*/*",
@@ -52,7 +54,8 @@ class DigiZaayApiConnector():
         response = requests.request("POST", self.api_url, headers=headers, data = payload)
 
         print(f'>>>Return from API<<<')
-        print(response.text.encode('utf8'))
+        # print(response.text.encode('utf8'))
+        print(f"status code ------> ",response.status_code)
 
 
     @classmethod
@@ -63,28 +66,35 @@ class DigiZaayApiConnector():
         print(crawl_history.text)
         json_obj =  crawl_history.json()        
         return json_obj['id']
+    
+    @classmethod
+    def get_pages_from_api(cls,header):
+        url=config('CURRENT_CRAWL_PAGES')
+        pages = requests.get(url,headers = header)
+        return pages
 
     @classmethod
     def end_crawling(self,crawl_history_id):
         url = config('DIGIZAAY_CRAWL_HISTORY_END').replace('{id}', str(crawl_history_id))
         payload = {'end_at':time.strftime('%H:%M:%S')}
-        result = requests.request("PUT", url, headers=self.headers, data = payload)
+        # result = requests.request("PUT", url, headers=self.headers, data = payload)
+        result = requests.put(url, headers=self.headers, data = payload)
         print(f'>>>Return from API {url}<<<')
         print(result.text.encode('utf8'))
 
     @classmethod
     def convert_digizaay_object(self,post,browser,page_id,market_place,g_type,crawl_history_id):
         if market_place == 0 and g_type ==0:
-            post_text = ContentExtractor.get_post_text(post)
+            post_text = ContentExtractor.get_post_text(post,browser=browser)
             segments = Entity_extractor.retrieve_entity(post_text)
             images = FacebookImageExtractor.extract_images_from_normal_gallary(post,browser)
             authorname = ContentExtractor.get_author_name(post)
             
         if market_place == 1:
-            post_text = ContentExtractor.get_post_text_for_gp(post)
+            post_text = ContentExtractor.get_post_text_for_gp(post,browser=browser)
             if "See more" in post_text:
-                click_see_more_button(post)
-                post_text = ContentExtractor.get_post_text_for_gp(post)
+                click_see_more_button(browser=browser,post=post)
+                post_text = ContentExtractor.get_post_text_for_gp(post,browser=browser)
                 time.sleep(0.5)
                 
             segments = Entity_extractor.retrieve_entity(post_text)
@@ -92,10 +102,10 @@ class DigiZaayApiConnector():
             authorname = ContentExtractor.get_author_name_for_group(post)
             
         if market_place == 0 and g_type == 1:
-            post_text = ContentExtractor.get_post_text(post)
+            post_text = ContentExtractor.get_post_text(post,browser=browser)
             if "See more" in post_text:
-                click_see_more_button(post)
-                post_text = ContentExtractor.get_post_text(post)
+                click_see_more_button(browser = browser , post=post)
+                post_text = ContentExtractor.get_post_text(post,browser=browser)
                 time.sleep(0.5)
             segments = Entity_extractor.retrieve_entity(post_text)
             images = FacebookImageExtractor.extract_images_from_normal_gallary(post,browser)

@@ -2,7 +2,7 @@
 
 ## Requirements
 
-Python3.6 and above, Python Request Lib, Pip and Mysql Server
+Python3.7 and above, Python Request Lib, Pip and Mysql Server
 
 ### Environment Setup
 
@@ -23,7 +23,6 @@ Within your project, create virtual environment
 ```
 virtualenv env -p python_path\python.exe
 ```
-Note : Only use python version 3.7 and above.
 
 And activate your environment
 
@@ -59,6 +58,9 @@ Add in firebase information to setup server to store images.
 
 ## Installation
 
+
+### Installing Require Python Packages
+
 Install mysql connector for python 
 
 ```
@@ -76,6 +78,7 @@ Install python-decouple
 ```
 pip install python-decouple
 ```
+
 Install argparse
 
 ```
@@ -129,9 +132,16 @@ python db_handler.py -i="page"
 
 Create an environment with python 3.6 and above (3.7 prefer)
 
-There are 3 main options
-
 source ~/VirtualEnvs/FB_Crawler/bin/activate
+
+Availabe options are as below
+
+-C option for crawling pages/groups from api'
+
+```
+python main.py -C
+
+```
 
 -p for page
 
@@ -145,7 +155,7 @@ python main.py -p="CarsNET-102005471291910" # pages you want to crawl
 python main.py -g="2283833765077318" # groups you want to crawl
 ```
 
--s for search.
+-s for searching desire posts in pages
 
 ```
 python main.py -s="12/PAZATA" # searches you want to crawl
@@ -157,7 +167,8 @@ For multiple pages, groups and searches, you can add names by separating commas
 python main.py -p="motherfinancemyanmar, GoogleCrowdsourceMyanmar" -g="2283833765077318, 2283833765077318" -s="12/PAZATA, motherfinance"
 ```
 
-Additionally, adjustable options are
+### Additionally, adjustable options are
+
 -d for depth which control the number of scroll
 As default, it will crawl by 5 scrolls
 
@@ -172,11 +183,6 @@ As default, it will wait 5 seconds
 python main.py -k=6 # wait for 6 seconds after 1 scroll
 ```
 
--C option for crawling pages/groups from api'
-
-```
-python main.py -C
-```
 
 ### Filtering the data
 

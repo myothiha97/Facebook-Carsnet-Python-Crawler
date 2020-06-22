@@ -3,6 +3,7 @@ import time
 import re
 import datetime
 import sys
+from selenium import webdriver
 class ContentExtractor:
     @classmethod
     def get_post_time_stamp(cls,post):
@@ -18,25 +19,28 @@ class ContentExtractor:
                     dateobj = datetime.datetime.now() - datetime.timedelta(hours=int(time_diff))
                     hr = dateobj.strftime("%H")
                     # hr = int(time.strftime("%H")) - int(time_diff)
-                    date = datetime.date.today()
-                    yr,month,day = date.strftime(r"%Y-%m-%d").split("-")
+                    # date = datetime.date.today()
+                    yr,month,day = dateobj.strftime(r"%Y-%m-%d").split("-")
                     # yr = date.strftime("%Y")
                     # day = date.strftime(r"%d")
-                    timestamp = f"{yr}-{month}-{day}-{hr}:00"
+                    timestamp = f"{yr}-{month}-{day} {hr}:00:00"
                     print("timestamp -----------------> ",timestamp)
                     time.sleep(1)
                     return timestamp
                 
                 if re.search(r"\d+\s*mins|\d+\s*min",date_content):
-                    hr=time.strftime("%H")
+                    # hr=time.strftime("%H")
                     mins = re.search(r"\d+",date_content).group()
-                    date = datetime.date.today()
-                    yr,month,day = date.strftime(r"%Y-%m-%d").split("-")
+                    dateobj = datetime.datetime.now() - datetime.timedelta(minutes=int(mins))
+                    hr = dateobj.strftime("%H")
+                    mins = dateobj.strftime("%M")
+                    # date = datetime.date.today()
+                    yr,month,day = dateobj.strftime(r"%Y-%m-%d").split("-")
                     # yr = date.strftime("%Y")
                     # day = date.strftime(r"%d")
                     if len(mins) == 1:
                         mins = "0"+mins
-                    timestamp = f"{yr}-{month}-{day}-{hr}:{mins}"
+                    timestamp = f"{yr}-{month}-{day} {hr}:{mins}:00"
                     print("timestamp -----------------> ",timestamp)
                     time.sleep(1)
                     return timestamp
@@ -53,7 +57,7 @@ class ContentExtractor:
                     hr = re.search(r"\d+",date_content).group()
                     mins = re.search(r":\d+",date_content).group()
                     mins = re.sub(r":","",mins)
-                    timestamp = f"{year}-{month}-{day}-{hr}:{mins}"
+                    timestamp = f"{year}-{month}-{day} {hr}:{mins}:00"
                     print("timestamp ---------------------> ",timestamp)
                     return timestamp
 
@@ -77,7 +81,7 @@ class ContentExtractor:
                         am_pm = re.search(r"AM|PM",date_content).group()
                         if am_pm == "PM":
                             hr = int(hr) + 12
-                timestamp = f"{year}-{month}-{day}-{hr}:{mins}"
+                timestamp = f"{year}-{month}-{day} {hr}:{mins}:00"
                 print("\n")
                 print("timestamp --------------------> ",timestamp)
                 time.sleep(1)
@@ -90,34 +94,42 @@ class ContentExtractor:
             return timestamp
         return timestamp
     @classmethod
-    def get_post_text(cls,post):
+    def get_post_text(cls,post,browser):
         # Post content    
         post_text = ''        
         try: 
             # post_text = post.find_element_by_css_selector("div[data-ad-comet-preview='message']").get_property('textContent')
-            post_text = post.find_element_by_css_selector("div[data-ad-comet-preview='message']").text
+            post_text = post.find_element_by_css_selector("div[data-ad-comet-preview='message']")
+            webdriver.ActionChains(browser).move_to_element(post_text).perform()
+            post_text = post_text.text
             print('------------- retrieving text ------------------')
             print(post_text)
             # clean_emoji = EmojiRemover.remove_emoji(post_text)
         except Exception as e:
             print('Issue with retrieving content: ' + str(e))
             try:
-                post_text = post.find_element_by_tag_name("blockquote").text
+                post_text = post.find_element_by_tag_name("blockquote")
+                webdriver.ActionChains(browser).move_to_element(post_text).perform()
+                post_text = post_text.text
             except Exception as e:
                 print("An error occur while trying to get blocktext ",str(e))
         time.sleep(1)
         return post_text
     
     @classmethod
-    def get_post_text_for_gp(cls,post):
+    def get_post_text_for_gp(cls,post,browser):
         post_text = ''
         try:
-            post_text = post.find_element_by_css_selector("div.rq0escxv.a8c37x1j.rz4wbd8a.a8nywdso > div:nth-of-type(2)").text
+            post_text = post.find_element_by_css_selector("div.rq0escxv.a8c37x1j.rz4wbd8a.a8nywdso > div:nth-of-type(2)")
+            webdriver.ActionChains(browser).move_to_element(post_text).perform()
+            post_text = post_text.text
         except Exception as e:
             print("An error occur while trying to get post text ",str(e))
             print("try another method")
             try:
-                post_text = post.find_element_by_tag_name("blockquote").text
+                post_text = post.find_element_by_tag_name("blockquote")
+                webdriver.ActionChains(browser).move_to_element(post_text).perform()
+                post_text = post_text.text
             except Exception as e:
                 print("An error occur while trying to get blocktext ",str(e))
         return post_text
