@@ -252,7 +252,7 @@ class Crawler:
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
         # print(all_content)
         self.api_connector.end_crawling(crawl_history_id)
-        print("The number of data  ", len(all_content))
+        # print("The number of data  ", len(all_content))
         print("The number of posts ",len(posts))
 
     def crawl_search_posts(self):

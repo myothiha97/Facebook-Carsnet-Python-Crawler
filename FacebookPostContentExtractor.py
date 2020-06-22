@@ -131,6 +131,7 @@ class ContentExtractor:
             print(f"Author name ----------> {author_name}")        
         except Exception as e:
             print("Error retrieving author name" + str(e))  
+            author_name = ''
         return author_name
     
     @classmethod
