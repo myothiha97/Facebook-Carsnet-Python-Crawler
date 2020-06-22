@@ -19,5 +19,5 @@ seater_reg    = r'seater|seaters|seating'
 hand_reg      = r'ဘယ်မောင်း|ညာမောင်း|l.h.d|r.h.d|lhd|rhd'
 # license_reg   = r'number|license|licence|လိုင်စင်|ygn|mdy|sgg|bgo|'
 license_reg   = r"\d[A-Z]\s*-\s*\d{4}|\d[a-z]-\d{4}|\d[A-Z]\([A-Z]+\)|\d[A-Z][-/ ][*]+|license|licence|လိုင်စင်|ygn|mdy|sgg|bgo|SHN"
-price_reg     = r'price|သိန်း|သိန်း [၀-၉]+|[၀-၉]+ သိန်း|\$\d\d\,\d\d\d|\d+သိန်း|\d+\s*lakhs|lakhs\s*\d+'
+price_reg     = r'price|သိန်း|သိန်း\s*[၀-၉]+|[၀-၉]+\s*သိန်း|\$\d\d\,\d\d\d|\d+သိန်း|\d+\s*lakhs|lakhs\s*\d+'
 ph_reg        = r"09-\d{9}|09\s*\d{9}|၀၉[၀-၉]{9}|၀၉-[၀-၉]{9}|09-\d{7}|09\s*\d{7}|၀၉[၀-၉]{7}|၀၉-[၀-၉]{7}|09\s*\d{3}\s*\d{3}\s*\d{3}|\+959\s*\d{9}|\+959\s*\d{7}|09[.]*\d{9}|09[.]*\d{7}|09\s*\d{4}\s*\d{3}\s*\d{2}|09\s*\d{3}\s*\d{4}|\+959\s*-\s*\d{9}|\+959\s*-\s*\d{7}"
