@@ -62,7 +62,8 @@ class Crawler:
                 # time.sleep(2)
 
                 ### change page id when crawling other page .For now page id is 1 for carsnet #####
-                crawl_history_id = self.api_connector.get_crawl_history_id(1)
+                # crawl_history_id = self.api_connector.get_crawl_history_id(1)
+                crawl_history_id = 1
                 time.sleep(5)
                 crawl_search_posts(browser = self.browser,history_id = crawl_history_id,page_id =1 )
             else:

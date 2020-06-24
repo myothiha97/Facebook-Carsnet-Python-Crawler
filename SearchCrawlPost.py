@@ -107,7 +107,7 @@ def crawl_search_posts(browser,history_id,page_id):
             except Exception as e:
                 print(f"An erro occur while trying to get post content : {str(e)}")
 
-        DigiZaayApiConnector.end_crawling(crawl_history_id = history_id)
+        # DigiZaayApiConnector.end_crawling(crawl_history_id = history_id)
         
     except Exception as e:
         print("An error occur while finding search post : ",str(e))
