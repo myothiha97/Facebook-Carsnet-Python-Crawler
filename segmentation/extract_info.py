@@ -179,7 +179,7 @@ class Extractor:
         try:
             price = re.search(price_reg, line).group()
             ### changing dollar to mm price ###
-            print(f"raw price ------------ > {price}")
+            # print(f"raw price ------------ > {price}")
             if re.search(r"\$",price):
                 price = re.sub(r",","",price)
                 dollar = re.search(r"\d+",price).group()
@@ -188,7 +188,7 @@ class Extractor:
                 self.segment['price'] = str(price_lakhs) + "Lakhs"
             else:
                 price = re.search(r"\d+", price).group()
-                print("reach here !!!!!")
+                
                 if len(price) >2:
                     new_str = ''
                     for i in price:
