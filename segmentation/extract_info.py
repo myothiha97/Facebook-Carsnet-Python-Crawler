@@ -1,7 +1,7 @@
 import re
 # from regex_pattern import *
 from segmentation.regex_pattern import *
-# from regex_pattern import *
+
 class Extractor:
     def __init__(self):
         self.segment = {}
@@ -178,14 +178,17 @@ class Extractor:
     def get_price(self,line):
         try:
             price = re.search(price_reg, line).group()
-            check_comma = price.find(',')
-            if check_comma !=-1:
-                new_str = re.sub(",","",price)
-                price = re.sub("သိန်း","",new_str)
-                print(price)
-                self.segment['price'] = price
+            ### changing dollar to mm price ###
+            print(f"raw price ------------ > {price}")
+            if re.search(r"\$",price):
+                price = re.sub(r",","",price)
+                dollar = re.search(r"\d+",price).group()
+                mm_price = 1400 * int(dollar) ### dollar price can be changed by the time 
+                price_lakhs = int(mm_price/100000)
+                self.segment['price'] = str(price_lakhs) + "Lakhs"
             else:
-                price = re.search(r"\d+", line).group()
+                price = re.search(r"\d+", price).group()
+                print("reach here !!!!!")
                 if len(price) >2:
                     new_str = ''
                     for i in price:
