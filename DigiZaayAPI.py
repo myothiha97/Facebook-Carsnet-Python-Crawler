@@ -54,12 +54,46 @@ class DigiZaayApiConnector():
         response = requests.request("POST", self.api_url, headers=headers, data = payload)
 
         print(f'>>>Return from API<<<')
-        # print(response.text.encode('utf8'))
+        print(response.text.encode('utf8'))
         print(f"status code ------> ",response.status_code)
 
 
     @classmethod
+    def sent_to_carsnet(self,content):
+
+        payload = json.dumps({'crawl_posts': content})
+        # print(data)
+        # x = requests.post(url, data = data)
+
+        # data = {'crawl_posts': [dataObj]})
+        # print("--------------------->>> The api object<<<---------------")
+        print(payload)
+        # time.sleep(60)
+        headers = {
+            'Content-Type': "application/json",
+            'Accept': "*/*",
+            'Cache-Control': "no-cache",
+            'Host': 'carsnet.com.mm',
+            'Accept-Encoding': "gzip, deflate",
+            'Content-Length': "45",
+            'Connection': "keep-alive",
+            'cache-control': "no-cache",
+            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiNzI2ZDU4NzE2OTJhMzVjNjg5NDUwMjUzYzlmMDgwOTRmN2VhMWVjZDQ5MGZhMTNhZjFmNTA4NDFmYTJhM2QzMDc4NzY5NDlkNDdhYWVkMWYiLCJpYXQiOjE1ODQ5NjExMzEsIm5iZiI6MTU4NDk2MTEzMSwiZXhwIjoxNjE2NDk3MTMxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.VThupbO-JgoSuU_JdyaW27H3DL9yYv8SxCZn_kwkpVcUy13R0dLBPhhh9yx9wFj1zU0q9-GIO4sskdHM1QJ3EtGVh8mHged01cpLkxxQ7dz-vgEGtZUcl6u8QWelqcKUqUjPXJJFNeekTJGHHTsywGEv8pJWZ0-rt9ljfLtSE9PzOy4hWgITyooRshLMEemtwKBs-ctY-QexfVRtaqhGYNCdFZNqWO3pBJRly_sD0b-oSBdArFMqUp_IkyXIKJe4hfdoBmdIF47TU7rImEC2K1RlaMdRKiYlmOXtvw1e0YO29mBIQJfVrXKH8wxC3WWtqg_Z-sC3MWrTfNjn1UPHRF0264YBMc2sFrEp3eI35Y5gelzpC_ciPh6XUKJxvivF6cNNeXTReRZZF2gssoMo-fyneh5TXZpN3_0YJuhl7NpA43lXsTqnabkpZRCooke4ERHGtXDLuQCpLw2zsg6EZ9J0QGIHnlGNpO6aZvceo_fkZJ_E989XR4Ul-INAC-K00lAXB-cC8Evhl81YzGCTn1Lk90zMjk-KgBjQ0KdFEkMxwZE2CJf7b9UKtpuzBrq-A4TgIJLvfWsRYAUzqR470hlqUNGAdZeqGtg7fMN2zgPRame90sXZJUmbna4YEy9uq45wSJyvK8-AklY7InNjIxkmAo1HV2JkGt92Q5b_T20'
+        }
+
+        carsnet_url = config('CARSNET_URL')
+
+        print(f'----- Triggering API request to {carsnet_url} -----------')
+
+        response = requests.request("POST", carsnet_url, headers=headers, data = payload)
+
+        print(f'>>>Return from API<<<')
+        print(response.text.encode('utf8'))
+        # print(f"status code ------> ",response.status_code)
+
+    @classmethod
     def get_crawl_history_id(self,id):
+        # return 1
         url = config('DIGIZAAY_CRAWL_HISTORY_START')
         payload = {'crawl_page_id':id,'start_at':time.strftime('%H:%M:%S')}
         crawl_history = requests.post(url,data = payload,headers=self.headers)
@@ -75,6 +109,7 @@ class DigiZaayApiConnector():
 
     @classmethod
     def end_crawling(self,crawl_history_id):
+        # return None
         url = config('DIGIZAAY_CRAWL_HISTORY_END').replace('{id}', str(crawl_history_id))
         payload = {'end_at':time.strftime('%H:%M:%S')}
         # result = requests.request("PUT", url, headers=self.headers, data = payload)

@@ -102,7 +102,7 @@ def crawl_search_posts(browser,history_id,page_id):
                     all_content.append(dataobj)
                     print(all_content)
                 print(all_content)
-                DigiZaayApiConnector.sent_to_digizaay(all_content)
+                DigiZaayApiConnector.sent_to_carsnet(all_content)
                 time.sleep(3)
             except Exception as e:
                 print(f"An erro occur while trying to get post content : {str(e)}")

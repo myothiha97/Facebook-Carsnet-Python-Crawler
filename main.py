@@ -93,24 +93,24 @@ if __name__ == '__main__':
         time.sleep(1)
 
         ## Group Test - Online ကားပြဲစားတန္း ( YGN )
-        p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
-        time.sleep(1)
+        # p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
+        # time.sleep(1)
 
-        # Group Test - Online ကားမျိုးစုံရောင်းဝယ်ရေး
-        p.collect_from_api(ids=3,url = 'https://www.facebook.com/groups/1695736407377955/?ref=share',market_place=1)
-        time.sleep(1)
+        # # Group Test - Online ကားမျိုးစုံရောင်းဝယ်ရေး
+        # p.collect_from_api(ids=3,url = 'https://www.facebook.com/groups/1695736407377955/?ref=share',market_place=1)
+        # time.sleep(1)
 
-        ##ကားပွဲစားတန်း(ရန်ကုန်)
-        p.collect_from_api(ids=4,url = 'https://www.facebook.com/groups/378369752669659/?ref=share',market_place=1)
-        time.sleep(1)
+        # ##ကားပွဲစားတန်း(ရန်ကုန်)
+        # p.collect_from_api(ids=4,url = 'https://www.facebook.com/groups/378369752669659/?ref=share',market_place=1)
+        # time.sleep(1)
 
         # ##online ကားပွဲစားတန်း
         p.collect_from_api(ids=5,url = 'https://www.facebook.com/groups/carforsale01/?ref=share',market_place=1)
         time.sleep(1)
 
-        # Car အရောင်းအဝယ် ရန်ကုန်မြို့
-        p.collect_from_api(ids=6,url = 'https://www.facebook.com/groups/323949978493502/?ref=share',market_place=1)
-        time.sleep(1)
+        # # Car အရောင်းအဝယ် ရန်ကုန်မြို့
+        # p.collect_from_api(ids=6,url = 'https://www.facebook.com/groups/323949978493502/?ref=share',market_place=1)
+        # time.sleep(1)
 
         
 
