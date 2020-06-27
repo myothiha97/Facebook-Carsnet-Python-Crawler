@@ -14,10 +14,10 @@ drive_reg     = r"4x4|\d\s*wd|\d\s*WD|\d\s*wheel|\d[.]*\s*wd|\d\s*weel|\d\s*w|\d
 fuel_reg      = r'diesel|petrol|ဓာတ်ဆီ|ဒီဇယ်'
 mileage_reg   = r'km|kilo|mileage|milage|ကိလို|ကီလို'
 gear_reg      = r'auto|manual|gear'
-region_reg    = r'ygn|mdy|shn|sgg|bgo|shn|npw|ayy'
+region_reg    = r'ygn|mdy|shn|sgg|bgo|npw|ayy|rke|kyn|chn'
 seater_reg    = r'seater|seaters|seating'
 hand_reg      = r'ဘယ်မောင်း|ညာမောင်း|l.h.d|r.h.d|lhd|rhd'
 # license_reg   = r'number|license|licence|လိုင်စင်|ygn|mdy|sgg|bgo|'
-license_reg   = r"\d[A-Z]\s*-\s*\d{4}|\d[a-z]-\d{4}|\d[A-Z]\([A-Z]+\)|\d[A-Z][-/ ][*]+|license|licence|လိုင်စင်|ygn|mdy|sgg|bgo|SHN"
-price_reg     = r'သိန်း\s*[၀-၉]+|[၀-၉]+\s*သိန်း|\$\s*\d+\,\d+|\d+\s*သိန်း|သိန်း\s*\d+|\d+\s*lakhs|lakhs\s*\d+|စျေး\s*\=*\s*\d+|စျေး\s*\=*\s*[၀-၉]+|\d+\s*lhks|lhks\s*\d+|ဈေးနူန်း\s*\=*\s*[၀-၉]+|ဈေးနူန်း\s*\=*\s*\d+'
-ph_reg        = r"09-\d{9}|09\s*\d{9}|၀၉[၀-၉]{9}|၀၉-[၀-၉]{9}|09-\d{7}|09\s*\d{7}|၀၉[၀-၉]{7}|၀၉-[၀-၉]{7}|09\s*\d{3}\s*\d{3}\s*\d{3}|\+959\s*\d{9}|\+959\s*\d{7}|09[.]*\d{9}|09[.]*\d{7}|09\s*\d{4}\s*\d{3}\s*\d{2}|09\s*\d{3}\s*\d{4}|\+959\s*-\s*\d{9}|\+959\s*-\s*\d{7}"
+license_reg   = r"\d[A-Za-z]\s*\-\s*\d{4}|\d[A-Z]\s*[/]\s*\d{4}|\d[a-z]\s*[/]\s*\d{4}|\d[a-z]\s*[-/ ]\s*[A-Za-z]+|\d[A-Za-z]\s*[-/ ]*\s*\([A-Za-z]+\)|\d[A-Za-z]\s*[-/ ]\s*[*]+|license|licence|လိုင်စင်"
+price_reg     = r'သိန်း\s*[၀-၉]+|[၀-၉]+\s*သိန်း|\$\s*\d+\,\d+|\d+\s*သိန်း|သိန်း\s*\d+|\d+\s*lakhs|lakhs\s*\d+|စျေး\s*\=*\s*\d+|စျေး\s*\=*\s*[၀-၉]+|စျေး\s*\-*\s*\d+|စျေး\s*\-*\s*[၀-၉]+|\d+\s*lhks|lhks\s*\d+|ဈေးနူန်း\s*\=*\s*[၀-၉]+|ဈေးနူန်း\s*\=*\s*\d+|ဈေးနူန်း\s*\-*\s*[၀-၉]+|ဈေးနူန်း\s*\-*\s*\d+|\d+\s*lks|lks\s*\d+'
+ph_reg        = r"09-\d{9}|09\s*\d{9}|၀၉[၀-၉]{9}|၀၉-[၀-၉]{9}|09-\d{7}|09\s*\d{7}|၀၉[၀-၉]{7}|၀၉-[၀-၉]{7}|09\s*\d{3}\s*\d{3}\s*\d{3}|\+959\s*\d{9}|\+959\s*\d{7}|09[.]*\d{9}|09[.]*\d{7}|09\s*\d{4}\s*\d{3}\s*\d{2}|09\s*\d{3}\s*\d{4}|\+959\s*-\s*\d{9}|\+959\s*-\s*\d{7}|09\d{2}\s*\d{3}\s*\d{4}"
