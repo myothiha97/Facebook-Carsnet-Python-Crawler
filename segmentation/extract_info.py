@@ -5,8 +5,9 @@ from segmentation.regex_pattern import *
 class Extractor:
     def __init__(self):
         self.segment = {}
-        self.segment['brand']        = '-'   
-        self.segment['name']         = '-'   
+        self.segment['brand']        = '-'
+        self.segment['make']         = '-'  
+        self.segment['name']         = '-'
         self.segment['model']        = '-'    
         self.segment['price']        = '-'   
         self.segment['grade']        = '-'   
@@ -49,6 +50,10 @@ class Extractor:
         if re.search(make_reg, str(line)) and self.segment['brand'] == "-" :
             
             self.segment['brand'] = re.search(make_reg, line).group()
+
+        if re.search(make_reg, str(line)) and self.segment['make'] == "-" :
+            
+            self.segment['make'] = re.search(make_reg, line).group()
 
         if self.segment['name'] == '-':
             self.get_name(line)
@@ -119,7 +124,8 @@ class Extractor:
                 self.segment['name'] = model
         except:
             self.segment['name'] = '-'
-            
+    
+    
     
     def get_year(self,line):
         if re.search(r'[က-အ]', line) or line.startswith('ph') or line.startswith('09'):
@@ -189,7 +195,7 @@ class Extractor:
             else:
                 price = re.search(r"\d+", price).group()
                 
-                if len(price) >2:
+                if len(price) > 1:
                     new_str = ''
                     for i in price:
                         if 4160 <= ord(i) <=4170:
@@ -273,9 +279,18 @@ class Extractor:
             
     
     def get_license(self,line):
+        
         result = re.search(license_reg,line).group()
         if re.search(r"license|licence|လိုင်စင်",result):
-            self.segment['license'] = "yes"
+            if re.search(r"\d[A-Za-z]|ygn|mdy|sgg|bgo|shn|npw|ayy|SHN|YGN|MDY|SGG|BGO",line):
+                res = re.search(r"\d[A-Za-z]|ygn|mdy|sgg|bgo|shn|npw|ayy|SHN|YGN|MDY|SGG|BGO",line).group()
+                if re.search(r"\d[A-Za-z]",res):
+                    res = res+"/****"
+                    self.segment['license'] = res
+                else:
+                    self.segment['license'] = res
+            else:
+                self.segment['license'] = "-"
         else:
             self.segment['license'] = result
           
