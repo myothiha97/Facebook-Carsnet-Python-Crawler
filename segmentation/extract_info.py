@@ -22,8 +22,9 @@ class Extractor:
         self.segment['seater']       = '-'   
         self.segment['hand_drive']   = '-'  
         self.segment['region']       = '-'   
-        self.segment['license']      = '-'   
-        self.segment['phone']        = '-'
+        self.segment['licence_plate_no']      = '-'
+        self.segment['phone1']        = '-'
+        self.segment['phone2']        = '-'
     def extract(self,post):
         # if self.segment['brand'] =='-':
         #     print("Brand is not yet selected")
@@ -38,11 +39,12 @@ class Extractor:
                 line = line.lower()
                 line = str(line)
                 self.extract_segment(line=line,ph_list=ph_list)
-                
-            if len(ph_list) > 1:
-                self.segment['phone'] = ','.join(ph_list)
-            else:
-                self.segment['phone'] = ''.join(ph_list)
+
+            if len(ph_list) >=1:
+                self.segment['phone1'] = ph_list[0]
+                if len(ph_list) > 1:
+                    self.segment['phone2'] = ph_list[1]
+
             return self.segment
         
     def extract_segment(self,line,ph_list):
@@ -97,7 +99,7 @@ class Extractor:
         if (self.segment['hand_drive'] == '-') and (re.search(hand_reg,str(line))):
             self.get_drive_position(line)
                 
-        if self.segment['license'] == '-' and (re.search(license_reg,str(line))):
+        if self.segment['licence_plate_no'] == '-' and (re.search(license_reg,str(line))):
             self.get_license(line)
             
         if re.search(ph_reg,str(line)):
@@ -139,20 +141,103 @@ class Extractor:
                 self.segment['model'] = re.sub(r'\W+','',model).strip()
             else:
                 self.segment['model'] = '-'
-    
+
     def get_grade(self,line):
+        
         try:
-            grade_ = re.sub('\W+',' ', line )  #remove special char
-            grade_lst = grade_.split()
-            grade_str = ''
-            for g in grade_lst:
-                if re.search('grade|\d+|model|[က-အ]|\/',g):
+            position = line.find('grade')
+            word_list = line.split()
+            g_postions=[]
+            grades = []
+            for w in word_list:
+                if re.search(r"[က-အ]|\-|[/]|[()]",w) or len(w)>3:
                     pass
                 else:
-                    grade_str += g
-            self.segment['grade'] = re.sub('\W+','',grade_str)
-        except:
-            self.segment['grade'] = '-'
+                    grades.append(w)
+                    g_postion = line.find(w)
+                    g_postions.append(g_postion)
+            # grade = grades.rfind('grade')
+            if g_postions:
+                ranges=[]
+                for val in g_postions:
+                    pos = abs(position-val)
+                    ranges.append(pos)
+                # print(grades)
+                grade = min(ranges)
+                grade = ranges.index(grade)
+                grade = grades[grade]
+                print(grades)
+                print(grade)
+                self.segment['grade'] = grade
+            else:
+                self.segment['grade'] = '-'
+        except Exception as e :
+            print(f"An error occur while trying to get grade : {str(e)}")
+        # if start >= 8:
+        #     grade_pattern = line[start-8:end+8]
+        #     grade_list = grade_pattern.split()
+        #     print(grade_list)
+        #     grade_str = ''
+        #     for g in grade_list:
+        #         if re.search(r"[က-အ]|\-|[/]|grade",g) or len(g) > 3:
+        #             pass
+        #         else:
+        #             grade_str +=g
+        #     if len(grade_str) > 3:
+        #         self.segment['grade'] = '-'
+        #     else:
+        #         self.segment['grade'] = grade_str
+
+        # elif start < 3:
+        #     grade_pattern = line[0:end+5]
+        #     grade_list = grade_pattern.split()
+        #     print(grade_list)
+        #     grade_str = ''
+        #     for g in grade_list:
+        #         if re.search(r"[က-အ]|\-|[/]|grade",g) or len(g) > 3:
+        #             pass
+        #         else:
+        #             grade_str +=g
+        #     if len(grade_str) > 3:
+        #         self.segment['grade'] = '-'
+        #     else:
+        #         self.segment['grade'] = grade_str
+            
+    
+    # def get_grade(self,line):
+    #     try:
+            
+    #         grade_ = re.sub(r'\s+',' ', line )  #remove special char
+    #         grade_lst = grade_.split()
+    #         print(grade_lst)
+    #         grade = 0
+    #         for g in grade_lst:
+    #             if re.search("grade",g):
+    #                 if re.search(r"[a-z]{3}\s*grade|[a-z]{2}\s*grade|[a-z]{1}\s*grade",g):
+    #                     word = re.search(r"[a-z]{3}\s*grade|[a-z]{2}\s*grade|[a-z]{1}\s*grade",g).group()
+    #                     grade = re.sub(r"grade","",word)
+
+    #                 elif re.search(r"grade\s*[a-z]{3}|grade\s*[a-z]{2}|grade\s*[a-z]{1}",g):
+    #                     word = re.search(r"grade\s*[a-z]{3}|grade\s*[a-z]{2}|grade\s*[a-z]{1}",g).group()
+    #                     grade = re.sub(r"grade","",word)
+    #                 else:
+    #                     print("nth found")
+
+    #             elif len(g) <=3 :
+    #                 if re.search(r"[a-z]{3}|[a-z]{2}|[a-z]",g):
+    #                     grade = re.search(r"[a-z]{3}|[a-z]{2}|[a-z]{1}",g).group()
+
+    #             else:
+    #                 pass
+
+    #         # grade_str = re.sub('\W+','',grade)
+    #         # if len(grade_str) <=3 :
+    #         if grade != 0:
+    #             self.segment['grade'] = grade
+    #         else:
+    #             self.segment['grade'] = '-'
+    #     except:
+    #         self.segment['grade'] = '-'
     
     def get_wheel_drive(self,line):
         try:
@@ -286,13 +371,13 @@ class Extractor:
                 res = re.search(r"\d[A-Za-z]|ygn|mdy|sgg|bgo|shn|npw|ayy|SHN|YGN|MDY|SGG|BGO",line).group()
                 if re.search(r"\d[A-Za-z]",res):
                     res = res+"/****"
-                    self.segment['license'] = res
+                    self.segment['licence_plate_no'] = res
                 else:
-                    self.segment['license'] = res
+                    self.segment['licence_plate_no'] = res
             else:
-                self.segment['license'] = "-"
+                self.segment['licence_plate_no'] = "-"
         else:
-            self.segment['license'] = result
+            self.segment['licence_plate_no'] = result
           
     
     def get_phone(self,ph_list,line):
