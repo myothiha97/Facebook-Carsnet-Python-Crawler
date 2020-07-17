@@ -25,7 +25,7 @@ class FacebookImageExtractor():
             )
             
             count = 0
-            while(count < 30):                       
+            while(count < 70):                       
                 try:          
                     spotlight = browser.find_element_by_css_selector("div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn").find_element_by_tag_name("img")
 
@@ -44,7 +44,7 @@ class FacebookImageExtractor():
                             
                         if image_url == images[0]:
                             print("the image is already crawled")
-                            count = 31
+                            count = 72
                             # continue
                             
                     # print(image_url)
@@ -78,14 +78,15 @@ class FacebookImageExtractor():
             
             image_holder = post.find_element_by_css_selector("a.tm8avpzi")
             # image_holder.click()
-            webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
+            browser.execute_script("arguments[0].click();", image_holder)
+            # webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
 
             WebDriverWait(browser, 10).until(
                 EC.presence_of_element_located(
                     (By.CSS_SELECTOR, "img.ji94ytn4"))
             )
             count = 0
-            while(count < 40):            
+            while(count < 70):            
                 try:     
                     WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.ji94ytn4")))
                     # time.sleep(0.3)
@@ -122,7 +123,7 @@ class FacebookImageExtractor():
                     print("error type : ",exc_type)
                     print(f"Error message ---------> {exc_value} & data type --------> {type(exc_value)} ")
                     if exc_type == ElementNotInteractableException:
-                        count = 41
+                        count = 72
                     count += 1
                     time.sleep(0.5)
             print("******* done crawling images for post*************")

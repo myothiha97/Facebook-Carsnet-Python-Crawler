@@ -108,7 +108,8 @@ class Crawler:
         self.browser.get(url)
         time.sleep(4)
 
-        crawl_history_id = self.api_connector.get_crawl_history_id(ids)
+        # crawl_history_id = self.api_connector.get_crawl_history_id(ids)
+        crawl_history_id = 15
         for scroll in range(self.depth):
             timestamp = calendar.timegm(time.gmtime())
             # Click Esc Key to prevent browser notification
@@ -256,7 +257,8 @@ class Crawler:
                 all_content.append(dataObj)
                 print(all_content)
                 try:
-                    self.api_connector.sent_to_digizaay(all_content)
+                    # self.api_connector.sent_to_digizaay(all_content)
+                    print("pass")
                 except Exception as e:
                     print("Error sending data to digizaay server")                    
             print(f"------------------finished crawling post {g}--------------------------")
@@ -265,7 +267,7 @@ class Crawler:
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
         # print(all_content)
-        self.api_connector.end_crawling(crawl_history_id)
+        # self.api_connector.end_crawling(crawl_history_id)
         # print("The number of data  ", len(all_content))
         print("The number of posts ",len(posts))
 

@@ -4,95 +4,17 @@ import re
 import datetime
 import sys
 from selenium import webdriver
+from time_extractor import get_publish_at
 class ContentExtractor:
     @classmethod
     def get_post_time_stamp(cls,post):
         # Get Date
-        timestamp = ''
-        try:
-            date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-of-type(2) > span > a > span").get_attribute("innerText")
-            # print("date_content -------> ",date_content)
-            # time.sleep(60)
-            if re.search(r"hr|hrs|min|mins",date_content):
-                if re.search(r"\d+\s*hrs|\d+\s*hr",date_content):
-                    time_diff = re.search(r"\d+",date_content).group()
-                    dateobj = datetime.datetime.now() - datetime.timedelta(hours=int(time_diff))
-                    hr = dateobj.strftime("%H")
-                    # hr = int(time.strftime("%H")) - int(time_diff)
-                    # date = datetime.date.today()
-                    yr,month,day = dateobj.strftime(r"%Y-%m-%d").split("-")
-                    # yr = date.strftime("%Y")
-                    # day = date.strftime(r"%d")
-                    timestamp = f"{yr}-{month}-{day} {hr}:00:00"
-                    print("timestamp -----------------> ",timestamp)
-                    time.sleep(1)
-                    return timestamp
-                
-                if re.search(r"\d+\s*mins|\d+\s*min",date_content):
-                    # hr=time.strftime("%H")
-                    mins = re.search(r"\d+",date_content).group()
-                    dateobj = datetime.datetime.now() - datetime.timedelta(minutes=int(mins))
-                    hr = dateobj.strftime("%H")
-                    mins = dateobj.strftime("%M")
-                    # date = datetime.date.today()
-                    yr,month,day = dateobj.strftime(r"%Y-%m-%d").split("-")
-                    # yr = date.strftime("%Y")
-                    # day = date.strftime(r"%d")
-                    if len(mins) == 1:
-                        mins = "0"+mins
-                    timestamp = f"{yr}-{month}-{day} {hr}:{mins}:00"
-                    print("timestamp -----------------> ",timestamp)
-                    time.sleep(1)
-                    return timestamp
-            else:
-                date_content = post.find_element_by_css_selector("span[id*='jsc'] > span:nth-of-type(2) > span > a > span").get_attribute("innerText")
-                month_reg = r"\d*\s*January\s*\d*|\d*\s*February\s*\d*|\d*\s*March\s*\d*|\d*\s*April\s*\d*|\d*\s*May\s*\d*|\d*\s*June\s*\d*|\d*\s*July\s*\d*|\d*\s*August\s*\d*|\d*\s*September\s*\d*|\d*\s*October\s*\d*|\d*\s*November\s*\d*|\d*\s*December\s*\d*"
-                year_reg = r"[1][9][0-9][0-9]|[2][0][0-9][0-9]"
-                # print("-------------------date content-----------------------")
-                # print(date_content)
-                # time.sleep(60)
-                if re.search("Yesterday|yesterday" , date_content):
-                    dateobj = datetime.datetime.strftime(datetime.datetime.now()- datetime.timedelta(1),r"%Y-%m-%d")
-                    year , month , day = dateobj.split("-")
-                    hr = re.search(r"\d+",date_content).group()
-                    mins = re.search(r":\d+",date_content).group()
-                    mins = re.sub(r":","",mins)
-                    timestamp = f"{year}-{month}-{day} {hr}:{mins}:00"
-                    print("timestamp ---------------------> ",timestamp)
-                    return timestamp
-
-                if re.search(month_reg,date_content):
-                    day = re.search(r"\d+",re.search(month_reg,date_content).group()).group()
-                    month_name = re.sub(r"\d+","",re.search(month_reg,date_content).group())
-                    month_name = month_name.strip()
-                    date_obj = datetime.datetime.strptime(month_name,"%B")
-                    month = date_obj.month
-
-                if re.search(year_reg,date_content):
-                    year = re.search(year_reg,date_content).group()
-                else:
-                    year = datetime.date.today().strftime("%Y")
-
-                if re.search(r"\d+:\d+\s*A*M*|\d+:\d+\s*P*M*",date_content):
-                    hr = re.search(r"\d+|\d+",re.search(r"\d+:\d+\s*A*M*|\d+:\d+\s*P*M*",date_content).group()).group()
-                    mins = re.search(r":\d+",date_content).group()
-                    mins = re.sub(r":","",mins)
-                    if re.search(r"AM|PM",date_content):
-                        am_pm = re.search(r"AM|PM",date_content).group()
-                        if am_pm == "PM":
-                            hr = int(hr) + 12
-                timestamp = f"{year}-{month}-{day} {hr}:{mins}:00"
-                print("\n")
-                print("timestamp --------------------> ",timestamp)
-                time.sleep(1)
-                return timestamp
-        except Exception as e:
-            print("Error retrieving date : " + str(e))
-            error_info = sys.exc_info()[2]  
-            print("Error line number : ",error_info.tb_lineno)
-            # time.sleep(60)
-            return timestamp
-        return timestamp
+        date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-of-type(2) > span > a > span").get_attribute("innerText")
+        print(date_content)
+        # time.sleep(10)
+        publish_at = get_publish_at(date_content)
+        time.sleep(3)
+        return publish_at
     @classmethod
     def get_post_text(cls,post,browser):
         # Post content    

@@ -25,6 +25,7 @@ class Extractor:
         self.segment['licence_plate_no']      = '-'
         self.segment['phone1']        = '-'
         self.segment['phone2']        = '-'
+
     def extract(self,post):
         # if self.segment['brand'] =='-':
         #     print("Brand is not yet selected")
@@ -45,17 +46,19 @@ class Extractor:
                 if len(ph_list) > 1:
                     self.segment['phone2'] = ph_list[1]
 
-            return self.segment
+            return self.segment 
         
     def extract_segment(self,line,ph_list):
         # print(line)
         if re.search(make_reg, str(line)) and self.segment['brand'] == "-" :
             
             self.segment['brand'] = re.search(make_reg, line).group()
+             
 
         if re.search(make_reg, str(line)) and self.segment['make'] == "-" :
             
             self.segment['make'] = re.search(make_reg, line).group()
+            #  
 
         if self.segment['name'] == '-':
             self.get_name(line)
@@ -68,9 +71,11 @@ class Extractor:
 
         if self.segment['color'] == '-' and re.search(color_reg, str(line)):
             self.segment['color'] = re.search(color_reg, line).group()
+             
 
         if (self.segment['body_type'] == '-') and (re.search(body_reg,str(line))):
             self.segment['body_type'] = re.search(body_reg, line).group()
+             
 
         if (self.segment['wheel_drive'] == '-') and (re.search(drive_reg,str(line))):
             self.get_wheel_drive(line)  
@@ -122,8 +127,10 @@ class Extractor:
                 pass
             elif model == 'mark':
                 self.segment['name'] = 'mark-2'
+                 
             else:
                 self.segment['name'] = model
+                 
         except:
             self.segment['name'] = '-'
     
@@ -135,10 +142,12 @@ class Extractor:
         else:
             if re.search(r'[1][9][9][0-9]|[2][0][0-9][0-9]',line):
                 self.segment['year'] = re.search(r'[1][9][9][0-9]|[2][0][0-9][0-9]',line).group()
+                 
                 
             elif re.search(r'model', line) and self.segment['model'] == '-':
                 model = line.replace('model','').strip()
                 self.segment['model'] = re.sub(r'\W+','',model).strip()
+                 
             else:
                 self.segment['model'] = '-'
 
@@ -150,25 +159,34 @@ class Extractor:
             g_postions=[]
             grades = []
             for w in word_list:
-                if re.search(r"[က-အ]|\-|[/]|[()]",w) or len(w)>3:
+                # print(w)
+                if re.search(r"[က-အ]|[-]|[/]|[()]|[:]",w) or len(w)>3:
                     pass
                 else:
                     grades.append(w)
                     g_postion = line.find(w)
                     g_postions.append(g_postion)
-            # grade = grades.rfind('grade')
+            
             if g_postions:
                 ranges=[]
                 for val in g_postions:
                     pos = abs(position-val)
-                    ranges.append(pos)
-                # print(grades)
+                    if val > position:
+                        pos-=4
+                        ranges.append(pos)
+                    else:
+                        ranges.append(pos)
+                # print(position)
+                # print(g_postions)
+                # print(ranges)
                 grade = min(ranges)
                 grade = ranges.index(grade)
                 grade = grades[grade]
                 print(grades)
+                # print(ranges,position)
                 print(grade)
                 self.segment['grade'] = grade
+                 
             else:
                 self.segment['grade'] = '-'
         except Exception as e :
@@ -244,6 +262,7 @@ class Extractor:
             drive_train = re.search(drive_reg, line).group()
             print(drive_train)
             self.segment['wheel_drive'] = re.search(r'\d', drive_train).group() + ' wheel'
+             
         except:
             self.segment['wheel_drive'] = '-'
 
@@ -252,10 +271,13 @@ class Extractor:
         fuel_type = re.search(fuel_reg, line).group()
         if fuel_type == 'ဓာတ်ဆီ':
             self.segment['fuel'] = 'petrol'
+             
         elif fuel_type == 'ဒီဇယ်':
             self.segment['fuel'] = 'diesel'
+             
         else:
             self.segment['fuel'] = fuel_type
+             
             
     
     def get_engine(self,line):
@@ -264,6 +286,7 @@ class Extractor:
         if displacement <100:
             displacement *=1000
         self.segment['engine']= str(int(displacement)) + ' cc'
+         
         
     
     def get_price(self,line):
@@ -277,6 +300,7 @@ class Extractor:
                 mm_price = 1400 * int(dollar) ### dollar price can be changed by the time 
                 price_lakhs = int(mm_price/100000)
                 self.segment['price'] = str(price_lakhs) + "Lakhs"
+                 
             else:
                 price = re.search(r"\d+", price).group()
                 
@@ -288,6 +312,7 @@ class Extractor:
                         else:
                             new_str += i
                     self.segment['price'] = new_str+' Lakhs'
+                     
                 else:
                     self.segment['price'] = '-'
         except:
@@ -298,8 +323,10 @@ class Extractor:
     def get_mileage(self,line):
         if re.search(r'\d+\,\d+', line):                                ## 140,000
             self.segment['mileage'] = re.search(r'\d+\,\d+', line).group().replace(',','') + ' km'
+             
         elif re.search(r'\d+ \+|\d+\+', line):                          ## 150000 + , 150,000+
             self.segment['mileage'] = re.search(r'\d+ \+|\d+\+', line).group().strip('+').strip() + ' km'
+             
         else:
             try:
                 array = re.findall(r'\d+|\++|[x]+|\*+|သောင်း|သိန်း',line)  ## 1++++ , 3xxxxx, 4*****, 2 သိန်း
@@ -326,6 +353,7 @@ class Extractor:
                         else:
                             new_str += i
                     self.segment['mileage'] = new_str+' km'
+                     
                 else:
                     self.segment['mileage'] = '-'
 
@@ -343,14 +371,17 @@ class Extractor:
     def get_gear(self,line):
         if ( line.find('auto') > 0 ):
             self.segment['gear'] = 'auto'
+             
         elif ( line.find('manual') > 0 ):
             self.segment['gear'] = 'manual'
+             
         else:
             self.segment['gear'] = '-'
     
     def get_seater(self,line):
         try:
             self.segment['seater'] = re.findall(r'\d',line)[0] + ' seats'
+             
         except:
             self.segment['seater'] = '-'
             
@@ -359,8 +390,10 @@ class Extractor:
         drive_postion = re.search(hand_reg,line).group()
         if drive_postion == 'ဘယ်မောင်း' or drive_postion == "l.h.d" or drive_postion == "lhd":
             self.segment['hand_drive'] = 'L.H.D'
+             
         if drive_postion == 'ညာမောင်း' or drive_postion == "r.h.d" or drive_postion == "rhd":
             self.segment['hand_drive'] = 'R.H.D'
+             
             
     
     def get_license(self,line):
@@ -372,12 +405,15 @@ class Extractor:
                 if re.search(r"\d[A-Za-z]",res):
                     res = res+"/****"
                     self.segment['licence_plate_no'] = res
+                     
                 else:
                     self.segment['licence_plate_no'] = res
+                     
             else:
                 self.segment['licence_plate_no'] = "-"
         else:
             self.segment['licence_plate_no'] = result
+             
           
     
     def get_phone(self,ph_list,line):

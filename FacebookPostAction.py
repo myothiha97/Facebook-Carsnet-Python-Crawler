@@ -7,7 +7,8 @@ def click_see_more_button(browser,post):
             seemore = post.find_element_by_xpath("//div[contains(text(),'See more')]")
             time.sleep(.5)
             # seemore.click()
-            webdriver.ActionChains(browser).move_to_element(seemore).click(seemore).perform()
+            webdriver.ActionChains(browser).move_to_element(seemore).perform()
+            browser.execute_script("arguments[0].click();", seemore)
             time.sleep(2)
         except Exception as e:
             print(e)
