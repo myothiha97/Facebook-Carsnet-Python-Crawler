@@ -40,7 +40,7 @@ parser.add_argument("-s", "--search", type=str,  action="store", nargs="?", meta
 
 # parser.add_argument("-c", "--comment", type=bool, default=False,  metavar="", help="Comments included")
 
-parser.add_argument("-d", "--depth", type=int, default=5, metavar="", help="Numbers of scroll")
+parser.add_argument("-d", "--depth", type=int, default=10, metavar="", help="Numbers of scroll")
 
 parser.add_argument("-k", "--keep", type=int, default=5, metavar="", help="Seconds you want to delay after scroll")
 
@@ -105,8 +105,8 @@ if __name__ == '__main__':
         # time.sleep(1)
 
         # ##online ကားပွဲစားတန်း
-        p.collect_from_api(ids=5,url = 'https://www.facebook.com/groups/carforsale01/?ref=share',market_place=1)
-        time.sleep(1)
+        # p.collect_from_api(ids=5,url = 'https://www.facebook.com/groups/carforsale01/?ref=share',market_place=1)
+        # time.sleep(1)
 
         # # Car အရောင်းအဝယ် ရန်ကုန်မြို့
         # p.collect_from_api(ids=6,url = 'https://www.facebook.com/groups/323949978493502/?ref=share',market_place=1)

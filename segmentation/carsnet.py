@@ -39,12 +39,12 @@ class Entity_extractor:
             standard = post
             # print(standard)
             # time.sleep(60)
-        print(standard,"\n")
-        print("----------------------------")
+        # print(standard,"\n")
+        # print("----------------------------")
         extractor = Extractor()
         entity_list = extractor.extract(str(standard))
-        print("-------------------This is segementation--------------------")
-        print(entity_list)
+        # print("-------------------This is segementation--------------------")
+        # print(entity_list)
         # time.sleep(60)
         return entity_list
        

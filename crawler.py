@@ -221,11 +221,15 @@ class Crawler:
         for g,post in enumerate(posts):
             # Click See More Button if exist          
             click_see_more_button(browser= self.browser,post = post)
-            share_check = post.find_element_by_css_selector('div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
-            if re.search(r"shared|share|Shared|Share|shares|Shares",share_check):
-                print("This is a shared post")
-                time.sleep(1)
+            try:
+                share_check = post.find_element_by_css_selector('div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
+                if re.search(r"shared|share|Shared|Share|shares|Shares",share_check):
+                    print("This is a shared post")
+                    time.sleep(1)
+                    continue
+            except Exception as e:
                 continue
+                print(f'Share check failed')
           
             # Check timestamp if the page is already scanned before            
             # if(timestamp < "1576813657"):
@@ -251,7 +255,10 @@ class Crawler:
                 all_content = []
                 all_content.append(dataObj)
                 print(all_content)
-                self.api_connector.sent_to_digizaay(all_content)
+                try:
+                    self.api_connector.sent_to_digizaay(all_content)
+                except Exception as e:
+                    print("Error sending data to digizaay server")                    
             print(f"------------------finished crawling post {g}--------------------------")
                                 
                     
