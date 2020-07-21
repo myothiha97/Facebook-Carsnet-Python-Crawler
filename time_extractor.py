@@ -33,6 +33,9 @@ def get_publish_at(content):
             return published_date
         except Exception as e:
             print(f"An error occur while trying to get timestamp at month format : {e}")
+            with open("error_time_formats.txt",'a') as obj:
+                obj.write(content)
+                obj.write("\n")
             # print(published_date)
             return published_date
     elif re.search(r"yesterday|Yesterday",content):
@@ -48,6 +51,9 @@ def get_publish_at(content):
         except Exception as e:
             print(f"An error occur while trying to get timestamp at yesterday format: {e}")
             # print(published_date)
+            with open("error_time_formats.txt",'a') as obj:
+                obj.write(content)
+                obj.write("\n")
             return published_date
     else:
         # splited_value = content.split('')
@@ -79,6 +85,9 @@ def get_publish_at(content):
         except Exception as e:
             print(f"An error occur while trying to get timestamp at hr/min/day format: {e}")
             # print(published_date)
+            with open("error_time_formats.txt",'a') as obj:
+                obj.write(content)
+                obj.write("\n")
             return published_date
 
 

@@ -96,7 +96,7 @@ class FacebookImageExtractor():
                     image_url = spotlight.get_attribute("src")
                     i = 0
                     if len(images) > 0:                        
-                        while image_url == images[-1] and i < 5:
+                        while image_url == images[-1] and i < 10:
                             time.sleep(0.2)
                             i+=1                            
                             image_url = spotlight.get_attribute("src")
