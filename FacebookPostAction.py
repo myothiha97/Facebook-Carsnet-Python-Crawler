@@ -4,11 +4,12 @@ from selenium import webdriver
 
 def click_see_more_button(browser,post):
         try:
-            seemore = post.find_element_by_xpath("//div[contains(text(),'See more')]")
+            # seemore = post.find_element_by_xpath("//div[contains(text(),'See more')]")
+            seemore = post.find_element_by_css_selector('div.j83agx80.cbu4d94t.ew0dbk1b.irj2b8pg > div > span > div > div:last-child > div')
             time.sleep(.5)
             # seemore.click()
             webdriver.ActionChains(browser).move_to_element(seemore).perform()
             browser.execute_script("arguments[0].click();", seemore)
-            time.sleep(2)
+            time.sleep(1)
         except Exception as e:
-            print(e)
+            print("An error occur while trying to click see_more button : ",str(e))
