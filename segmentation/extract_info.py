@@ -154,6 +154,7 @@ class Extractor:
     def get_grade(self,line):
         
         try:
+            # line = re.sub(r"[()]","",line)
             position = line.find('grade')
             word_list = line.split()
             g_postions=[]
