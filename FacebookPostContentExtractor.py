@@ -11,9 +11,9 @@ class ContentExtractor:
         # Get Date
         date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-of-type(2) > span > a > span").get_attribute("innerText")
         print(date_content)
-        # time.sleep(10)
+        
         publish_at = get_publish_at(date_content)
-        time.sleep(3)
+        time.sleep(1)
         return publish_at
     @classmethod
     def get_post_text(cls,post,browser):
@@ -22,7 +22,7 @@ class ContentExtractor:
         try: 
             # post_text = post.find_element_by_css_selector("div[data-ad-comet-preview='message']").get_property('textContent')
             post_text = post.find_element_by_css_selector("div[data-ad-comet-preview='message']")
-            webdriver.ActionChains(browser).move_to_element(post_text).perform()
+            # webdriver.ActionChains(browser).move_to_element(post_text).perform()
             post_text = post_text.text
             print('------------- retrieving text ------------------')
             print(post_text)
@@ -31,7 +31,7 @@ class ContentExtractor:
             print('Issue with retrieving content: ' + str(e))
             try:
                 post_text = post.find_element_by_tag_name("blockquote")
-                webdriver.ActionChains(browser).move_to_element(post_text).perform()
+                # webdriver.ActionChains(browser).move_to_element(post_text).perform()
                 post_text = post_text.text
             except Exception as e:
                 print("An error occur while trying to get blocktext ",str(e))
