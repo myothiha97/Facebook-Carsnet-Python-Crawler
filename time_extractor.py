@@ -14,12 +14,15 @@ def get_publish_at(content):
             date_obj = datetime.datetime.strptime(month_name,"%B")
             month = date_obj.month
 
-            if re.search(r"\d+:\d+\s*A*M*|\d+:\d+\s*P*M*",content):
-                hr = re.search(r"\d+|\d+",re.search(r"\d+:\d+\s*A*M*|\d+:\d+\s*P*M*",content).group()).group()
+            if re.search(r"\d+:\d+\s*A*M*|\d+:\d+\s*P*M*|\d+:\d+\s*[Aa]*[Mm]*|\d+:\d+\s*[Pp]*[Mm]*",content):
+                hr = re.search(r"\d+|\d+",re.search(r"\d+:\d+\s*A*M*|\d+:\d+\s*P*M*|\d+:\d+\s*[Aa]*[Mm]*|\d+:\d+\s*[Pp]*[Mm]*",content).group()).group()
                 mins = re.search(r":\d+",content).group()
                 mins = re.sub(r":","",mins)
-                if re.search(r"AM|PM",content):
-                    am_pm = re.search(r"AM|PM",content).group()
+                if re.search(r"[Aa][Mm]|[Pp][Mm]",content):
+                    print("time found")
+                    am_pm = re.search(r"[Aa][Mm]|[Pp][Mm]",content).group()
+                    print(am_pm)
+                    am_pm = am_pm.upper()
                     if am_pm == "PM":
                         hr = int(hr) + 12
             else:
@@ -92,7 +95,7 @@ def get_publish_at(content):
 
 
 if __name__ == "__main__":
-    content = "May 3,2016"
+    content = "2019 3 May "
     get_publish_at(content)
 
 
