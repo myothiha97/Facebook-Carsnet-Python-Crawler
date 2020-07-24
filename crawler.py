@@ -21,7 +21,7 @@ from FacebookPostContentExtractor import ContentExtractor
 from ImageExtractor import FacebookImageExtractor
 from segmentation.carsnet import Entity_extractor
 from SearchCrawlPost import crawl_search_posts
-
+from FacebookPostContentExtractor import ContentExtractor
 class Crawler:
     def __init__(self, database, storage, depth, keep, filter):
 
@@ -108,8 +108,8 @@ class Crawler:
         self.browser.get(url)
         time.sleep(4)
 
-        # crawl_history_id = self.api_connector.get_crawl_history_id(ids)
-        crawl_history_id = 15
+        crawl_history_id = self.api_connector.get_crawl_history_id(ids)
+        # crawl_history_id = 15
         for scroll in range(self.depth):
             timestamp = calendar.timegm(time.gmtime())
             # Click Esc Key to prevent browser notification
@@ -122,6 +122,7 @@ class Crawler:
                 "window.scrollBy(0, document.body.scrollHeight)")
         time.sleep(0.5)
         self.browser.execute_script("window.scrollTo(document.body.scrollHeight,0)")
+        # self.browser.execute_script("window.scrollBy(0,document.body.scrollHeight)")
         time.sleep(0.5)
         if market_place == 0:
             print("This is page")
@@ -216,11 +217,19 @@ class Crawler:
     def crawl_posts(self,ids,crawl_history_id,market_place=0,g_type=0):
 
         posts = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")
-        
-       
+        # posts = posts_[::-1]
         check_already_safe_stimestamp = False
+        print("The number of posts to crawl : ",len(posts))
         for g,post in enumerate(posts):
-            # Click See More Button if exist          
+            # Click See More Button if exist
+            # webdriver.ActionChains(self.browser).move_to_element(post).perform()
+            self.browser.execute_script("arguments[0].scrollIntoView();", post)
+            date = ContentExtractor.get_post_time_stamp(post)
+            if re.search(r"2020-(06|6)-[1-3][0-9]|2020-(07|7)-[1-3][0-9]|2020-(07|7)-[0-9]",date):
+                print("post already crawl")
+                continue
+            # time.sleep(5)
+                  
             click_see_more_button(browser= self.browser,post = post)
             try:
                 share_check = post.find_element_by_css_selector('div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
@@ -247,6 +256,7 @@ class Crawler:
                 click_see_more_button(browser = self.browser,post=post)
                 dataObj , status  = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type,crawl_history_id=crawl_history_id)
                 print("")
+                # print(f"--------------recrawling post {posts_.index(posts[g])}----------------")
                 print(f"--------------recrawling post {g}----------------")
                 print("")
                 count+=1
@@ -257,17 +267,18 @@ class Crawler:
                 all_content.append(dataObj)
                 print(all_content)
                 try:
-                    # self.api_connector.sent_to_digizaay(all_content)
-                    print("pass")
+                    self.api_connector.sent_to_digizaay(all_content)
+                    # print("pass")
                 except Exception as e:
                     print("Error sending data to digizaay server")                    
+            # print(f"------------------finished crawling post {posts_.index(posts[g])}--------------------------")
             print(f"------------------finished crawling post {g}--------------------------")
                                 
                     
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
         # print(all_content)
-        # self.api_connector.end_crawling(crawl_history_id)
+        self.api_connector.end_crawling(crawl_history_id)
         # print("The number of data  ", len(all_content))
         print("The number of posts ",len(posts))
 
