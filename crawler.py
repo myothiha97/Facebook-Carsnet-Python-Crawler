@@ -108,8 +108,9 @@ class Crawler:
         self.browser.get(url)
         time.sleep(4)
 
-        crawl_history_id = self.api_connector.get_crawl_history_id(ids)
-        # crawl_history_id = 15
+        # crawl_history_id = self.api_connector.get_crawl_history_id(ids)
+        crawl_history_id = 15
+        scroll_count = 1
         for scroll in range(self.depth):
             timestamp = calendar.timegm(time.gmtime())
             # Click Esc Key to prevent browser notification
@@ -120,13 +121,16 @@ class Crawler:
             # Scrolling
             self.browser.execute_script(
                 "window.scrollBy(0, document.body.scrollHeight)")
+            print(f"Scroll count ---------> {scroll_count}")
+            scroll_count+=1
+
         time.sleep(0.5)
         self.browser.execute_script("window.scrollTo(document.body.scrollHeight,0)")
         # self.browser.execute_script("window.scrollBy(0,document.body.scrollHeight)")
         time.sleep(0.5)
         if market_place == 0:
             print("This is page")
-            self.crawl_posts(ids,crawl_history_id=crawl_history_id)
+            self.crawl_posts(ids,crawl_history_id=crawl_history_id , market_place = 0, g_type=0)
         else:
             WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span")))
             gp_type = self.browser.find_element_by_css_selector("div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span").text
@@ -135,7 +139,7 @@ class Crawler:
                 self.crawl_posts(ids,crawl_history_id=crawl_history_id,market_place=0, g_type = 1)
             else:
                 print("This group is market place")
-                self.crawl_posts(ids,crawl_history_id=crawl_history_id,market_place=1)
+                self.crawl_posts(ids,crawl_history_id=crawl_history_id,market_place=1,g_type=1)
         # self.crawl_posts(ids,market_place)
 
     def select_types(self, type, url):
@@ -214,7 +218,7 @@ class Crawler:
             comment.send_keys(Keys.ENTER)
             text = comment.text
 
-    def crawl_posts(self,ids,crawl_history_id,market_place=0,g_type=0):
+    def crawl_posts(self,ids,crawl_history_id,market_place,g_type):
 
         posts = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")
         # posts = posts_[::-1]
@@ -224,13 +228,15 @@ class Crawler:
             # Click See More Button if exist
             # webdriver.ActionChains(self.browser).move_to_element(post).perform()
             self.browser.execute_script("arguments[0].scrollIntoView();", post)
-            date = ContentExtractor.get_post_time_stamp(post)
-            if re.search(r"2020-(06|6)-[1-3][0-9]|2020-(07|7)-[1-3][0-9]|2020-(07|7)-[0-9]",date):
-                print("post already crawl")
-                continue
+            # date = ContentExtractor.get_post_time_stamp(post)
+            # date_reg = r"2020|2019-12-(24|25|26|27|28|29|30|31)"
+            # if re.search(r"2020-(06|6)-[1-3][0-9]|2020-(07|7)-[1-3][0-9]|2020-(07|7)-[0-9]",date):
+            # if re.search(date_reg,date):
+            #     print("post already crawl")
+            #     continue
             # time.sleep(5)
-                  
-            click_see_more_button(browser= self.browser,post = post)
+            # else:
+            click_see_more_button(browser= self.browser,post = post,type= g_type)
             try:
                 share_check = post.find_element_by_css_selector('div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
                 if re.search(r"shared|share|Shared|Share|shares|Shares",share_check):
@@ -240,7 +246,7 @@ class Crawler:
             except Exception as e:
                 continue
                 print(f'Share check failed')
-          
+        
             # Check timestamp if the page is already scanned before            
             # if(timestamp < "1576813657"):
             # if(True):
@@ -266,9 +272,11 @@ class Crawler:
                 all_content = []
                 all_content.append(dataObj)
                 print(all_content)
+                print(f"Total images -------------------> {len(dataObj['post_images'])}")
+                # time.sleep(7)
                 try:
-                    self.api_connector.sent_to_digizaay(all_content)
-                    # print("pass")
+                    # self.api_connector.sent_to_digizaay(all_content)
+                    print("pass")
                 except Exception as e:
                     print("Error sending data to digizaay server")                    
             # print(f"------------------finished crawling post {posts_.index(posts[g])}--------------------------")
@@ -278,7 +286,7 @@ class Crawler:
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
         # print(all_content)
-        self.api_connector.end_crawling(crawl_history_id)
+        # self.api_connector.end_crawling(crawl_history_id)
         # print("The number of data  ", len(all_content))
         print("The number of posts ",len(posts))
 
