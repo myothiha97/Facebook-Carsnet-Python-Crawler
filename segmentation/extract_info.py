@@ -330,7 +330,7 @@ class Extractor:
              
         else:
             try:
-                array = re.findall(r'\d+|\++|[x]+|\*+|သောင်း|သိန်း',line)  ## 1++++ , 3xxxxx, 4*****, 2 သိန်း
+                array = re.findall(r'\d|\++|[x]+|\*+|သောင်း|သိန်း|သ်ိန်း',line)  ## 1++++ , 3xxxxx, 4*****, 2 သိန်း
                 km = ''.join(array)
                 if km.find(',') >=0:
                     mileage = km.replace(',','')
@@ -344,9 +344,14 @@ class Extractor:
                     mileage = km.replace('သောင်း', '0000')
                 elif km.find('သိန်း') >=0 :
                     mileage = km.replace('သိန်း','00000')
+                elif km.find("သ်ိန်း") >=0:
+                    mileage = km.replace('သ်ိန်း','00000')
                 else:
+                    # print("nth found ")
                     mileage = km
+                    # print(mileage)
                 if len(mileage)<7:
+
                     new_str = ''
                     for i in mileage:
                         if 4160 <= ord(i) <=4170:
@@ -414,7 +419,6 @@ class Extractor:
                 self.segment['licence_plate_no'] = "-"
         else:
             self.segment['licence_plate_no'] = result
-             
           
     
     def get_phone(self,ph_list,line):
