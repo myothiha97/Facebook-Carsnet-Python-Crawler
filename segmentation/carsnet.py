@@ -3,14 +3,16 @@ import pandas as pd
 from converter import zg12uni51
 import csv
 import json
-from segmentation.regex_pattern import *
-from segmentation.extract_info import Extractor
-# from extract_info import Extractor
+
+# from segmentation.regex_pattern import *
+# from segmentation.extract_info import Extractor
+
+from regex_pattern import *
+from extract_info import Extractor
+
 from myanmartools import ZawgyiDetector
 import time
-# from regex_pattern import *
-# from extract_info import Extractor
-# from myanmartools import ZawgyiDetector
+
 
 class Entity_extractor:
     @staticmethod            
@@ -43,26 +45,29 @@ class Entity_extractor:
         # print("----------------------------")
         extractor = Extractor()
         entity_list = extractor.extract(str(standard))
-        # print("-------------------This is segementation--------------------")
-        # print(entity_list)
+        print("-------------------This is segementation--------------------")
+        print(entity_list)
         # time.sleep(60)
         return entity_list
        
         
 if __name__ =="__main__":
     extractor = Entity_extractor()
-    str1="""#Mitsubishi RVR ထဲ က ကားကောင်းကားသန့်လေးကိုမှရှာနေသောသူများအတွက်
-#model 2010
-#paddle shift
-#G grade push start
-#very good condition
-#kilo 60000 ကျော်
-#engine power 1800 CC ကို Eco mode ပါ၍ဆီစားသက်သာသည်။
-#price 290lakhs Nego
-#စိတ်တိုင်းကျစစ်ဆေးနိုင်ပါသည်။ကားကောင်းကြောင်း 100% အာမခံသည်။
-#ph no 09 790 135 661
-#လိုင်စင်လေးလည်းဝေးတယ်နော်
-Myo Win Thant"""
+    str1="""HONDA FIT GP1,2011
+$205
+205 သိန်း
+Light Green colour,2011 model
+အော်ဆေး95 % ,Japan or TV or bc
+DVD CD SD USB HDD AM/FM AUX
+ kilo 8 သိန်းကျော် 1300 CC
+လိုင်စင်အသစ်,တာယာအသစ်
+အင်ဂျင် အောက်ပိုင်း ရှယ်ကောင်း
+3L-9+++(YGN),2022/4လပိုင်း
+IMA Bettery စိတ်ကြိုက်စစ်ပါ
+အလုံ တွင်ကားကြည့်နိုင်ပါသည်
+09-766644851
+09-448236117"""
+
     Entity_extractor.retrieve_entity(str1)
     
   
