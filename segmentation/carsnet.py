@@ -4,11 +4,11 @@ from converter import zg12uni51
 import csv
 import json
 
-# from segmentation.regex_pattern import *
-# from segmentation.extract_info import Extractor
+from segmentation.regex_pattern import *
+from segmentation.extract_info import Extractor
 
-from regex_pattern import *
-from extract_info import Extractor
+# from regex_pattern import *
+# from extract_info import Extractor
 
 from myanmartools import ZawgyiDetector
 import time
