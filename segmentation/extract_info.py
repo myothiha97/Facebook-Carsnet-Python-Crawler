@@ -1,6 +1,6 @@
 import re
-# from regex_pattern import *
-from segmentation.regex_pattern import *
+from regex_pattern import *
+# from segmentation.regex_pattern import *
 
 class Extractor:
     def __init__(self):
@@ -325,13 +325,17 @@ class Extractor:
         if re.search(r'\d+\,\d+', line):                                ## 140,000
             self.segment['mileage'] = re.search(r'\d+\,\d+', line).group().replace(',','') + ' km'
              
-        elif re.search(r'\d+ \+|\d+\+', line):                          ## 150000 + , 150,000+
-            self.segment['mileage'] = re.search(r'\d+ \+|\d+\+', line).group().strip('+').strip() + ' km'
+        # elif re.search(r'\d+ \+|\d+\+', line):                          ## 150000 + , 150,000+
+        #     self.segment['mileage'] = re.search(r'\d+ \+|\d+\+', line).group().strip('+').strip() + ' km'
              
         else:
+            print("Mileage not found !")
             try:
-                array = re.findall(r'\d|\++|[x]+|\*+|သောင်း|သိန်း|သ်ိန်း',line)  ## 1++++ , 3xxxxx, 4*****, 2 သိန်း
-                km = ''.join(array)
+                array = re.search(r'\d+\s*[+]+|\d+\s*[x]+|\d+\s*\*+|\d+\s*(သောင်း|သိန်း|သ်ိန်း)*',line).group()  ## 1++++ , 3xxxxx, 4*****, 2 သိန်း
+                # km = ''.join(array)
+                # print(array)
+                km = re.sub("kilo","",array)
+                km = re.sub(" ","",km)
                 if km.find(',') >=0:
                     mileage = km.replace(',','')
                 elif km.find('+') >=0:
