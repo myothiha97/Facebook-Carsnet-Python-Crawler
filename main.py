@@ -8,6 +8,8 @@ import mysql.connector
 from mysql.connector import Error
 import time
 import datetime
+import os
+import getpass
 from DigiZaayAPI import DigiZaayApiConnector
 
 token =  'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiYzViNTM2ZjYwYmJkNmUzODE5OTY1NDU5Y2NhMDdkYWZkZWZmOGNhYzFmMWFlM2M4ZjM0NDNlNTliNmRkNjNhOWY5M2RlYjZlOWE3M2RkOWYiLCJpYXQiOjE1ODI4Nzc5NzIsIm5iZiI6MTU4Mjg3Nzk3MiwiZXhwIjoxNjE0NTAwMzcyLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.LO3h9dmRO3avdr0Xie6qju2SBYoN8Js283pRW2ajm1NGZeMRGB9mVBP0w6v7H4pkrvx1eAF0CFyFpEwWf5WF9FbEGbvBFMuVsYYfEQluAMYykPmR7RynXhBi_TVj7o2h7ZKK4RKCMqUdMD9R2S6K_ebtE0sfPn-Dh08pxwjYgx4ecpYImt0P6gfvhPON9tGzWrxd_GLeZ0Oqs5012v13gL1BKk45_op1_rovDG3o18eLk5ASYh38dkgT1My8zxN9Ommuz1EhDlwD0FcI_w6d1OYV0qprsxpvUUUT33tWeOhkC5Y1mViGGyPdQW3y08VGrUIaVGsPu6BpFx1whhDeDryTFY9FBv7dX3yhiz0mX51Tc5iOeIjXmy127PRBAzeYysHMG1I3WrE6It_LJ4r2BdVrLFfQc1zdNxC-KAy3CdwhHYsIYL9aGlSv2VPrXDRnNujF5nprZSTMbbgEbXW6ahAte2AyC6kFmfcl-Q-E2a7tCk_jMmo6lqiNR1RGhQjs-7j1SuNxvcVVm9mXO8z-L_k6Fh34SxkPD4_UR_EtGWV4XPpIEhxHJGzVfKR72LAgayfc5dnTZowKs2xMTsfAQLDLljuDmeDzgE1MIj1zgt9cQVQ9z5UUzfUiVQDMUW33uxQ07fasjFsGiGg9uQA6v_zO0epZ8c_Xl0bWbDGcNF0'
@@ -55,6 +57,14 @@ args = parser.parse_args()
    
 
 if __name__ == '__main__':
+
+
+    current_date = datetime.datetime.now()
+    username = getpass.getuser()
+    with open('crawler-history-log.txt','a') as fileobj:
+        fileobj.write(f"User - {username} has run the crawler at {current_date}")
+        fileobj.write("\n")
+
     # Initializer Crawler
     p = Crawler(database=None, storage=None, depth=args.depth, keep=args.keep,filter=args.filter)
 
@@ -65,7 +75,6 @@ if __name__ == '__main__':
     p.login(config('EMAIL'), config('PASSWORD'))
     time.sleep(5)
 
-    
 
     if args.crawl:
         pages = DigiZaayApiConnector.get_pages_from_api(header = headers)
@@ -89,12 +98,12 @@ if __name__ == '__main__':
     
     if args.test_crawl:
         # ## Carsnet Page Test
-        p.collect_from_api(ids=1,url = "https://www.facebook.com/CarsNET-102005471291910/",market_place=0)
-        time.sleep(1)
+        # p.collect_from_api(ids=1,url = "https://www.facebook.com/CarsNET-102005471291910/",market_place=0)
+        # time.sleep(1)
 
         ## Group Test - Online ကားပြဲစားတန္း ( YGN )
-        # p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
-        # time.sleep(1)
+        p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
+        time.sleep(1)
 
         # # Group Test - Online ကားမျိုးစုံရောင်းဝယ်ရေး
         # p.collect_from_api(ids=3,url = 'https://www.facebook.com/groups/1695736407377955/?ref=share',market_place=1)
