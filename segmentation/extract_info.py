@@ -324,14 +324,17 @@ class Extractor:
     def get_mileage(self,line):
         if re.search(r'\d+\,\d+', line):                                ## 140,000
             self.segment['mileage'] = re.search(r'\d+\,\d+', line).group().replace(',','') + ' km'
+
+        elif re.search(r"\d{5,6}",line):
+            self.segment['mileage'] = re.search(r"\d{5,6}",line).group() + " km"
              
         # elif re.search(r'\d+ \+|\d+\+', line):                          ## 150000 + , 150,000+
         #     self.segment['mileage'] = re.search(r'\d+ \+|\d+\+', line).group().strip('+').strip() + ' km'
              
         else:
-            print("Mileage not found !")
+            # print("Mileage not found !")
             try:
-                array = re.search(r'\d+\s*[+]+|\d+\s*[x]+|\d+\s*\*+|\d+\s*(သောင်း|သိန်း|သ်ိန်း)*',line).group()  ## 1++++ , 3xxxxx, 4*****, 2 သိန်း
+                array = re.search(r'\d+\s*[+]+|\d+\s*[x]+|\d+\s*\*+|\d+\s*(သောင်း|သိန်း|သ်ိန်း)+',line).group()  ## 1++++ , 3xxxxx, 4*****, 2 သိန်း
                 # km = ''.join(array)
                 # print(array)
                 km = re.sub("kilo","",array)
@@ -422,7 +425,7 @@ class Extractor:
             else:
                 self.segment['licence_plate_no'] = "-"
         else:
-            self.segment['licence_plate_no'] = result
+            self.segment['licence_plate_no'] = result.replace(" ","")
           
     
     def get_phone(self,ph_list,line):
