@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver import ChromeOptions
+from selenium.webdriver.chrome.options import Options
 
 # Utils
 from decouple import config
@@ -22,14 +23,17 @@ from ImageExtractor import FacebookImageExtractor
 from segmentation.carsnet import Entity_extractor
 from SearchCrawlPost import crawl_search_posts
 from FacebookPostContentExtractor import ContentExtractor
+from evaluate_date import eval_date_to_crawl
 class Crawler:
     def __init__(self, database, storage, depth, keep, filter):
 
         self.ids = None
         self.depth = depth
         self.delay = keep
+        self.options = Options()
+        self.options.set_headless(headless=True)
         self.browser = webdriver.Chrome(executable_path=config('CHROMEDRIVER'))
-        # self.browser = webdriver.Firefox(executable_path="./drivers/geckodriver.exe")
+        # self.browser = webdriver.Firefox(executable_path="./drivers/geckodriver")
         self.db = database
         self.storage = storage
         self.table = None
@@ -54,7 +58,8 @@ class Crawler:
                 # time.sleep(self.delay)
                 WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div[aria-label = 'Search']")))
                 search_box = self.browser.find_element_by_css_selector("div[aria-label = 'Search']")
-                search_box.click()
+                self.browser.execute_script("arguments[0].click();", search_box)
+                # search_box.click()
                 time.sleep(1)
                 webdriver.ActionChains(self.browser).send_keys(txt).perform()
                 # search_box.send_keys(txt)
@@ -121,7 +126,13 @@ class Crawler:
             # Scrolling
             self.browser.execute_script(
                 "window.scrollBy(0, document.body.scrollHeight)")
-            print(f"Scroll count ---------> {scroll_count}")
+            # latest_post = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")[-1]
+            # date = ContentExtractor.get_post_time_stamp(latest_post)
+            # print(f"Scroll count : {scroll_count} and latest post date : {date}")
+            # if re.search("2019-(01|1)",date):
+            #     print(f"Reached to desire date with scroll count {scroll_count} ")
+            #     break
+            print(f'Scroll Count -----------> {scroll_count}')
             scroll_count+=1
 
         time.sleep(0.5)
@@ -222,52 +233,63 @@ class Crawler:
 
         posts = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")
         # posts = posts_[::-1]
+        # posts = posts[200:]
         check_already_safe_stimestamp = False
         print("The number of posts to crawl : ",len(posts))
         for g,post in enumerate(posts):
             # Click See More Button if exist
             # webdriver.ActionChains(self.browser).move_to_element(post).perform()
             self.browser.execute_script("arguments[0].scrollIntoView();", post)
-            # date = ContentExtractor.get_post_time_stamp(post)
-            # date_reg = r"2020|2019-12-(24|25|26|27|28|29|30|31)"
-            # if re.search(r"2020-(06|6)-[1-3][0-9]|2020-(07|7)-[1-3][0-9]|2020-(07|7)-[0-9]",date):
-            # if re.search(date_reg,date):
+            date = ContentExtractor.get_post_time_stamp(post)
+            date_reg = r"2020-(8|7|6|5|4)|2020-(08|07|06|05|04)|2020-(03|3)-[2-3][0-9]|2020-(03|3)-(18|19)"
+            # result = eval_date_to_crawl(date)
+
+            # date_reg = r"2020-(03|3)-24 "
+            
+            # if not re.search(date_reg,date):
             #     print("post already crawl")
             #     continue
-            # time.sleep(5)
+            
             # else:
-            click_see_more_button(browser= self.browser,post = post,type= g_type)
-            try:
-                share_check = post.find_element_by_css_selector('div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
-                if re.search(r"shared|share|Shared|Share|shares|Shares",share_check):
-                    print("This is a shared post")
-                    time.sleep(1)
-                    continue
-            except Exception as e:
+            if re.search(date_reg,date):
+                print('post already crawl')
                 continue
-                print(f'Share check failed')
-        
-            # Check timestamp if the page is already scanned before            
-            # if(timestamp < "1576813657"):
-            # if(True):
-            dataObj , status = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type,crawl_history_id=crawl_history_id)
 
-            count = 0
-            while status and count  < 2:               
-                # print(dataObj.items())
-                # time.sleep(3)
-                time.sleep(0.5)
-                self.click_esc_key()
-                time.sleep(0.5)
-                click_see_more_button(browser = self.browser,post=post)
-                dataObj , status  = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type,crawl_history_id=crawl_history_id)
-                print("")
-                # print(f"--------------recrawling post {posts_.index(posts[g])}----------------")
-                print(f"--------------recrawling post {g}----------------")
-                print("")
-                count+=1
-                
-            if dataObj['post_detail'] != '':
+            else:
+                click_see_more_button(browser= self.browser,post = post,type= g_type)
+                try:
+                    share_check = post.find_element_by_css_selector('div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
+                    if re.search(r"shared|share|Shared|Share|shares|Shares",share_check):
+                        print("This is a shared post")
+                        time.sleep(1)
+                        continue
+                except Exception as e:
+                    continue
+                    print(f'Share check failed')
+            
+                # Check timestamp if the page is already scanned before            
+                # if(timestamp < "1576813657"):
+                # if(True):
+                dataObj , status = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type,crawl_history_id=crawl_history_id)
+
+                count = 0
+                while status and count  < 2:               
+                    # print(dataObj.items())
+                    # time.sleep(3)
+                    time.sleep(0.5)
+                    self.click_esc_key()
+                    time.sleep(0.5)
+                    click_see_more_button(browser = self.browser,post=post,type=g_type)
+                    dataObj , status  = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type,crawl_history_id=crawl_history_id)
+                    print("")
+                    # print(f"--------------recrawling post {posts_.index(posts[g])}----------------")
+                    print(f"--------------recrawling post {g}----------------")
+                    print("")
+                    count+=1
+                    
+                if dataObj['post_detail'] == '':
+                    dataObj['post_detail'] = 'Empty Post Detail'
+
                 print(dataObj)
                 all_content = []
                 all_content.append(dataObj)
@@ -278,10 +300,18 @@ class Crawler:
                     self.api_connector.sent_to_digizaay(all_content)
                     # print("pass")
                 except Exception as e:
-                    print("Error sending data to digizaay server")                    
-            # print(f"------------------finished crawling post {posts_.index(posts[g])}--------------------------")
-            print(f"------------------finished crawling post {g}--------------------------")
-                                
+                    print("Error sending data to digizaay server") 
+                    print("Error message : ",str(e))                   
+                # # print(f"------------------finished crawling post {posts_.index(posts[g])}--------------------------")
+                # else:
+                #     print(f'The post {g} doesnt have post detail')
+                #     print(f'Program Break!!')
+                #     break
+                    
+
+                print(f"------------------finished crawling post {g}--------------------------")
+
+                            
                     
 
             # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
