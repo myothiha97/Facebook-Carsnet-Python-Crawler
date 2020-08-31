@@ -95,7 +95,7 @@ def get_publish_at(content):
 
 
 if __name__ == "__main__":
-    content = "2019 3 May "
+    content = " 4d "
     get_publish_at(content)
 
 
