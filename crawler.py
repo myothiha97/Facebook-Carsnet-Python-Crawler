@@ -260,8 +260,8 @@ class Crawler:
             check_already_safe_stimestamp = False
             print("The number of posts to crawl : ",len(posts))
 
-            ''' Skip to desire post number ''' 
-            # posts = posts[900:] ### only use when large amount of posts are crawled
+            ''' Skip to desire post number.Only use when large amount of posts are crawled '''
+            # posts = posts[900:] ## Can use desire number. 
             # check = 0
             for g,post in enumerate(posts):
                 # Click See More Button if exist
