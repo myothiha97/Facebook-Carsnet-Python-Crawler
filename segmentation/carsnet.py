@@ -53,20 +53,20 @@ class Entity_extractor:
         
 if __name__ =="__main__":
     extractor = Entity_extractor()
-    str1="""HONDA FIT GP1,2011
-$205
-205 သိန်း
-Light Green colour,2011 model
-အော်ဆေး95 % ,Japan or TV or bc
-DVD CD SD USB HDD AM/FM AUX
- kilo 8 သိန်းကျော် 1300 CC
-လိုင်စင်အသစ်,တာယာအသစ်
-အင်ဂျင် အောက်ပိုင်း ရှယ်ကောင်း
-3L-9+++(YGN),2022/4လပိုင်း
-IMA Bettery စိတ်ကြိုက်စစ်ပါ
-အလုံ တွင်ကားကြည့်နိုင်ပါသည်
+    str1="""Toyota Mark X
+2004 Model
+Kilo-160000
+Metallic Black Color
+2500 CC (Octane)
+Auto Gear, 2WD
+Push Start , Smart Key
+First Owner, Car at good condition
+1H- 9**2
+Yangon Licence
+Price: 275 သိန်း (ညှိနှိုင်း)
+ရန်ကုန်မြို့ ရန်ကင်း တွင်ကားကြည့်နိုင်ပါသည်
 09-766644851
-09-448236117"""
+09-88423611"""
 
     Entity_extractor.retrieve_entity(str1)
     

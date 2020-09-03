@@ -15,6 +15,7 @@ import argparse
 import uuid
 import re
 import requests
+import sys
 
 from DigiZaayAPI import DigiZaayApiConnector
 from FacebookPostAction import click_see_more_button
@@ -32,9 +33,22 @@ class Crawler:
         self.ids = None
         self.depth = depth
         self.delay = keep
-        self.options = Options()
-        self.options.set_headless(headless=True)
-        self.browser = webdriver.Chrome(executable_path=config('CHROMEDRIVER'))
+        # self.options = Options()
+        self.options = webdriver.ChromeOptions()
+        # self.options.set_headless(headless=True)
+
+        ''' Chrome options to optimize crawling process '''
+        # self.options.add_argument('--disable-dev-shm-usage')
+        self.options.add_argument('--no-sandbox')
+        self.options.add_argument('--disable-gpu')  
+        self.options.add_argument('--disable-default-apps') 
+        self.options.add_argument('--disable-extensions')
+        self.options.add_argument('--disable-sync')
+        self.options.add_argument('--disable-hang-monitor')
+        self.options.add_argument('--disable-web-resources')
+        self.options.add_argument('--disable-notifications')
+        
+        self.browser = webdriver.Chrome(executable_path=config('CHROMEDRIVER'),chrome_options = self.options)
         # self.browser = webdriver.Firefox(executable_path="./drivers/geckodriver")
         self.db = database
         self.storage = storage
@@ -118,29 +132,35 @@ class Crawler:
         crawl_history_id = self.api_connector.get_crawl_history_id(ids)
         # crawl_history_id = 15
         scroll_count = 1
-        for scroll in range(self.depth):
-            timestamp = calendar.timegm(time.gmtime())
-            # Click Esc Key to prevent browser notification
-            self.click_esc_key()
+        try:
+            for scroll in range(self.depth):
+                timestamp = calendar.timegm(time.gmtime())
+                # Click Esc Key to prevent browser notification
+                self.click_esc_key()
 
-            time.sleep(self.delay)
+                time.sleep(self.delay)
 
-            # Scrolling
-            self.browser.execute_script(
-                "window.scrollBy(0, document.body.scrollHeight)")
-            # latest_post = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")[-1]
-            # date = ContentExtractor.get_post_time_stamp(latest_post)
-            # print(f"Scroll count : {scroll_count} and latest post date : {date}")
-            # if re.search("2019-(01|1)",date):
-            #     print(f"Reached to desire date with scroll count {scroll_count} ")
-            #     break
-            print(f'Scroll Count -----------> {scroll_count}')
-            scroll_count+=1
+                # Scrolling
+                self.browser.execute_script(
+                    "window.scrollBy(0, document.body.scrollHeight)")
+                # latest_post = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")[-1]
+                # date = ContentExtractor.get_post_time_stamp(latest_post)
+                # print(f"Scroll count : {scroll_count} and latest post date : {date}")
+                # if re.search("2019-(01|1)",date):
+                #     print(f"Reached to desire date with scroll count {scroll_count} ")
+                #     break
+                print(f'Scroll Count -----------> {scroll_count}')
+                scroll_count+=1
+        except Exception as e:
+            print("An error occur while scrolling : ", str(e))
+            self.api_connector.end_crawling(crawl_history_id)
+            self.browser.close()
+            sys.exit()
 
         time.sleep(0.5)
         self.browser.execute_script("window.scrollTo(document.body.scrollHeight,0)")
         # self.browser.execute_script("window.scrollBy(0,document.body.scrollHeight)")
-        time.sleep(0.5)
+        time.sleep(3)
         if market_place == 0:
             print("This is page")
             self.crawl_posts(ids,crawl_history_id=crawl_history_id , market_place = 0, g_type=0)
@@ -233,117 +253,130 @@ class Crawler:
 
     def crawl_posts(self,ids,crawl_history_id,market_place,g_type):
 
-        posts = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")
-        # posts = posts_[::-1]
-        # posts = posts[200:]
-        check_already_safe_stimestamp = False
-        print("The number of posts to crawl : ",len(posts))
-        for g,post in enumerate(posts):
-            # Click See More Button if exist
-            # webdriver.ActionChains(self.browser).move_to_element(post).perform()
-            date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-of-type(2) > span > a > span").get_attribute("innerText")
-            if re.search(r"d|D",date_content):
-                print("Day include in date content")
-                time.sleep(1)
-                time_holder = post.find_element_by_css_selector('span.oi732d6d.ik7dh3pa.d2edcug0.qv66sw1b.c1et5uql.a8c37x1j.hop8lmos.enqfppq2.e9vueds3.j5wam9gi.knj5qynh.m9osqain.hzawbc8m > span > span:nth-of-type(2) > span')
-                hover = webdriver.ActionChains(self.browser).move_to_element(time_holder)
-                hover.perform()
-                time.sleep(2)
+        try:
+            posts = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")
+            # posts = posts_[::-1]
+            # posts = posts[200:]
+            check_already_safe_stimestamp = False
+            print("The number of posts to crawl : ",len(posts))
+
+            ''' Skip to desire post number ''' 
+            # posts = posts[900:] ### only use when large amount of posts are crawled
+            # check = 0
+            for g,post in enumerate(posts):
+                # Click See More Button if exist
+                # webdriver.ActionChains(self.browser).move_to_element(post).perform()
+                ''' Skipping logic '''
+                # if check == 0:  
+                #     print("Skip to post 900")
+                #     self.browser.execute_script("arguments[0].scrollIntoView();", post)
+                #     check +=1
+                #     continue
+                ''' Check if the date is needed to be hovered '''
+                date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-of-type(2) > span > a > span").get_attribute("innerText")
+                if re.search(r"d|D",date_content):
+                    print("Day include in date content")
+                    time.sleep(1)
+                    try:
+                        time_holder = post.find_element_by_css_selector('span.oi732d6d.ik7dh3pa.d2edcug0.qv66sw1b.c1et5uql.a8c37x1j.hop8lmos.enqfppq2.e9vueds3.j5wam9gi.knj5qynh.m9osqain.hzawbc8m > span > span:nth-of-type(2) > span')
+                        hover = webdriver.ActionChains(self.browser).move_to_element(time_holder)
+                        hover.perform()
+                        time.sleep(2)
+                        hover_time = self.browser.find_element_by_css_selector('div.j34wkznp.qp9yad78.pmk7jnqg.kr520xx4.hzruof5a > span > div > div > span').text
+                        print(f"raw_time -----------------> {hover_time}")
+                        publish_date = format_time(hover_time)
+                        print(f"Foramt time ---------------> {publish_date}")
+                        time.sleep(1)
+                    except Exception as e:
+                        print(f"An error occur when trying to get hover time : {str(e)}")
+                        publish_date = ""
+                else:
+                    publish_date = ContentExtractor.get_post_time_stamp(post)
+
+                self.browser.execute_script("arguments[0].scrollIntoView();", post)
+
+                ''' Check if the post is already crawled '''
+                # date_reg = r"2020-(08|8)-(31|30|29|28|27|26|25|24|23)|2020-(09|9)"
+                # if re.search(date_reg,publish_date):
+                #     print("post already crawl")
+                #     continue
+
+                click_see_more_button(browser= self.browser,post = post,type= g_type)
                 try:
-                    hover_time = self.browser.find_element_by_css_selector('div.j34wkznp.qp9yad78.pmk7jnqg.kr520xx4.hzruof5a > span > div > div > span').text
-                    print(f"raw_time -----------------> {hover_time}")
-                    publish_date = format_time(hover_time)
-                    print(f"Foramt time ---------------> {publish_date}")
-                    time.sleep(1)
+                    share_check = post.find_element_by_css_selector('div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
+                    if re.search(r"shared|share|Shared|Share|shares|Shares",share_check):
+                        print("This is a shared post")
+                        time.sleep(1)
+                        continue
                 except Exception as e:
-                    print(f"An error occur when trying to get hover time : {str(e)}")
-                    publish_date = ""
-            else:
-                publish_date = ContentExtractor.get_post_time_stamp(post)
-
-            self.browser.execute_script("arguments[0].scrollIntoView();", post)
-
-            # date = ContentExtractor.get_post_time_stamp(post)
-            # date_reg = r"2020|2019-12-[2-3][1-9]|2019-12-30"
-            
-            # if not re.search(date_reg,date):
-            #     print("post already crawl")
-            #     continue
-            
-            # else:
-            # if re.search(date_reg,date):
-            #     print('post already crawl')
-            #     continue
-
-            # else:
-            click_see_more_button(browser= self.browser,post = post,type= g_type)
-            try:
-                share_check = post.find_element_by_css_selector('div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
-                if re.search(r"shared|share|Shared|Share|shares|Shares",share_check):
-                    print("This is a shared post")
-                    time.sleep(1)
                     continue
-            except Exception as e:
-                continue
-                print(f'Share check failed')
-        
-            # Check timestamp if the page is already scanned before            
-            # if(timestamp < "1576813657"):
-            # if(True):
-            dataObj , status = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type,crawl_history_id=crawl_history_id)
+                    print(f'Share check failed')
+            
+                # Check timestamp if the page is already scanned before            
+                # if(timestamp < "1576813657"):
+                # if(True):
+                dataObj , status = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type,crawl_history_id=crawl_history_id)
 
-            count = 0
-            while status and count  < 2:               
-                # print(dataObj.items())
-                # time.sleep(3)
-                time.sleep(0.5)
-                self.click_esc_key()
-                time.sleep(0.5)
-                click_see_more_button(browser = self.browser,post=post,type=g_type)
-                dataObj , status  = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type,crawl_history_id=crawl_history_id)
-                print("")
-                # print(f"--------------recrawling post {posts_.index(posts[g])}----------------")
-                print(f"--------------recrawling post {g}----------------")
-                print("")
-                count+=1
-                
-            if dataObj['post_detail'] == '':
-                dataObj['post_detail'] = 'Empty Post Detail'
+                count = 0
+                while status and count  < 2:               
+                    # print(dataObj.items())
+                    # time.sleep(3)
+                    time.sleep(0.5)
+                    self.click_esc_key()
+                    time.sleep(0.5)
+                    click_see_more_button(browser = self.browser,post=post,type=g_type)
+                    dataObj , status  = self.api_connector.convert_digizaay_object(post,browser=self.browser,page_id=ids,market_place=market_place,g_type=g_type,crawl_history_id=crawl_history_id)
+                    print("")
+                    # print(f"--------------recrawling post {posts_.index(posts[g])}----------------")
+                    print(f"--------------recrawling post {g}----------------")
+                    print("")
+                    count+=1
+                    
+                if dataObj['post_detail'] == '':
+                    dataObj['post_detail'] = 'Empty Post Detail'
 
-            if publish_date == '': ### If failed to get hover time , use formatted date instead
-                dataObj['published_at'] = ContentExtractor.get_post_time_stamp(post)
-            else:
-                dataObj['published_at'] = publish_date
+                if publish_date == '': ### If failed to get hover time , use formatted date instead
+                    dataObj['published_at'] = ContentExtractor.get_post_time_stamp(post)
+                else:
+                    dataObj['published_at'] = publish_date
 
-            print(dataObj)
-            all_content = []
-            all_content.append(dataObj)
-            print(all_content)
-            print(f"Total images -------------------> {len(dataObj['post_images'])}")
-            # time.sleep(7)
-            try:
-                # self.api_connector.sent_to_digizaay(all_content)
-                print("pass")
-            except Exception as e:
-                print("Error sending data to digizaay server") 
-                print("Error message : ",str(e))                   
-            # # print(f"------------------finished crawling post {posts_.index(posts[g])}--------------------------")
-            # else:
-            #     print(f'The post {g} doesnt have post detail')
-            #     print(f'Program Break!!')
-            #     break
-                
-
-            print(f"------------------finished crawling post {g}--------------------------")
-
-                            
+                print(dataObj)
+                all_content = []
+                all_content.append(dataObj)
+                print(all_content)
+                print(f"Posted date ---------------------> {dataObj['published_at']}")
+                print("\n")
+                print(f"Total images -------------------> {len(dataObj['post_images'])}")
+                # time.sleep(7)
+                try:
+                    self.api_connector.sent_to_digizaay(all_content)
+                    # print("pass")
+                except Exception as e:
+                    print("Error sending data to digizaay server") 
+                    print("Error message : ",str(e))                   
+                # # print(f"------------------finished crawling post {posts_.index(posts[g])}--------------------------")
+                # else:
+                #     print(f'The post {g} doesnt have post detail')
+                #     print(f'Program Break!!')
+                #     break
                     
 
-            # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
-        # print(all_content)
-        # self.api_connector.end_crawling(crawl_history_id)
-        # print("The number of data  ", len(all_content))
-        print("The number of posts ",len(posts))
+                print(f"------------------finished crawling post {g}--------------------------")
+
+                                
+                        
+
+                # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
+            # print(all_content)
+            self.api_connector.end_crawling(crawl_history_id)
+            # print("The number of data  ", len(all_content))
+            print("The number of posts ",len(posts))
+
+        except Exception as e:
+            print("An error occur while crawling posts : ", str(e))
+            self.api_connector.end_crawling(crawl_history_id)
+            self.browser.close()
+            sys.exit()
 
     
     def save_img_to_db(self, count, timestamp, url):

@@ -5,6 +5,8 @@ import datetime
 import sys
 from selenium import webdriver
 from time_extractor import get_publish_at
+import csv
+
 class ContentExtractor:
     @classmethod
     def get_post_time_stamp(cls,post):
@@ -14,6 +16,11 @@ class ContentExtractor:
         
         publish_at = get_publish_at(date_content)
         time.sleep(1)
+        # with open("Post_Dates.csv",'a') as fileobj:
+        #     fieldnames = ['Raw_date','Format_date']
+        #     writer = csv.DictWriter(fileobj,fieldnames=fieldnames)
+        #     writer.writeheader()
+        #     writer.writerow({'Raw_date': date_content,'Format_date': publish_at})
         return publish_at
     @classmethod
     def get_post_text(cls,post,browser):
@@ -35,6 +42,7 @@ class ContentExtractor:
                 post_text = post_text.text
             except Exception as e:
                 print("An error occur while trying to get blocktext ",str(e))
+                post_text = ''
         time.sleep(1)
         return post_text
     
@@ -43,17 +51,20 @@ class ContentExtractor:
         post_text = ''
         try:
             post_text = post.find_element_by_css_selector("div.rq0escxv.a8c37x1j.rz4wbd8a.a8nywdso > div:nth-of-type(2)")
-            webdriver.ActionChains(browser).move_to_element(post_text).perform()
+            # webdriver.ActionChains(browser).move_to_element(post_text).perform()
             post_text = post_text.text
         except Exception as e:
             print("An error occur while trying to get post text ",str(e))
             print("try another method")
             try:
                 post_text = post.find_element_by_tag_name("blockquote")
-                webdriver.ActionChains(browser).move_to_element(post_text).perform()
+                # webdriver.ActionChains(browser).move_to_element(post_text).perform()
                 post_text = post_text.text
             except Exception as e:
                 print("An error occur while trying to get blocktext ",str(e))
+                post_text = ''
+                
+        time.sleep(1)
         return post_text
                 
     

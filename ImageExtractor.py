@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import NoSuchElementException
+# from selenium.common.exceptions import InvalidSessionIdException
 import sys , traceback
 import time
 
@@ -37,7 +38,7 @@ class FacebookImageExtractor():
                     
                     if len(images) > 0:
                         print(f'last image url is { images[-1]}')
-                        while image_url == images[-1] and i < 10:
+                        while image_url == images[-1] and i < 30:
                             time.sleep(0.2)
                             i+=1
                             print(f'image url is {image_url}')
@@ -98,7 +99,7 @@ class FacebookImageExtractor():
                     image_url = spotlight.get_attribute("src")
                     i = 0
                     if len(images) > 0:                        
-                        while image_url == images[-1] and i < 10:
+                        while image_url == images[-1] and i < 30:
                             time.sleep(0.2)
                             i+=1                            
                             image_url = spotlight.get_attribute("src")
@@ -128,6 +129,10 @@ class FacebookImageExtractor():
                         count = 72
                     elif exc_type == NoSuchElementException:
                         WebDriverWait(browser,60).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.ji94ytn4")))
+
+                    # elif exc_type == InvalidSessionIdException:
+                    #     KeyBoard.click_esc_key(browser)
+                    #     return images
                     count += 1
                     time.sleep(0.5)
             print("******* done crawling images for post*************")

@@ -44,6 +44,7 @@ def crawl_search_posts(browser, history_id, page_id):
             try:
                 crawl_post = browser.find_element_by_css_selector(
                     "div[data-testid='Keycommand_wrapper_feed_story']")
+                post_date = ContentExtractor.get_post_time_stamp(crawl_post)
                 share_check = crawl_post.find_element_by_css_selector(
                     'div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
                 if re.search(r"shared|share|Shared|Share|shares|Shares", share_check):
@@ -59,7 +60,7 @@ def crawl_search_posts(browser, history_id, page_id):
                 WebDriverWait(browser, 10).until(EC.presence_of_element_located(
                     (By.XPATH, "//div[contains(text(),'See more')]")))
 
-                click_see_more_button(browser=browser, post=crawl_post)
+                click_see_more_button(browser=browser, post=crawl_post, type=0)
                 # data_obj , status = self.api_connector.convert_digizaay_object(crawl_post,browser=browser,page_id=None,market_place=0,g_type=0)
                 post_texts = ContentExtractor.get_post_text(
                     crawl_post, browser=browser)
@@ -101,7 +102,7 @@ def crawl_search_posts(browser, history_id, page_id):
 
                 dataobj = {
                     "post_detail": post_texts,
-                    "published_at": "2020-01-27 07:17:46",
+                    "published_at": post_date,
                     "author_name": None,
                     "post_images": post_images,
                     "segmentation": segments,

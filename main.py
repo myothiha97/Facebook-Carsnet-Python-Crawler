@@ -12,7 +12,7 @@ import os
 import getpass
 from DigiZaayAPI import DigiZaayApiConnector
 
-token =  'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiYzViNTM2ZjYwYmJkNmUzODE5OTY1NDU5Y2NhMDdkYWZkZWZmOGNhYzFmMWFlM2M4ZjM0NDNlNTliNmRkNjNhOWY5M2RlYjZlOWE3M2RkOWYiLCJpYXQiOjE1ODI4Nzc5NzIsIm5iZiI6MTU4Mjg3Nzk3MiwiZXhwIjoxNjE0NTAwMzcyLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.LO3h9dmRO3avdr0Xie6qju2SBYoN8Js283pRW2ajm1NGZeMRGB9mVBP0w6v7H4pkrvx1eAF0CFyFpEwWf5WF9FbEGbvBFMuVsYYfEQluAMYykPmR7RynXhBi_TVj7o2h7ZKK4RKCMqUdMD9R2S6K_ebtE0sfPn-Dh08pxwjYgx4ecpYImt0P6gfvhPON9tGzWrxd_GLeZ0Oqs5012v13gL1BKk45_op1_rovDG3o18eLk5ASYh38dkgT1My8zxN9Ommuz1EhDlwD0FcI_w6d1OYV0qprsxpvUUUT33tWeOhkC5Y1mViGGyPdQW3y08VGrUIaVGsPu6BpFx1whhDeDryTFY9FBv7dX3yhiz0mX51Tc5iOeIjXmy127PRBAzeYysHMG1I3WrE6It_LJ4r2BdVrLFfQc1zdNxC-KAy3CdwhHYsIYL9aGlSv2VPrXDRnNujF5nprZSTMbbgEbXW6ahAte2AyC6kFmfcl-Q-E2a7tCk_jMmo6lqiNR1RGhQjs-7j1SuNxvcVVm9mXO8z-L_k6Fh34SxkPD4_UR_EtGWV4XPpIEhxHJGzVfKR72LAgayfc5dnTZowKs2xMTsfAQLDLljuDmeDzgE1MIj1zgt9cQVQ9z5UUzfUiVQDMUW33uxQ07fasjFsGiGg9uQA6v_zO0epZ8c_Xl0bWbDGcNF0'
+token =  'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI2IiwianRpIjoiYjViYzczNDJlYjVkOGVlZDhiMzhhOTlmZGE3NjcxZmFjMTAwMTExMTM0ZDcwNmNkN2FmY2Q4NjYzMmRmZTNkZjUxNjA5OWQ3MGNjMDQwOTMiLCJpYXQiOjE1OTg1ODUxNTIsIm5iZiI6MTU5ODU4NTE1MiwiZXhwIjoxNjMwMTIxMTUyLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.kWldsf_gBhpyy_GVJW4csxbeftDLf_ztwFdRPIdXckvsldQB-yU-eMzSAhm4Dw5CMV-NW61deZKr9wgekdPQcU4HwtSj3z3A6HS82nc-74p0eABWNIfHpqIeqcmzr8veUiWjwxhXgSo63oE-1JMzlsW0nxhMyUfL70nDTwWAmK0mbKBSr1dXsEhM51bcTLJ2EApViIziMTAc8l09vkme9bOHQ_NFxvmRVXD_NuHQXWdQK3EsCsekp-hmTi3sfjg_2VmzDOr0-P2GqdKfhrCfp5ki6KJDOSEGlimfCS8MKrfri2niZnYE-UZ4vRghLv1eNIUte6di5wTsCWrEMpbY0fVE0rO9BCoTMtnZfMEv_97AvSoxY05f31t1S4mr-ym7dxg84rWcs2G5qpxGQoS_MARuvSmpM8L7mUHrm3lslTXberNDxNibgEMgXKcgO7wmNHl_mP-KAw6OAlQj0JBQivUPpHBP9FlPbf0wzfP4f6L1G6VvkY4E_BPXg5S9WGABYvYMHkzbr9AtVtutMnH-9BgvzKTcz8afCK2AOfl8nYxAlM83a1aaZFGxg44SqvKtS7w_ZrDwAGOwwnzYkfKiWgTHh_Jnbvmlaq-J-5Q8Dldc5l5KbrJnSD0AA1Up6ERDSSxDxZSR5Ab1LubfsRAOjTVPHpcPv8SOkCAl2hL4t4E'
 headers = {
             'Content-Type': "application/json",
             'Accept': "*/*",
@@ -98,12 +98,12 @@ if __name__ == '__main__':
     
     if args.test_crawl:
         # ## Carsnet Page Test
-        p.collect_from_api(ids=1,url = "https://www.facebook.com/CarsNET-102005471291910/",market_place=0)
-        time.sleep(1)
+        # p.collect_from_api(ids=1,url = "https://www.facebook.com/CarsNET-102005471291910/",market_place=0)
+        # time.sleep(1)
 
         ## Group Test - Online ကားပြဲစားတန္း ( YGN )
-        # p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
-        # time.sleep(1)
+        p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
+        time.sleep(1)
 
         # # Group Test - Online ကားမျိုးစုံရောင်းဝယ်ရေး
         # p.collect_from_api(ids=3,url = 'https://www.facebook.com/groups/1695736407377955/?ref=share',market_place=1)
