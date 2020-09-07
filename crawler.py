@@ -26,6 +26,7 @@ from SearchCrawlPost import crawl_search_posts
 from FacebookPostContentExtractor import ContentExtractor
 from evaluate_date import eval_date_to_crawl
 from TimeFormatter import format_time
+from utility.Send_Mail import send_mail
 
 class Crawler:
     def __init__(self, database, storage, depth, keep, filter):
@@ -154,6 +155,8 @@ class Crawler:
         except Exception as e:
             print("An error occur while scrolling : ", str(e))
             self.api_connector.end_crawling(crawl_history_id)
+            print("-------------->>Sending Email<<-------------")
+            send_mail(text_message=str(e))
             self.browser.close()
             sys.exit()
 
@@ -375,6 +378,8 @@ class Crawler:
         except Exception as e:
             print("An error occur while crawling posts : ", str(e))
             self.api_connector.end_crawling(crawl_history_id)
+            print("-------------->>Sending Email<<-------------")
+            send_mail(text_message=str(e))
             self.browser.close()
             sys.exit()
 
