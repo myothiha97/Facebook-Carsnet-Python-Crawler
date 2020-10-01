@@ -11,7 +11,8 @@ class ContentExtractor:
     @classmethod
     def get_post_time_stamp(cls,post):
         # Get Date
-        date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-of-type(2) > span > a > span").get_attribute("innerText")
+        print("Retrieving post time stamp")
+        date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-of-type(2) > span").get_attribute("innerText")
         print(date_content)
         
         publish_at = get_publish_at(date_content)

@@ -63,13 +63,20 @@ class FacebookImageExtractor():
                     
                 except Exception as ex:
                     print("Issue from ImageExtractor : "+str(ex))
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    print("error type : ",exc_type)
+                    print(f"Error message ---------> {exc_value} & data type --------> {type(exc_value)} ")
+                    if exc_type == ElementNotInteractableException:
+                        count = 72
                     count += 1
                     time.sleep(1)
+            print("**** Done crwaling images *****")
             KeyBoard.click_esc_key(browser)
         except Exception as e:
-            # No image holder or images here
-            print('Issue from ImageExtractor : ',str(e))
+            print('Issue from ImageHolder : ' + str(e))
             KeyBoard.click_esc_key(browser)
+            # No image holder or images here
+           
         return images
 
     def extract_images_from_normal_gallary(post,browser):
@@ -102,9 +109,11 @@ class FacebookImageExtractor():
                         while image_url == images[-1] and i < 30:
                             time.sleep(0.2)
                             i+=1                            
-                            image_url = spotlight.get_attribute("src")
-                            print(f'the loop count of the image is {i}')
-                    print(f'Successfully retrieve image ${image_url}')
+                            image_url = spotlight.get_attribute("src")                            
+                            print(".", end = '')
+                    print()
+                    print(f'Successfully retrieve the new image ===> ${image_url}')
+
                     if image_url in images:                        
                         print('This image is already retrieved')
                         # hasMore = False
@@ -120,11 +129,11 @@ class FacebookImageExtractor():
                     # time.sleep(1.2)
                     count += 1
                 except Exception as ex:
-                    print("Issue from ImageExtractor : ")
+                    # print("Issue from ImageExtractor : ")
                     
                     exc_type, exc_value, exc_traceback = sys.exc_info()
-                    print("error type : ",exc_type)
-                    print(f"Error message ---------> {exc_value} & data type --------> {type(exc_value)} ")
+                    # print("error type : ",exc_type)
+                    # print(f"Error message ---------> {exc_value} & data type --------> {type(exc_value)} ")
                     if exc_type == ElementNotInteractableException:
                         count = 72
                     elif exc_type == NoSuchElementException:

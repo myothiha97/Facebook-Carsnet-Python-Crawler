@@ -41,6 +41,7 @@ class Crawler:
         ''' Chrome options to optimize crawling process '''
         # self.options.add_argument('--disable-dev-shm-usage')
         self.options.add_argument('--no-sandbox')
+        # self.options.add_argument('--headless')
         self.options.add_argument('--disable-gpu')  
         self.options.add_argument('--disable-default-apps') 
         self.options.add_argument('--disable-extensions')
@@ -64,14 +65,18 @@ class Crawler:
         # pages_ids = self.db.extract_page_ids_from_page()
         # print(objects)
         # time.sleep(60)
-        for ids in objects:
+
+        # To prevent session crash issue
+        self.browser.set_page_load_timeout(1000)
+
+        for ids in objects:            
             # self.select_types(type, url.strip())
             if type == "search":
                 # objects = self.ids.strip().split(',')
                 # self.click_store_overview_posts(url)
                 # self.click_store_overview_posts(ids)
                 txt = ids
-                self.browser.get("https://www.facebook.com/CarsNET-102005471291910")
+                self.browser.get("https://www.facebook.com/CarsNET-102005471291910")                
                 # time.sleep(self.delay)
                 WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div[aria-label = 'Search']")))
                 search_box = self.browser.find_element_by_css_selector("div[aria-label = 'Search']")
@@ -264,19 +269,30 @@ class Crawler:
             print("The number of posts to crawl : ",len(posts))
 
             ''' Skip to desire post number.Only use when large amount of posts are crawled '''
-            # posts = posts[900:] ## Can use desire number. 
-            # check = 0
+            # posts = posts[461:] ## Can use desire number. 
+            # check = True
             for g,post in enumerate(posts):
                 # Click See More Button if exist
                 # webdriver.ActionChains(self.browser).move_to_element(post).perform()
+                # g += 461
                 ''' Skipping logic '''
-                # if check == 0:  
-                #     print("Skip to post 900")
+                # if check == True:  
+                #     print("Skipped")
                 #     self.browser.execute_script("arguments[0].scrollIntoView();", post)
-                #     check +=1
+                #     check = False
                 #     continue
                 ''' Check if the date is needed to be hovered '''
-                date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-of-type(2) > span > a > span").get_attribute("innerText")
+                date_content = ""
+                try:
+                    date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-child(2) > span").get_attribute("innerText")
+                    # print(date_content.get_attribute("innerText"))
+                    # date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-child(2) > span > a > span > span").get_attribute("innerText")
+                    print(date_content)
+                except  Exception as e:
+                    print("Error extracting date_content")
+                    print(post.get_attribute("innerText"))
+                    print(str(e))                    
+
                 if re.search(r"d|D",date_content):
                     print("Day include in date content")
                     time.sleep(1)
@@ -299,7 +315,7 @@ class Crawler:
                 self.browser.execute_script("arguments[0].scrollIntoView();", post)
 
                 ''' Check if the post is already crawled '''
-                # date_reg = r"2020-(08|8)-(31|30|29|28|27|26|25|24|23)|2020-(09|9)"
+                # date_reg = r"2020-(09|9)-(06|6|07|7)"
                 # if re.search(date_reg,publish_date):
                 #     print("post already crawl")
                 #     continue
