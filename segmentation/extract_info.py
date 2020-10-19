@@ -1,6 +1,7 @@
 import re
 # from regex_pattern import *
 from segmentation.regex_pattern import *
+import datetime
 
 class Extractor:
     def __init__(self):
@@ -141,9 +142,15 @@ class Extractor:
             pass
         else:
             if re.search(r'[1][9][9][0-9]|[2][0][0-9][0-9]',line):
-                self.segment['year'] = re.search(r'[1][9][9][0-9]|[2][0][0-9][0-9]',line).group()
-                 
-                
+                # self.segment['year'] = re.search(r'[1][9][9][0-9]|[2][0][0-9][0-9]',line).group()
+                years = re.findall(r'[1][9][9][0-9]|[2][0][0-9][0-9]',line)
+                current_yr = datetime.datetime.now().strftime("%Y")
+                filterd_yrs = list(filter(lambda yr: yr <= current_yr,years))
+                if filterd_yrs:
+                    self.segment['year'] = filterd_yrs[0] ### Choose the first year 
+                else:
+                    self.segment['year'] = '-'
+        
             elif re.search(r'model', line) and self.segment['model'] == '-':
                 model = line.replace('model','').strip()
                 self.segment['model'] = re.sub(r'\W+','',model).strip()
@@ -304,7 +311,7 @@ class Extractor:
                  
             else:
                 price = re.search(r"\d+", price).group()
-                
+
                 if len(price) > 1:
                     new_str = ''
                     for i in price:
@@ -317,8 +324,18 @@ class Extractor:
                 else:
                     self.segment['price'] = '-'
         except:
-            print("failed finding price")
-            self.segment['price'] = '-'
+            if re.search(r"price|lakhs|lks|စျေး|သိန်း",price):
+                digits = re.findall(r"\d+",line)
+                price = list(filter(lambda digit: len(digit) <=4,digits))[0]
+                new_str = ''
+                for i in price:
+                    if 4160 <= ord(i) <=4170:
+                            new_str += str(ord(i)%10)
+                    else:
+                        new_str += i
+                self.segment['price'] = new_str + ' ' + 'Lakhs'
+            else:
+                self.segment['price'] = '-' 
             
     
     def get_mileage(self,line):
