@@ -53,7 +53,7 @@ class Entity_extractor:
         
 if __name__ =="__main__":
     extractor = Entity_extractor()
-    str1="""Toyota Mark X
+    str1="""Toyota Mark X 2022 2019
 2004 Model
 Kilo-160000
 Metallic Black Color
@@ -63,7 +63,7 @@ Push Start , Smart Key
 First Owner, Car at good condition
 1H- 9**2
 Yangon Licence
-Price: 275 သိန်း (ညှိနှိုင်း)
+သိန်း: ၁၃၃  (ညှိနှိုင်း)
 ရန်ကုန်မြို့ ရန်ကင်း တွင်ကားကြည့်နိုင်ပါသည်
 09-766644851
 09-88423611"""
