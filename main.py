@@ -85,8 +85,9 @@ if __name__ == '__main__':
         if pages:
             print(f"Total {len(pages)} page to crawl")
             for page in pages:
-                p.collect_from_api(ids=page['id'],url=page['url'],market_place=page['is_marketplace'])
-                time.sleep(1)
+                if page['is_active'] == 1:
+                    p.collect_from_api(ids=page['id'],url=page['url'],market_place=page['is_marketplace'])
+                    time.sleep(1)
         else:
             print("There is no page to crawl")
 
@@ -169,7 +170,7 @@ if __name__ == '__main__':
         # p.collect_from_api(ids=18,url = 'https://www.facebook.com/groups/213191119285748/',market_place=1)
         # time.sleep(1)  
 
-        # # 19	Yangon Car Online Sale Group	https://www.facebook.com/groups/240683956371062/
+        # 19	Yangon Car Online Sale Group	https://www.facebook.com/groups/240683956371062/
         # p.collect_from_api(ids=19,url = 'https://www.facebook.com/groups/240683956371062/',market_place=1)
         # time.sleep(1)  
 
@@ -177,27 +178,27 @@ if __name__ == '__main__':
         # p.collect_from_api(ids=20,url = 'https://www.facebook.com/groups/233517020338369/',market_place=1)
         # time.sleep(1)  
 
-        # # c-> 21	မန်းလေးကားမျိုးစုံရောင်းဝယ်ရေး	https://www.facebook.com/groups/1640172876271325/
-        # p.collect_from_api(ids=21,url = 'https://www.facebook.com/groups/1640172876271325/',market_place=1)
-        # time.sleep(1)  
+        # c-> 21	မန်းလေးကားမျိုးစုံရောင်းဝယ်ရေး	https://www.facebook.com/groups/1640172876271325/
+        p.collect_from_api(ids=21,url = 'https://www.facebook.com/groups/1640172876271325/',market_place=1)
+        time.sleep(1)  
 
-        # # c-> 22	Taxi ရောင်းဝယ်ရေး	https://www.facebook.com/groups/155793198089677/
+        # c-> 22 	Taxi ရောင်းဝယ်ရေး	https://www.facebook.com/groups/155793198089677/
         # p.collect_from_api(ids=22,url = 'https://www.facebook.com/groups/155793198089677/',market_place=1)
         # time.sleep(1)  
 
-        # c-> 23	TAXI Sales ( အငှားယာဉ်သီးသန့်ရောင်းရန် )	https://www.facebook.com/groups/1468044100104906/
-        p.collect_from_api(ids=23,url = 'https://www.facebook.com/groups/155793198089677/',market_place=1)
-        time.sleep(1) 
+        # # c-> 23	TAXI Sales ( အငှားယာဉ်သီးသန့်ရောင်းရန် )	https://www.facebook.com/groups/1468044100104906/
+        # p.collect_from_api(ids=23,url = 'https://www.facebook.com/groups/1468044100104906/',market_place=1)
+        # time.sleep(1) 
 
-        ## 24	ရန်ကုန်လိုင်စင် အိမ်စီးကားသီးသန့်အရောင်းအဝယ်	https://www.facebook.com/groups/1573085942991070/?ref=share
+        # # 24	ရန်ကုန်လိုင်စင် အိမ်စီးကားသီးသန့်အရောင်းအဝယ်	https://www.facebook.com/groups/1573085942991070/?ref=share
         # p.collect_from_api(ids=24,url = 'https://www.facebook.com/groups/1573085942991070/',market_place=1)
         # time.sleep(1) 
 
-        ## 25	ကားမျိုးစုံရောင်းဝယ်ရာနေရာ	https://www.facebook.com/groups/1377034182534659/
+        # # 25	ကားမျိုးစုံရောင်းဝယ်ရာနေရာ	https://www.facebook.com/groups/1377034182534659/
         # p.collect_from_api(ids=25,url = 'https://www.facebook.com/groups/1377034182534659/',market_place=1)
         # time.sleep(1) 
 
-        ## 26	Online ကား ပွဲ စား တန်း	https://www.facebook.com/groups/carforsale01/?ref=share
+        # # 26	Online ကား ပွဲ စား တန်း	https://www.facebook.com/groups/carforsale01/?ref=share
         # p.collect_from_api(ids=26,url = 'https://www.facebook.com/groups/carforsale01/',market_place=1)
         # time.sleep(1) 
 

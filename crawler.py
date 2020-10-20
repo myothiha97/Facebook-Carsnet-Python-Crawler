@@ -89,8 +89,8 @@ class Crawler:
                 # time.sleep(2)
 
                 ### change page id when crawling other page .For now page id is 1 for carsnet #####
-                # crawl_history_id = self.api_connector.get_crawl_history_id(1)
-                crawl_history_id = 1
+                crawl_history_id = self.api_connector.get_crawl_history_id(1)
+                # crawl_history_id = 1
                 time.sleep(5)
                 crawl_search_posts(browser = self.browser,history_id = crawl_history_id,page_id =1 )
             else:
@@ -120,7 +120,8 @@ class Crawler:
                     self.crawl_posts()
                 if type == "group":
                     # print("This is market place")
-                    gp_type = self.browser.find_element_by_css_selector("div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span").text
+                    # Search for discussion word to determind if it is Normal or Marketplace group
+                    gp_type = self.browser.find_element_by_css_selector("div > div.rq0escxv.l9j0dhe7.du4w35lb.j83agx80.pfnyh3mw > div > div > div > div > div > div > div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4 > a:nth-child(3)").text
                     if gp_type == "Discussion":
                         print("This group is normal gp")
                         self.crawl_posts(market_place=0,g_type = 1)
@@ -160,8 +161,12 @@ class Crawler:
         except Exception as e:
             print("An error occur while scrolling : ", str(e))
             self.api_connector.end_crawling(crawl_history_id)
-            print("-------------->>Sending Email<<-------------")
-            send_mail(text_message=str(e))
+            print("-------------->>Sending Email<<-------------")    
+            content = f"""Crawler stopped while running for {url} [id = {ids}] at scroll depth {scroll_count}                       
+                      Detail as follow :
+                      {str(e)}
+                      """
+            send_mail(text_message=content)
             self.browser.close()
             sys.exit()
 
@@ -173,8 +178,8 @@ class Crawler:
             print("This is page")
             self.crawl_posts(ids,crawl_history_id=crawl_history_id , market_place = 0, g_type=0)
         else:
-            WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span")))
-            gp_type = self.browser.find_element_by_css_selector("div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span").text
+            WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div > div.rq0escxv.l9j0dhe7.du4w35lb.j83agx80.pfnyh3mw > div > div > div > div > div > div > div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4 > a:nth-child(3)")))
+            gp_type = self.browser.find_element_by_css_selector("div > div.rq0escxv.l9j0dhe7.du4w35lb.j83agx80.pfnyh3mw > div > div > div > div > div > div > div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4 > a:nth-child(3)").text
             if gp_type == "Discussion":
                 print("This group is normal gp")
                 self.crawl_posts(ids,crawl_history_id=crawl_history_id,market_place=0, g_type = 1)
@@ -261,6 +266,9 @@ class Crawler:
 
     def crawl_posts(self,ids,crawl_history_id,market_place,g_type):
 
+        # Skip to the post index directly
+        current_post_index = 1
+
         try:
             posts = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")
             # posts = posts_[::-1]
@@ -269,12 +277,13 @@ class Crawler:
             print("The number of posts to crawl : ",len(posts))
 
             ''' Skip to desire post number.Only use when large amount of posts are crawled '''
-            # posts = posts[461:] ## Can use desire number. 
+            posts = posts[current_post_index:] ## Can use desire number. 
             # check = True
             for g,post in enumerate(posts):
                 # Click See More Button if exist
                 # webdriver.ActionChains(self.browser).move_to_element(post).perform()
-                # g += 461
+                current_post_index += 1
+                g = current_post_index
                 ''' Skipping logic '''
                 # if check == True:  
                 #     print("Skipped")
@@ -382,9 +391,6 @@ class Crawler:
 
                 print(f"------------------finished crawling post {g}--------------------------")
 
-                                
-                        
-
                 # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
             # print(all_content)
             self.api_connector.end_crawling(crawl_history_id)
@@ -395,7 +401,13 @@ class Crawler:
             print("An error occur while crawling posts : ", str(e))
             self.api_connector.end_crawling(crawl_history_id)
             print("-------------->>Sending Email<<-------------")
-            send_mail(text_message=str(e))
+            content = f"""Crawler stopped while running for {self.browser.current_url} [id = {ids}] at post depth {current_post_index}       
+                      You should restart the page by assigning current_post_index = {current_post_index} at crawler.py +line 269
+
+                      Error detail as follow :
+                      {str(e)}
+                      """
+            send_mail(text_message=content)
             self.browser.close()
             sys.exit()
 
