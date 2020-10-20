@@ -318,7 +318,8 @@ class Extractor:
         except:
             if re.search(r"price|lakhs|lks|စျေး|သိန်း", price):
                 print(line)
-                digits = re.findall(r"\d+", line)
+                digits = re.findall(r"[၀-၉]+|\d+", line)
+                
                 if digits:
                     price = list(
                         filter(lambda digit: len(digit) <= 4, digits))[0]
