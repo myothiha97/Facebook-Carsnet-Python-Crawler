@@ -39,15 +39,17 @@ b180,slk350,e320,gl350,gl450,
 c300,glc250,b170,glc300,e250,
 rvr,pajero,mirage,colt,delica,
 outlander,fuso,asx,eclipse,
-x-trail,sunny,qashqai,wingroad,juke,elgrand,cedric,advan,ad,van,
+x-trail,sunny,qashqai,wingroad,juke,elgrand,cedric,advan,van,
 navara,rogue,model3,modelx,xc90,xc60,v40,bighorn,elf,d-max,dmax,wizard,trooper'''
 raw_models = re.sub(r'\n', '', raw_car_models)
 # print(raw_models)
 models = re.sub(r'[,]', '|', raw_models)
-print(models)
+models = models.strip()
+
+# print(models)
 if __name__ == "__main__":
     ''' Testing '''
-    test_string = 'this is a explorer'
-    if re.search(models, test_string):
-        print(re.search(models, test_string).group())
+    test_string = "this is a Caldina"
+    if re.search(models, test_string.lower()):
+        print(re.search(models, test_string.lower()).group())
         print("is working")
