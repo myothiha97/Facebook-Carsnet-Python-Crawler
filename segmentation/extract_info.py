@@ -1,5 +1,9 @@
 import re
-from segmentation.regex_pattern import *
+import sys,os
+# from segmentation.regex_pattern import *
+sys.path.append('/home/mthk/Desktop/mmds-crawler/mmDS-FBCrawler-Selenium/segmentation')
+# sys.path.append(os.path.abspath(os.path.join('..','regex_pattern')))
+from regex_pattern import *
 import datetime
 
 

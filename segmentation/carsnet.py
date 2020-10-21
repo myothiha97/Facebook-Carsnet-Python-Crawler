@@ -3,6 +3,10 @@ import pandas as pd
 from converter import zg12uni51
 import csv
 import json
+import sys,os
+sys.path.append('/home/mthk/Desktop/mmds-crawler/mmDS-FBCrawler-Selenium/segmentation')
+# sys.path.append(os.path.abspath(os.path.join('..','regex_pattern')))
+# sys.path.append(os.path.abspath(os.path.join('..','extract_info')))
 
 # from segmentation.regex_pattern import *
 # from segmentation.extract_info import Extractor

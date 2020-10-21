@@ -50,6 +50,7 @@ models = models.strip()
 if __name__ == "__main__":
     ''' Testing '''
     test_string = "this is a Caldina"
+    
     if re.search(models, test_string.lower()):
         print(re.search(models, test_string.lower()).group())
         print("is working")
