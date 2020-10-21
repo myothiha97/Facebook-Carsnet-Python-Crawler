@@ -150,7 +150,7 @@ class Crawler:
                 # Scrolling
                 self.browser.execute_script(
                     "window.scrollBy(0, document.body.scrollHeight)")
-                # latest_post = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")[-1]
+                # latest_post = self.browser.find_elements_by_css_selector("div[aria-posinset]")[-1]
                 # date = ContentExtractor.get_post_time_stamp(latest_post)
                 # print(f"Scroll count : {scroll_count} and latest post date : {date}")
                 # if re.search("2019-(01|1)",date):
@@ -270,9 +270,9 @@ class Crawler:
         current_post_index = 1
 
         try:
-            posts = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")
+            posts = self.browser.find_elements_by_css_selector("div[aria-posinset]")
             # posts = posts_[::-1]
-            # posts = posts[200:]
+            # posts = posts[200:]div[aria-posinset]
             check_already_safe_stimestamp = False
             print("The number of posts to crawl : ",len(posts))
 

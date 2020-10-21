@@ -103,8 +103,8 @@ if __name__ == '__main__':
         # time.sleep(1)
 
         # # Group Test - Online ကားပြဲစားတန္း ( YGN )
-        # p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
-        # time.sleep(1)
+        p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
+        time.sleep(1)
 
         # # Group Test - Online ကားမျိုးစုံရောင်းဝယ်ရေး
         # p.collect_from_api(ids=3,url = 'https://www.facebook.com/groups/1695736407377955/?ref=share',market_place=1)
@@ -178,9 +178,9 @@ if __name__ == '__main__':
         # p.collect_from_api(ids=20,url = 'https://www.facebook.com/groups/233517020338369/',market_place=1)
         # time.sleep(1)  
 
-        # c-> 21	မန်းလေးကားမျိုးစုံရောင်းဝယ်ရေး	https://www.facebook.com/groups/1640172876271325/
-        p.collect_from_api(ids=21,url = 'https://www.facebook.com/groups/1640172876271325/',market_place=1)
-        time.sleep(1)  
+        # # c-> 21	မန်းလေးကားမျိုးစုံရောင်းဝယ်ရေး	https://www.facebook.com/groups/1640172876271325/
+        # p.collect_from_api(ids=21,url = 'https://www.facebook.com/groups/1640172876271325/',market_place=1)
+        # time.sleep(1)  
 
         # c-> 22 	Taxi ရောင်းဝယ်ရေး	https://www.facebook.com/groups/155793198089677/
         # p.collect_from_api(ids=22,url = 'https://www.facebook.com/groups/155793198089677/',market_place=1)
