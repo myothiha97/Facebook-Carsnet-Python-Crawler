@@ -1,5 +1,4 @@
 import re
-# from regex_pattern import *
 from segmentation.regex_pattern import *
 import datetime
 
@@ -316,21 +315,27 @@ class Extractor:
                 else:
                     self.segment['price'] = '-'
         except:
-            if re.search(r"price|lakhs|lks|စျေး|သိန်း", price):
-                print(line)
+            if re.search(r"သိိန်း|price|lakhs|lks|စျေး|သိန်း", price):
+                # print(line)
                 digits = re.findall(r"[၀-၉]+|\d+", line)
-                
+                # print(digits)
                 if digits:
                     price = list(
-                        filter(lambda digit: len(digit) <= 4, digits))[0]
-                    print(price)
-                    new_str = ''
-                    for i in price:
-                        if 4160 <= ord(i) <= 4170:
-                            new_str += str(ord(i) % 10)
+                        filter(lambda digit: len(digit) <= 4, digits))
+                    if price:
+                        price = price[0]
+                        if len(price) < 2:
+                            self.segment['price'] = '-'
                         else:
-                            new_str += i
-                    self.segment['price'] = new_str + ' ' + 'Lakhs'
+                            new_str = ''
+                            for i in price:
+                                if 4160 <= ord(i) <= 4170:
+                                    new_str += str(ord(i) % 10)
+                                else:
+                                    new_str += i
+                            self.segment['price'] = new_str + ' ' + 'Lakhs'
+                    else:
+                        self.segment['price'] = '-'
                 else:
                     self.segment['price'] = '-'
             else:
@@ -353,11 +358,11 @@ class Extractor:
             try:
                 # 1++++ , 3xxxxx, 4*****, 2 သိန်း
                 array = re.search(
-                    r'\d+\s*[+]+|\d+\s*[x]+|\d+\s*\*+|\d+\s*(သောင်း|သိန်း|သ်ိန်း)+', line).group()
+                    r'\d+\s*[+]+|\d+\s*[x]+|\d+\s*\*+|[(]*\d+[)]*\s*(သောင်း|သိန်း|သ်ိန်း)+', line).group()
                 # km = ''.join(array)
-                # print(array)
                 km = re.sub("kilo", "", array)
                 km = re.sub(" ", "", km)
+                km = re.sub(r'[()]','',km)
                 if km.find(',') >= 0:
                     mileage = km.replace(',', '')
                 elif km.find('+') >= 0:
@@ -377,7 +382,7 @@ class Extractor:
                     mileage = km
                     # print(mileage)
                 if len(mileage) < 7:
-
+                    # print(mileage)
                     new_str = ''
                     for i in mileage:
                         if 4160 <= ord(i) <= 4170:
@@ -389,7 +394,7 @@ class Extractor:
                 else:
                     self.segment['mileage'] = '-'
 
-            except:
+            except Exception as e:
                 self.segment['mileage'] = '-'
 
     def get_region(self, line):
