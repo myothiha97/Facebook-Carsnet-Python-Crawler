@@ -320,16 +320,21 @@ class Extractor:
                 print(line)
                 digits = re.findall(r"\d+", line)
                 if digits:
-                    price = list(
-                        filter(lambda digit: len(digit) <= 4, digits))[0]
-                    print(price)
-                    new_str = ''
-                    for i in price:
-                        if 4160 <= ord(i) <= 4170:
-                            new_str += str(ord(i) % 10)
-                        else:
-                            new_str += i
-                    self.segment['price'] = new_str + ' ' + 'Lakhs'
+                    try:
+                        price = list(
+                            filter(lambda digit: len(digit) <= 4, digits))[0]
+                        print(price)
+                        
+                        new_str = ''
+                        for i in price:
+                            if 4160 <= ord(i) <= 4170:
+                                new_str += str(ord(i) % 10)
+                            else:
+                                new_str += i
+                        self.segment['price'] = new_str + ' ' + 'Lakhs'
+                    except Exception as e:
+                         print(f"An error occur while trying to get price : {str(e)}")
+                         self.segment['price'] = '-'
                 else:
                     self.segment['price'] = '-'
             else:
