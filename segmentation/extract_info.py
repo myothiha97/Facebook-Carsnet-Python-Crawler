@@ -1,8 +1,9 @@
 import re
 import sys,os
-# from segmentation.regex_pattern import *
-sys.path.append('/home/mthk/Desktop/mmds-crawler/mmDS-FBCrawler-Selenium/segmentation')
-# sys.path.append(os.path.abspath(os.path.join('..','regex_pattern')))
+import pathlib
+p = pathlib.Path('segmentation').resolve()
+sys.path.append(str(p))
+# sys.path.append('/home/mthk/Desktop/mmds-crawler/mmDS-FBCrawler-Selenium/segmentation')
 from regex_pattern import *
 import datetime
 
@@ -319,17 +320,17 @@ class Extractor:
                 else:
                     self.segment['price'] = '-'
         except:
-            if re.search(r"သိိန်း|price|lakhs|lks|စျေး|သိန်း", price):
+            if re.search(r"သိိန်း|price|lakhs|lks|စျေး|သိန်း", price): 
                 # print(line)
                 digits = re.findall(r"[၀-၉]+|\d+", line)
                 # print(digits)
                 if digits:
                     price = list(
                         filter(lambda digit: len(digit) <= 4, digits))
-                    if price:
+                    if price: ### continue operation if price is not empty otherwise pass to next iteration
                         price = price[0]
-                        if len(price) < 2:
-                            self.segment['price'] = '-'
+                        if len(price) < 2: ### we will pass if len price is too small
+                            self.segment['price'] = '-' 
                         else:
                             new_str = ''
                             for i in price:
@@ -362,11 +363,11 @@ class Extractor:
             try:
                 # 1++++ , 3xxxxx, 4*****, 2 သိန်း
                 array = re.search(
-                    r'\d+\s*[+]+|\d+\s*[x]+|\d+\s*\*+|[(]*\d+[)]*\s*(သောင်း|သိန်း|သ်ိန်း)+', line).group()
+                    r'\d+\s*[+]+|\d+\s*[x]+|\d+\s*\*+|[(]*\d+[)]*\s*(သောင်း|သိန်း|သ်ိန်း)+', line).group() ### add '('and  ')' pattern
                 # km = ''.join(array)
                 km = re.sub("kilo", "", array)
                 km = re.sub(" ", "", km)
-                km = re.sub(r'[()]','',km)
+                km = re.sub(r'[()]','',km) ### remove any '(' or ')'
                 if km.find(',') >= 0:
                     mileage = km.replace(',', '')
                 elif km.find('+') >= 0:
