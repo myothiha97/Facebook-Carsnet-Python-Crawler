@@ -6,12 +6,12 @@ import os
 import decouple
 
 def send_mail(text_message):
-    email_address = 'myothiha.kyaw@mm-digital-solutions.com'
-    email_pass = 'blackeye.mmr3345'
+    email_address = 'th.ucsy@gmail.com'
+    email_pass = 'tnkutpvjiyxrbgqo'
     
-    contacts = ['mthk97.mc@gmail.com','thethlaing@mm-digital-solutions.com']
+    contacts = ['thethlaing@mm-digital-solutions.com']
     msg = EmailMessage()
-    msg['Subject'] = 'Crawler Error Message'
+    msg['Subject'] = 'Carsnet Crawler had an issue and suddently stoppped!'
     msg['From'] = email_address
     msg['To'] = ','.join(contacts)
     msg.set_content(text_message)

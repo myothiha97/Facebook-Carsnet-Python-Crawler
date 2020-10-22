@@ -38,12 +38,12 @@ def crawl_search_posts(browser, history_id, page_id):
 
             # browser.get(post_url)
             WebDriverWait(browser, 10).until(EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div[data-testid='Keycommand_wrapper_feed_story']")))
+                (By.CSS_SELECTOR, "div[aria-posinset]")))
             # self.click_esc_key()
             # time.sleep(3)
             try:
                 crawl_post = browser.find_element_by_css_selector(
-                    "div[data-testid='Keycommand_wrapper_feed_story']")
+                    "div[aria-posinset]")
                 post_date = ContentExtractor.get_post_time_stamp(crawl_post)
                 share_check = crawl_post.find_element_by_css_selector(
                     'div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text

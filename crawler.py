@@ -42,8 +42,9 @@ class Crawler:
         ''' Chrome options to optimize crawling process '''
         # self.options.add_argument('--disable-dev-shm-usage')
         self.options.add_argument('--no-sandbox')
-        self.options.add_argument('--disable-gpu')
-        self.options.add_argument('--disable-default-apps')
+        # self.options.add_argument('--headless')
+        self.options.add_argument('--disable-gpu')  
+        self.options.add_argument('--disable-default-apps') 
         self.options.add_argument('--disable-extensions')
         self.options.add_argument('--disable-sync')
         self.options.add_argument('--disable-hang-monitor')
@@ -66,15 +67,18 @@ class Crawler:
         # pages_ids = self.db.extract_page_ids_from_page()
         # print(objects)
         # time.sleep(60)
-        for ids in objects:
+
+        # To prevent session crash issue
+        self.browser.set_page_load_timeout(1000)
+
+        for ids in objects:            
             # self.select_types(type, url.strip())
             if type == "search":
                 # objects = self.ids.strip().split(',')
                 # self.click_store_overview_posts(url)
                 # self.click_store_overview_posts(ids)
                 txt = ids
-                self.browser.get(
-                    "https://www.facebook.com/CarsNET-102005471291910")
+                self.browser.get("https://www.facebook.com/CarsNET-102005471291910")       
                 # time.sleep(self.delay)
                 WebDriverWait(self.browser, 10).until(EC.presence_of_element_located(
                     (By.CSS_SELECTOR, "div[aria-label = 'Search']")))
@@ -91,8 +95,8 @@ class Crawler:
                 # time.sleep(2)
 
                 ### change page id when crawling other page .For now page id is 1 for carsnet #####
-                # crawl_history_id = self.api_connector.get_crawl_history_id(1)
-                crawl_history_id = 1
+                crawl_history_id = self.api_connector.get_crawl_history_id(1)
+                # crawl_history_id = 1
                 time.sleep(5)
                 crawl_search_posts(browser=self.browser,
                                    history_id=crawl_history_id, page_id=1)
@@ -124,8 +128,8 @@ class Crawler:
                     self.crawl_posts()
                 if type == "group":
                     # print("This is market place")
-                    gp_type = self.browser.find_element_by_css_selector(
-                        "div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span").text
+                    # Search for discussion word to determind if it is Normal or Marketplace group
+                    gp_type = self.browser.find_element_by_css_selector("div > div.rq0escxv.l9j0dhe7.du4w35lb.j83agx80.pfnyh3mw > div > div > div > div > div > div > div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4 > a:nth-child(3)").text
                     if gp_type == "Discussion":
                         print("This group is normal gp")
                         self.crawl_posts(market_place=0, g_type=1)
@@ -154,7 +158,7 @@ class Crawler:
                 # Scrolling
                 self.browser.execute_script(
                     "window.scrollBy(0, document.body.scrollHeight)")
-                # latest_post = self.browser.find_elements_by_css_selector("div[data-testid='Keycommand_wrapper_feed_story']")[-1]
+                # latest_post = self.browser.find_elements_by_css_selector("div[aria-posinset]")[-1]
                 # date = ContentExtractor.get_post_time_stamp(latest_post)
                 # print(f"Scroll count : {scroll_count} and latest post date : {date}")
                 # if re.search("2019-(01|1)",date):
@@ -165,8 +169,12 @@ class Crawler:
         except Exception as e:
             print("An error occur while scrolling : ", str(e))
             self.api_connector.end_crawling(crawl_history_id)
-            print("-------------->>Sending Email<<-------------")
-            send_mail(text_message=str(e))
+            print("-------------->>Sending Email<<-------------")    
+            content = f"""Crawler stopped while running for {url} [id = {ids}] at scroll depth {scroll_count}                       
+                      Detail as follow :
+                      {str(e)}
+                      """
+            send_mail(text_message=content)
             self.browser.close()
             sys.exit()
 
@@ -180,10 +188,10 @@ class Crawler:
             self.crawl_posts(
                 ids, crawl_history_id=crawl_history_id, market_place=0, g_type=0)
         else:
-            WebDriverWait(self.browser, 10).until(EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span")))
-            gp_type = self.browser.find_element_by_css_selector(
-                "div.bp9cbjyn.j83agx80.btwxx1t3.k4urcfbm > a:nth-of-type(2) > div > span").text
+
+            WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div > div.rq0escxv.l9j0dhe7.du4w35lb.j83agx80.pfnyh3mw > div > div > div > div > div > div > div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4 > a:nth-child(3)")))
+            gp_type = self.browser.find_element_by_css_selector("div > div.rq0escxv.l9j0dhe7.du4w35lb.j83agx80.pfnyh3mw > div > div > div > div > div > div > div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4 > a:nth-child(3)").text
+
             if gp_type == "Discussion":
                 print("This group is normal gp")
                 self.crawl_posts(
@@ -272,30 +280,47 @@ class Crawler:
 
     def crawl_posts(self, ids, crawl_history_id, market_place, g_type):
 
+        # Skip to the post index directly
+        current_post_index = 1
+
         try:
-            posts = self.browser.find_elements_by_css_selector(
-                "div[data-testid='Keycommand_wrapper_feed_story']")
+
+            posts = self.browser.find_elements_by_css_selector("div[aria-posinset]")
             # posts = posts_[::-1]
-            # posts = posts[200:]
+            # posts = posts[200:]div[aria-posinset]
             check_already_safe_stimestamp = False
             print("The number of posts to crawl : ", len(posts))
 
             ''' Skip to desire post number.Only use when large amount of posts are crawled '''
-            # posts = posts[900:] ## Can use desire number.
-            # check = 0
-            for g, post in enumerate(posts):
+
+            posts = posts[current_post_index:] ## Can use desire number. 
+            # check = True
+            for g,post in enumerate(posts):
                 # Click See More Button if exist
                 # webdriver.ActionChains(self.browser).move_to_element(post).perform()
+                current_post_index += 1
+                g = current_post_index
                 ''' Skipping logic '''
-                # if check == 0:
-                #     print("Skip to post 900")
+
+                # if check == True:  
+                #     print("Skipped")
                 #     self.browser.execute_script("arguments[0].scrollIntoView();", post)
-                #     check +=1
+                #     check = False
                 #     continue
                 ''' Check if the date is needed to be hovered '''
-                date_content = post.find_element_by_css_selector(
-                    "span[id*='jsc']  > span:nth-of-type(2) > span > a > span").get_attribute("innerText")
-                if re.search(r"d|D", date_content):
+
+                date_content = ""
+                try:
+                    date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-child(2) > span").get_attribute("innerText")
+                    # print(date_content.get_attribute("innerText"))
+                    # date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-child(2) > span > a > span > span").get_attribute("innerText")
+                    print(date_content)
+                except  Exception as e:
+                    print("Error extracting date_content")
+                    print(post.get_attribute("innerText"))
+                    print(str(e))                    
+
+                if re.search(r"d|D",date_content):
                     print("Day include in date content")
                     time.sleep(1)
                     try:
@@ -322,7 +347,7 @@ class Crawler:
                     "arguments[0].scrollIntoView();", post)
 
                 ''' Check if the post is already crawled '''
-                # date_reg = r"2020-(08|8)-(31|30|29|28|27|26|25|24|23)|2020-(09|9)"
+                # date_reg = r"2020-(09|9)-(06|6|07|7)"
                 # if re.search(date_reg,publish_date):
                 #     print("post already crawl")
                 #     continue
@@ -394,8 +419,7 @@ class Crawler:
                 #     print(f'Program Break!!')
                 #     break
 
-                print(
-                    f"------------------finished crawling post {g}--------------------------")
+                print(f"------------------finished crawling post {g}--------------------------")
 
                 # self.db.store_post_to_db(self.table,clean_emoji ,self.filter)
             # print(all_content)
@@ -407,7 +431,13 @@ class Crawler:
             print("An error occur while crawling posts : ", str(e))
             self.api_connector.end_crawling(crawl_history_id)
             print("-------------->>Sending Email<<-------------")
-            send_mail(text_message=str(e))
+            content = f"""Crawler stopped while running for {self.browser.current_url} [id = {ids}] at post depth {current_post_index}       
+                      You should restart the page by assigning current_post_index = {current_post_index} at crawler.py +line 269
+
+                      Error detail as follow :
+                      {str(e)}
+                      """
+            send_mail(text_message=content)
             self.browser.close()
             sys.exit()
 

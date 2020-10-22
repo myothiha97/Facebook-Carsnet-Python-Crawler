@@ -85,8 +85,9 @@ if __name__ == '__main__':
         if pages:
             print(f"Total {len(pages)} page to crawl")
             for page in pages:
-                p.collect_from_api(ids=page['id'],url=page['url'],market_place=page['is_marketplace'])
-                time.sleep(1)
+                if page['is_active'] == 1:
+                    p.collect_from_api(ids=page['id'],url=page['url'],market_place=page['is_marketplace'])
+                    time.sleep(1)
         else:
             print("There is no page to crawl")
 
@@ -97,11 +98,11 @@ if __name__ == '__main__':
         p.collect("search")
     
     if args.test_crawl:
-        # ## Carsnet Page Test
+        ## Carsnet Page Test
         # p.collect_from_api(ids=1,url = "https://www.facebook.com/CarsNET-102005471291910/",market_place=0)
         # time.sleep(1)
 
-        ## Group Test - Online ကားပြဲစားတန္း ( YGN )
+        # # Group Test - Online ကားပြဲစားတန္း ( YGN )
         p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
         time.sleep(1)
 
@@ -113,13 +114,98 @@ if __name__ == '__main__':
         # p.collect_from_api(ids=4,url = 'https://www.facebook.com/groups/378369752669659/?ref=share',market_place=1)
         # time.sleep(1)
 
-        # ##online ကားပွဲစားတန်း
+        # # online ကားပွဲစားတန်း
         # p.collect_from_api(ids=5,url = 'https://www.facebook.com/groups/carforsale01/?ref=share',market_place=1)
         # time.sleep(1)
 
-        # # Car အရောင်းအဝယ် ရန်ကုန်မြို့
-        # p.collect_from_api(ids=6,url = 'https://www.facebook.com/groups/323949978493502/?ref=share',market_place=1)
+        # Car အရောင်းအဝယ် ရန်ကုန်မြို့
+        p.collect_from_api(ids=6,url = 'https://www.facebook.com/groups/323949978493502/?ref=share',market_place=1)
+        time.sleep(1)
+
+        # # ကားပွဲစားတန်း
+        # p.collect_from_api(ids=7,url = 'https://www.facebook.com/groups/1382476945385129/?ref=share',market_place=1)
         # time.sleep(1)
+
+        # # CarZay (ကားဈေး)
+        # p.collect_from_api(ids=8,url = 'https://www.facebook.com/groups/1627128580904864/?ref=share',market_place=1)
+        # time.sleep(1)
+
+        # #  သိန်း၂၀၀အောက် ကားမျိုးစုံ ဝယ်ရောင်း
+        # p.collect_from_api(ids=9,url = 'https://www.facebook.com/groups/643021239182864/?ref=share',market_place=1)
+        # time.sleep(1)
+
+        # #  အိမ်စီးကားမျိုးစုံအရောင်းအဝယ်
+        # p.collect_from_api(ids=10,url = 'https://www.facebook.com/groups/1473937692898588/?ref=share',market_place=1)
+        # time.sleep(1)        
+
+        # # 11	ကားအရောင်းဝယ် Online .	https://www.facebook.com/groups/onlinecarsales/?ref=share
+        # p.collect_from_api(ids=11,url = 'https://www.facebook.com/groups/onlinecarsales/?ref=share',market_place=1)
+        # time.sleep(1)   
+
+        # # 12	ကားရောင်း / ကားဝယ် ကားပွဲစား များဆုံစည်းရာ	https://www.facebook.com/groups/1786089771666089/?ref=share
+        # p.collect_from_api(ids=12,url = 'https://www.facebook.com/groups/1786089771666089/?ref=share',market_place=1)
+        # time.sleep(1)   
+
+        # # 13	Auto Car Market ကားအရောင်းအ၀ယ်	https://www.facebook.com/groups/myanmarcarmarket/
+        # p.collect_from_api(ids=13,url = 'https://www.facebook.com/groups/myanmarcarmarket/',market_place=1)
+        # time.sleep(1)   
+
+        # # 14	မြန်မာ ကားရောင်းဝယ် (Myanmar Car Dealer)	https://www.facebook.com/groups/369828630054592/
+        # p.collect_from_api(ids=14,url = 'https://www.facebook.com/groups/369828630054592/',market_place=1)
+        # time.sleep(1)   
+
+        # # 15	USED MYANMAR CAR	https://www.facebook.com/groups/520776898092100/
+        # p.collect_from_api(ids=15,url = 'https://www.facebook.com/groups/520776898092100/',market_place=1)
+        # time.sleep(1)  
+
+        # # 16	35လမ်း,MDY Car, သီးသန့်(ဝယ်/ရောင်း)	https://www.facebook.com/groups/632262877126267/
+        # p.collect_from_api(ids=16,url = 'https://www.facebook.com/groups/632262877126267/',market_place=1)
+        # time.sleep(1)  
+        
+        # ## 17	Myanmar Car Showroom	https://www.facebook.com/groups/1265995456818130/
+        # p.collect_from_api(ids=17,url = 'https://www.facebook.com/groups/1265995456818130/',market_place=1)
+        # time.sleep(1)  
+        
+        # # 18	Toyota Crown နှင့် ဂျပန်မော်တော်ကားမျိုးစုံရောင်းဝယ်ရေး (Group)	https://www.facebook.com/groups/213191119285748/
+        # p.collect_from_api(ids=18,url = 'https://www.facebook.com/groups/213191119285748/',market_place=1)
+        # time.sleep(1)  
+
+        # 19	Yangon Car Online Sale Group	https://www.facebook.com/groups/240683956371062/
+        # p.collect_from_api(ids=19,url = 'https://www.facebook.com/groups/240683956371062/',market_place=1)
+        # time.sleep(1)  
+
+        # # 20	Car အရောင်းအဝယ် Group MDY	https://www.facebook.com/groups/233517020338369/
+        # p.collect_from_api(ids=20,url = 'https://www.facebook.com/groups/233517020338369/',market_place=1)
+        # time.sleep(1)  
+
+        # # c-> 21	မန်းလေးကားမျိုးစုံရောင်းဝယ်ရေး	https://www.facebook.com/groups/1640172876271325/
+        # p.collect_from_api(ids=21,url = 'https://www.facebook.com/groups/1640172876271325/',market_place=1)
+        # time.sleep(1)  
+
+        # c-> 22 	Taxi ရောင်းဝယ်ရေး	https://www.facebook.com/groups/155793198089677/
+        # p.collect_from_api(ids=22,url = 'https://www.facebook.com/groups/155793198089677/',market_place=1)
+        # time.sleep(1)  
+
+        # # c-> 23	TAXI Sales ( အငှားယာဉ်သီးသန့်ရောင်းရန် )	https://www.facebook.com/groups/1468044100104906/
+        # p.collect_from_api(ids=23,url = 'https://www.facebook.com/groups/1468044100104906/',market_place=1)
+        # time.sleep(1) 
+
+        # # 24	ရန်ကုန်လိုင်စင် အိမ်စီးကားသီးသန့်အရောင်းအဝယ်	https://www.facebook.com/groups/1573085942991070/?ref=share
+        # p.collect_from_api(ids=24,url = 'https://www.facebook.com/groups/1573085942991070/',market_place=1)
+        # time.sleep(1) 
+
+        # # 25	ကားမျိုးစုံရောင်းဝယ်ရာနေရာ	https://www.facebook.com/groups/1377034182534659/
+        # p.collect_from_api(ids=25,url = 'https://www.facebook.com/groups/1377034182534659/',market_place=1)
+        # time.sleep(1) 
+
+        # # 26	Online ကား ပွဲ စား တန်း	https://www.facebook.com/groups/carforsale01/?ref=share
+        # p.collect_from_api(ids=26,url = 'https://www.facebook.com/groups/carforsale01/',market_place=1)
+        # time.sleep(1) 
+
+        ## 27	ကားအမြန်ရောင်းဝယ်ရေး	https://www.facebook.com/groups/824818357601140/?ref=share
+        # p.collect_from_api(ids=27,url = 'https://www.facebook.com/groups/824818357601140/',market_place=1)
+        # time.sleep(1) 
+
 
         
 

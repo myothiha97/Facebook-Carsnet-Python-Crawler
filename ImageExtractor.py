@@ -79,6 +79,7 @@ class FacebookImageExtractor():
                 KeyBoard.click_esc_key(browser)
             return images
 
+
     def extract_images_from_normal_gallary(post,browser):
         # actions = ActionChains(browser)
         
@@ -141,6 +142,7 @@ class FacebookImageExtractor():
                             count = 72
                         elif exc_type == NoSuchElementException:
                             WebDriverWait(browser,60).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.ji94ytn4")))
+
 
                         # elif exc_type == InvalidSessionIdException:
                         #     KeyBoard.click_esc_key(browser)

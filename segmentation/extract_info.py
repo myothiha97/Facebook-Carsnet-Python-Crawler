@@ -354,6 +354,7 @@ class Extractor:
                             self.segment['price'] = '-'
                     else:
                         self.segment['price'] = '-'
+
                 else:
                     self.segment['price'] = '-'
             except:

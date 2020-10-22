@@ -57,6 +57,7 @@ class DigiZaayApiConnector():
             "POST", self.api_url, headers=headers, data=payload)
 
         print(f'>>>Return from API<<<')
+        # print(reponse.body)
         print(response.text.encode('utf8'))
         print(f"status code ------> ", response.status_code)
 
