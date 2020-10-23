@@ -13,6 +13,7 @@ import sys
 import time
 import re
 from ImageExtractor import FacebookImageExtractor
+from FacebookPostAction import share_check
 
 class ImageClickTester():
 
@@ -27,7 +28,7 @@ class ImageClickTester():
     def click_images(self):
         self.login(self.mail,self.password)
         time.sleep(5)
-        self.browser.get('https://www.facebook.com/groups/378369752669659/?ref=share')
+        self.browser.get('https://www.facebook.com/groups/643021239182864/')
         time.sleep(3)
         for i in range(self.depth):
             # self.click_esc_key()
@@ -71,15 +72,9 @@ class ImageClickTester():
         for post in posts:
             self.browser.execute_script(
                     "arguments[0].scrollIntoView();", post)
-            try:
-                share_check = post.find_element_by_css_selector(
-                    'div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
-                if re.search(r"shared|share|Shared|Share|shares|Shares", share_check):
-                    print("This is a shared post")
-                    time.sleep(1)
-                    continue
-            except Exception as e:
-                print(f'Share check failed')
+            time.sleep(1)
+            is_share_post = share_check(browser=self.browser,post=post)
+            if is_share_post: ### if post is share post , we skipped
                 continue
             images = FacebookImageExtractor.extract_images_from_market_gallary(post=post,browser= self.browser)
             posts_images.append(images)
@@ -92,15 +87,10 @@ class ImageClickTester():
         for post in posts:
             self.browser.execute_script(
                     "arguments[0].scrollIntoView();", post)
-            try:
-                share_check = post.find_element_by_css_selector(
-                    'div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
-                if re.search(r"shared|share|Shared|Share|shares|Shares", share_check):
-                    print("This is a shared post")
-                    time.sleep(1)
-                    continue
-            except Exception as e:
-                print(f'Share check failed')
+            time.sleep(1)
+            is_share_post = share_check(browser=self.browser,post=post)
+            if is_share_post: ### if post is share post , we skipped
+                continue
                 # print(e)
             images = FacebookImageExtractor.extract_images_from_normal_gallary(post=post , browser= self.browser)
             posts_images.append(images)
