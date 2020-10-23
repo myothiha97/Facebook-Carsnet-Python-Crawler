@@ -14,6 +14,7 @@ import time
 import re
 from ImageExtractor import FacebookImageExtractor
 from FacebookPostAction import share_check
+from ElementSelectors import post_no_selector,gp_type_check_selector2
 
 class ImageClickTester():
 
@@ -52,9 +53,8 @@ class ImageClickTester():
             print(images)
         else:
             WebDriverWait(self.browser, 10).until(EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div.cb02d2ww.ni8dbmo4.stjgntxs.l9j0dhe7.k4urcfbm.du4w35lb.lzcic4wl > div > div:nth-of-type(2) > a:nth-of-type(2)")))
-            gp_type = self.browser.find_element_by_css_selector(
-                "div.cb02d2ww.ni8dbmo4.stjgntxs.l9j0dhe7.k4urcfbm.du4w35lb.lzcic4wl > div > div:nth-of-type(2) > a:nth-of-type(2)").text
+                (By.CSS_SELECTOR, gp_type_check_selector2)))
+            gp_type = self.browser.find_element_by_css_selector(gp_type_check_selector2).text
 
             if gp_type == "Discussion":
                 print("This group is normal gp")
@@ -67,7 +67,8 @@ class ImageClickTester():
             print(images)
         
     def click_market_gallery(self):
-        posts = self.browser.find_elements_by_css_selector("div[aria-labelledby*='jsc']")
+        posts = self.browser.find_elements_by_css_selector(post_no_selector)
+        print('posts --> ',len(posts))
         posts_images = [] ### two dimensional array
         for post in posts:
             self.browser.execute_script(
@@ -81,7 +82,7 @@ class ImageClickTester():
         return posts_images
 
     def click_normal_gallery(self):
-        posts = self.browser.find_elements_by_css_selector("div[aria-labelledby*='jsc']")
+        posts = self.browser.find_elements_by_css_selector(post_no_selector)
         print('posts --> ',len(posts))
         posts_images = [] ### two dimensional array
         for post in posts:
