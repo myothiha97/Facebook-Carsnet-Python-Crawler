@@ -21,15 +21,30 @@ class FacebookImageExtractor():
             # image_holder.click()
             browser.execute_script("arguments[0].click();", image_holder)
             # webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
+
             WebDriverWait(browser, 10).until(
                 EC.presence_of_element_located(
                     (By.CSS_SELECTOR, "div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn"))
             )
             
             count = 0
-            while(count < 70):                       
+            while(count < 70):
+
                 try:
-                    WebDriverWait(browser, 300).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn")))          
+                    # WebDriverWait(browser, 300).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn")))
+                    WebDriverWait(browser,300).until(
+                            lambda x: x.find_element(By.CSS_SELECTOR,"div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn") or x.find_element(By.CSS_SELECTOR,"div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4.nhd2j8a9 > div > div")
+                        )
+                    try:
+                        video_btn = browser.find_element_by_css_selector("div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4.nhd2j8a9 > div > div")
+                        print("\n----------Video Detected---------")
+                        next_btn = browser.find_element_by_css_selector("div[aria-label='View next image']")
+                        next_btn.click()
+                        count += 1
+                        continue
+                    except:
+                        pass
+
                     spotlight = browser.find_element_by_css_selector("div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn").find_element_by_tag_name("img")
 
                     # print('---------------------------------')                    
@@ -63,26 +78,21 @@ class FacebookImageExtractor():
                     
                 except Exception as ex:
                     print("Issue from ImageExtractor : "+str(ex))
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    print("error type : ",exc_type)
-                    print(f"Error message ---------> {exc_value} & data type --------> {type(exc_value)} ")
-                    if exc_type == ElementNotInteractableException:
-                        count = 72
                     count += 1
                     time.sleep(1)
-            print("**** Done crwaling images *****")
             KeyBoard.click_esc_key(browser)
         except Exception as e:
-            print('Issue from ImageHolder : ' + str(e))
-            KeyBoard.click_esc_key(browser)
             # No image holder or images here
-           
+            print('Issue from ImageExtractor : ',str(e))
+            KeyBoard.click_esc_key(browser)
         return images
+
 
     def extract_images_from_normal_gallary(post,browser):
         # actions = ActionChains(browser)
         
         images = []
+        
         try:                
             # Try clicking on the images
             
@@ -98,7 +108,19 @@ class FacebookImageExtractor():
             count = 0
             while(count < 70):            
                 try:     
-                    WebDriverWait(browser, 300).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.ji94ytn4")))
+                    # WebDriverWait(browser, 300).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.ji94ytn4")))
+                    WebDriverWait(browser,300).until(
+                            lambda x: x.find_element(By.CSS_SELECTOR,"img.ji94ytn4") or x.find_element(By.CSS_SELECTOR,"div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4.nhd2j8a9 > div > div")
+                        )
+                    try:
+                        video_btn = browser.find_element_by_css_selector("div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4.nhd2j8a9 > div > div")
+                        print("\n----------Video Detected---------")
+                        next_btn = browser.find_element_by_css_selector("div[aria-label='View next image']")
+                        next_btn.click()
+                        count += 1
+                        continue
+                    except:
+                        pass
                     # time.sleep(0.3)
                     spotlight = browser.find_element_by_css_selector("img.ji94ytn4")
 
@@ -106,16 +128,15 @@ class FacebookImageExtractor():
                     image_url = spotlight.get_attribute("src")
                     i = 0
                     if len(images) > 0:                        
-                        while image_url == images[-1] and i < 30:
+                        while image_url == images[-1] and i < 15:
                             time.sleep(0.2)
                             i+=1                            
-                            image_url = spotlight.get_attribute("src")                            
-                            print(".", end = '')
-                    print()
-                    print(f'Successfully retrieve the new image ===> ${image_url}')
-
+                            image_url = spotlight.get_attribute("src")
+                            print(f'the loop count of the image is {i}')
+                    print(f'Successfully retrieve image ${image_url}')
                     if image_url in images:                        
                         print('This image is already retrieved')
+                        count = 80
                         # hasMore = False
                     else:
                         print('Appending image into the image list')
@@ -129,15 +150,16 @@ class FacebookImageExtractor():
                     # time.sleep(1.2)
                     count += 1
                 except Exception as ex:
-                    # print("Issue from ImageExtractor : ")
+                    print("Issue from ImageExtractor : ")
                     
                     exc_type, exc_value, exc_traceback = sys.exc_info()
-                    # print("error type : ",exc_type)
-                    # print(f"Error message ---------> {exc_value} & data type --------> {type(exc_value)} ")
+                    print("error type : ",exc_type)
+                    print(f"Error message ---------> {exc_value} & data type --------> {type(exc_value)} ")
                     if exc_type == ElementNotInteractableException:
                         count = 72
                     elif exc_type == NoSuchElementException:
                         WebDriverWait(browser,60).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.ji94ytn4")))
+
 
                     # elif exc_type == InvalidSessionIdException:
                     #     KeyBoard.click_esc_key(browser)

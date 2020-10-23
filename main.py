@@ -59,11 +59,11 @@ args = parser.parse_args()
 if __name__ == '__main__':
 
 
-    current_date = datetime.datetime.now()
-    username = getpass.getuser()
-    with open('crawler-history-log.txt','a') as fileobj:
-        fileobj.write(f"User - {username} has run the crawler at {current_date}")
-        fileobj.write("\n")
+    # current_date = datetime.datetime.now()
+    # username = getpass.getuser()
+    # with open('crawler-history-log.txt','a') as fileobj:
+    #     fileobj.write(f"User - {username} has run the crawler at {current_date}")
+    #     fileobj.write("\n")
 
     # Initializer Crawler
     p = Crawler(database=None, storage=None, depth=args.depth, keep=args.keep,filter=args.filter)
