@@ -18,7 +18,7 @@ import requests
 import sys
 
 from DigiZaayAPI import DigiZaayApiConnector
-from FacebookPostAction import click_see_more_button
+from FacebookPostAction import click_see_more_button , share_check
 from FacebookPostContentExtractor import ContentExtractor
 from ImageExtractor import FacebookImageExtractor
 from segmentation.carsnet import Entity_extractor
@@ -354,16 +354,10 @@ class Crawler:
 
                 click_see_more_button(
                     browser=self.browser, post=post, type=g_type)
-                try:
-                    share_check = post.find_element_by_css_selector(
-                        'div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
-                    if re.search(r"shared|share|Shared|Share|shares|Shares", share_check):
-                        print("This is a shared post")
-                        time.sleep(1)
-                        continue
-                except Exception as e:
+                
+                is_share_post = share_check(browser=self.browser,post=post)
+                if is_share_post: ### if post is share post , we skipped
                     continue
-                    print(f'Share check failed')
 
                 # Check timestamp if the page is already scanned before
                 # if(timestamp < "1576813657"):
