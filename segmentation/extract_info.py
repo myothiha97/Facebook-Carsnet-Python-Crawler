@@ -94,7 +94,7 @@ class Extractor:
         if (self.segment['region'] == '-') and (re.search(region_reg, str(line))):
             self.get_region(line)
 
-        if (self.segment['gear'] == '-') and (re.search(drive_reg, str(line))):
+        if (self.segment['gear'] == '-') and (re.search(gear_reg, str(line))):
             self.get_gear(line)
 
         if (self.segment['seater'] == '-') and (re.search(seater_reg, str(line))):

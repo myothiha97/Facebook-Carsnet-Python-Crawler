@@ -119,8 +119,8 @@ if __name__ == '__main__':
         # time.sleep(1)
 
         # Car အရောင်းအဝယ် ရန်ကုန်မြို့
-        p.collect_from_api(ids=6,url = 'https://www.facebook.com/groups/323949978493502/?ref=share',market_place=1)
-        time.sleep(1)
+        # p.collect_from_api(ids=6,url = 'https://www.facebook.com/groups/323949978493502/?ref=share',market_place=1)
+        # time.sleep(1)
 
         # # ကားပွဲစားတန်း
         # p.collect_from_api(ids=7,url = 'https://www.facebook.com/groups/1382476945385129/?ref=share',market_place=1)
