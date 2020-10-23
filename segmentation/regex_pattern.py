@@ -20,7 +20,7 @@ seater_reg = r'seater|seaters|seating'
 hand_reg = r'ဘယ်မောင်း|ညာမောင်း|l.h.d|r.h.d|lhd|rhd'
 # license_reg   = r'number|license|licence|လိုင်စင်|ygn|mdy|sgg|bgo|'
 license_reg = r"\d\s*[a-z]\s*\-\s*\d{4}|\d\s*[a-z]\s*[/]\s*\d{4}|\d\s*[a-z]\s*[/]\s*\d{4}|\d\s*[a-z]\s*[-/ ]\s*(ygn|mdy|shn|sgg|bgo|npw|ayy|rke|kyn|chn)|\d\s*[A-Za-z]\s*[-/ ]*\s*\([A-Za-z]+\)|\d\s*[A-Za-z]\s*[-/ ]\s*[*.+x]+|license|licence|လိုင်စင်"
-price_reg = r'သိန်း\s*[၀-၉]+|[၀-၉]+\s*သိန်း|\$\s*\d+\,\d+|\d+\s*သိန်း|သိန်း\s*\d+|\d+\s*lakhs|lakhs\s*\d+|စျေး\s*\=*\s*\d+|စျေး\s*\=*\s*[၀-၉]+|စျေး\s*\-*\s*\d+|စျေး\s*\-*\s*[၀-၉]+|\d+\s*lhks|lhks\s*\d+|ဈေးနူန်း\s*\=*\s*[၀-၉]+|ဈေးနူန်း\s*\=*\s*\d+|ဈေးနူန်း\s*\-*\s*[၀-၉]+|ဈေးနူန်း\s*\-*\s*\d+|စျေးနှုန်း\s*[-= ]*\s*\d+|\d+\s*lks|lks\s*\d+|price|lakhs|lks|စျေး|သိန်း'
+price_reg = r'သိိန်း\s*[၀ဝ၁၂၃၄၅၆၇၈၉]+|[၀ဝ၁၂၃၄၅၆၇၈၉]+\s*သိိန်း|\$\s*\d+\,\d+|\d+\s*သိိန်း|သိိန်း\s*\d+|\d+\s*lakhs|lakhs\s*\d+|စျေး\s*\=*\s*\d+|စျေး\s*\=*\s*[၀ဝ၁၂၃၄၅၆၇၈၉]+|စျေး\s*\-*\s*\d+|စျေး\s*\-*\s*[၀ဝ၁၂၃၄၅၆၇၈၉]+|\d+\s*lhks|lhks\s*\d+|ဈေးနူန်း\s*\=*\s*[၀ဝ၁၂၃၄၅၆၇၈၉]+|ဈေးနူန်း\s*\=*\s*\d+|ဈေးနူန်း\s*\-*\s*[၀ဝ၁၂၃၄၅၆၇၈၉]+|ဈေးနူန်း\s*\-*\s*\d+|စျေးနှုန်း\s*[-= ]*\s*\d+|\d+\s*lks|lks\s*\d+|သိိန်း|price|lakhs|lks|စျေး|သိန်း'
 ph_reg = r"09-\d{9}|09\s*\d{9}|၀၉[၀-၉]{9}|၀၉-[၀-၉]{9}|09-\d{7}|09\s*\d{7}|၀၉[၀-၉]{7}|၀၉-[၀-၉]{7}|09\s*\d{3}\s*\d{3}\s*\d{3}|\+959\s*\d{9}|\+959\s*\d{7}|09[.]*\d{9}|09[.]*\d{7}|09\s*\d{4}\s*\d{3}\s*\d{2}|09\s*\d{3}\s*\d{4}|\+959\s*-\s*\d{9}|\+959\s*-\s*\d{7}|09\d{2}\s*\d{3}\s*\d{4}"
 
 raw_car_models = '''markII,mark2,alphard,
@@ -49,7 +49,22 @@ models = models.strip()
 # print(models)
 if __name__ == "__main__":
     ''' Testing '''
-    test_string = "this is a Caldina"
-    if re.search(models, test_string.lower()):
-        print(re.search(models, test_string.lower()).group())
-        print("is working")
+    test_string = """အရောင်း အလဲထပ် ပြပါ
+iR.V & Fair Lady ထဲက ပြပါ
+အလိုက်ပေးလဲမယ် Caldina Gt4 2002 2.0 Turbo Modify စက်ရုပ် လေး Wheel Tex မှာ ဒီရုပ်ပေါက်တယ်နော်
+၁၈ဝ သိန်း
+
+. . . . . . . . . . . . . . . . . . . . .
+Wish 2003 XS Grade အမှန်
+M တန်း နံပါတ်နဲ့တင် ကြွေလို့ရတယ် Pearl White ကားအလွန်သန့် 1.8 Cc
+၂ဝ၉ သိိန်း
+ဖုန်း 09450029089"""
+    
+    # if re.search(models, test_string.lower()):
+    #     print(re.search(models, test_string.lower()).group())
+    #     print("is working")
+
+    if re.search(price_reg,test_string):
+        print('pattern found')
+        print(re.search(price_reg,test_string).group())
+    

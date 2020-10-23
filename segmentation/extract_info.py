@@ -1,6 +1,10 @@
 import re
-# from regex_pattern import *
-from segmentation.regex_pattern import *
+import sys,os
+import pathlib
+p = pathlib.Path('segmentation').resolve()
+sys.path.append(str(p))
+# sys.path.append('/home/mthk/Desktop/mmds-crawler/mmDS-FBCrawler-Selenium/segmentation')
+from regex_pattern import *
 import datetime
 
 
@@ -86,6 +90,8 @@ class Extractor:
             self.get_engine(line)
 
         if self.segment['price'] == '-' and re.search(price_reg, str(line)):
+            # print("Price Detected")
+            # print(line)
             self.get_price(line)
 
         if self.segment['mileage'] == '-' and re.search(mileage_reg, str(line)):
@@ -94,7 +100,7 @@ class Extractor:
         if (self.segment['region'] == '-') and (re.search(region_reg, str(line))):
             self.get_region(line)
 
-        if (self.segment['gear'] == '-') and (re.search(drive_reg, str(line))):
+        if (self.segment['gear'] == '-') and (re.search(gear_reg, str(line))):
             self.get_gear(line)
 
         if (self.segment['seater'] == '-') and (re.search(seater_reg, str(line))):
@@ -133,7 +139,7 @@ class Extractor:
         #         self.segment['name'] = '-'
 
     def get_year(self, line):
-        if re.search(r'[က-အ]', line) or line.startswith('ph') or line.startswith('09'):
+        if line.startswith('ဖုန်း') or line.startswith('ph') or line.startswith('09'):
             pass
         else:
             if re.search(r'[1][9][9][0-9]|[2][0][0-9][0-9]', line):
@@ -290,9 +296,14 @@ class Extractor:
 
     def get_price(self, line):
         try:
+            mm_year_reg = r'[၁][၉][၀ဝ၁၂၃၄၅၆၇၈၉][၀ဝ၁၂၃၄၅၆၇၈၉]|[၂][၀ဝ][၀ဝ၁၂၃၄၅၆၇၈၉][၀ဝ၁၂၃၄၅၆၇၈၉]'
+            line = re.sub(year_reg,'',line)
+            line = re.sub(mm_year_reg,'',line)
+            # print(line)
             price = re.search(price_reg, line).group()
-            ### changing dollar to mm price ###
+            # print(price)
             # print(f"raw price ------------ > {price}")
+            ### changing dollar to mm price ###
             if re.search(r"\$", price):
                 price = re.sub(r",", "", price)
                 dollar = re.search(r"\d+", price).group()
@@ -302,8 +313,7 @@ class Extractor:
                 self.segment['price'] = str(price_lakhs) + "Lakhs"
 
             else:
-                price = re.search(r"\d+", price).group()
-
+                price = re.search(r"[၀ဝ၁၂၃၄၅၆၇၈၉]+|\d+", price).group()
                 if len(price) > 1:
                     new_str = ''
                     for i in price:
@@ -311,34 +321,43 @@ class Extractor:
                             new_str += str(ord(i) % 10)
                         else:
                             new_str += i
+                    
+                    new_str = re.sub(r'[ဝ၀]','0',new_str) ### failed to change myanmar digits zero
                     self.segment['price'] = new_str+' Lakhs'
 
                 else:
                     self.segment['price'] = '-'
-        except:
-            if re.search(r"price|lakhs|lks|စျေး|သိန်း", price):
-                print(line)
-                digits = re.findall(r"[၀-၉]+|\d+", line)
-                
-                if digits:
-                    try:
+        except Exception as e:
+            # print(e)
+            try:
+                if re.search(r"သိိန်း|price|lakhs|lks|စျေး|သိန်း", price): 
+                    # print(line)
+                    digits = re.findall(r"[၀ဝ၁၂၃၄၅၆၇၈၉]+|\d+", line)
+                    # print(digits)
+                    if digits:
                         price = list(
-                            filter(lambda digit: len(digit) <= 4, digits))[0]
-                        print(price)
-                        
-                        new_str = ''
-                        for i in price:
-                            if 4160 <= ord(i) <= 4170:
-                                new_str += str(ord(i) % 10)
+                            filter(lambda digit: len(digit) <= 4, digits))
+                        if price: ### continue operation if price is not empty otherwise pass to next iteration
+                            price = price[0]
+                            if len(price) < 2: ### we will pass if len price is too small
+                                self.segment['price'] = '-' 
                             else:
-                                new_str += i
-                        self.segment['price'] = new_str + ' ' + 'Lakhs'
-                    except Exception as e:
-                         print(f"An error occur while trying to get price : {str(e)}")
-                         self.segment['price'] = '-'
+                                new_str = ''
+                                for i in price:
+                                    if 4160 <= ord(i) <= 4170:
+                                        new_str += str(ord(i) % 10)
+                                    else:
+                                        new_str += i
+                                new_str = re.sub(r'[ဝ၀]','0',new_str)
+                                self.segment['price'] = new_str + ' ' + 'Lakhs'
+                        else:
+                            self.segment['price'] = '-'
+                    else:
+                        self.segment['price'] = '-'
+
                 else:
                     self.segment['price'] = '-'
-            else:
+            except:
                 self.segment['price'] = '-'
 
     def get_mileage(self, line):
@@ -346,9 +365,9 @@ class Extractor:
             self.segment['mileage'] = re.search(
                 r'\d+\,\d+', line).group().replace(',', '') + ' km'
 
-        elif re.search(r"\d{5,6}", line):
-            self.segment['mileage'] = re.search(
-                r"\d{5,6}", line).group() + " km"
+        elif re.search(r"(km|kilo|mileage|milage|ကိလို|ကီလို)\s*[-:/=]*\s*\d{5,6}|\d{5,6}\s*[-:/=]*\s*(km|kilo|mileage|milage|ကိလို|ကီလို)", line):
+            mileage = re.search(r"(km|kilo|mileage|milage|ကိလို|ကီလို)\s*[-:/=]*\s*\d{5,6}|\d{5,6}\s*[-:/=]*\s*(km|kilo|mileage|milage|ကိလို|ကီလို)",line).group()
+            self.segment['mileage'] = re.search(r'\d{5,6}',mileage).group()
 
         # elif re.search(r'\d+ \+|\d+\+', line):                          ## 150000 + , 150,000+
         #     self.segment['mileage'] = re.search(r'\d+ \+|\d+\+', line).group().strip('+').strip() + ' km'
@@ -358,11 +377,11 @@ class Extractor:
             try:
                 # 1++++ , 3xxxxx, 4*****, 2 သိန်း
                 array = re.search(
-                    r'\d+\s*[+]+|\d+\s*[x]+|\d+\s*\*+|\d+\s*(သောင်း|သိန်း|သ်ိန်း)+', line).group()
+                    r'\d+\s*[+]+|\d+\s*[x]+|\d+\s*\*+|[(]*\d+[)]*\s*(သောင်း|သိန်း|သ်ိန်း)+', line).group() ### add '('and  ')' pattern
                 # km = ''.join(array)
-                # print(array)
                 km = re.sub("kilo", "", array)
                 km = re.sub(" ", "", km)
+                km = re.sub(r'[()]','',km) ### remove any '(' or ')'
                 if km.find(',') >= 0:
                     mileage = km.replace(',', '')
                 elif km.find('+') >= 0:
@@ -382,7 +401,7 @@ class Extractor:
                     mileage = km
                     # print(mileage)
                 if len(mileage) < 7:
-
+                    # print(mileage)
                     new_str = ''
                     for i in mileage:
                         if 4160 <= ord(i) <= 4170:
@@ -394,7 +413,7 @@ class Extractor:
                 else:
                     self.segment['mileage'] = '-'
 
-            except:
+            except Exception as e:
                 self.segment['mileage'] = '-'
 
     def get_region(self, line):
@@ -404,6 +423,7 @@ class Extractor:
             self.segment['region'] = '-'
 
     def get_gear(self, line):
+        
         if (line.find('auto') > 0):
             self.segment['gear'] = 'auto'
 
@@ -411,6 +431,7 @@ class Extractor:
             self.segment['gear'] = 'manual'
 
         else:
+            print('gear not detected')
             self.segment['gear'] = '-'
 
     def get_seater(self, line):

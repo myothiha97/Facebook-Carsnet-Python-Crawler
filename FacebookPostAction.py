@@ -1,6 +1,7 @@
 from selenium.webdriver.common.keys import Keys
 import time
 from selenium import webdriver
+import re
 
 def click_see_more_button(browser,post,type):
     if type == 0:
@@ -24,4 +25,18 @@ def click_see_more_button(browser,post,type):
             time.sleep(1)
         except Exception as e:
             print("An error occur while trying to click see_more button : ",str(e))
-        
+
+def share_check(browser,post):
+    try:
+        share_element = post.find_element_by_css_selector(
+            'div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span').text
+        if re.search(r"shared|share|Shared|Share|shares|Shares", share_element):
+            print("This is a shared post")
+            time.sleep(1)
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        print(f'Share check failed')
+        print(e)
