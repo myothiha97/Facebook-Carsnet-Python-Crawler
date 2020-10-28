@@ -8,6 +8,9 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import NoSuchElementException
 # from selenium.common.exceptions import InvalidSessionIdException
+from ElementSelectors import image_holder_selector,page_image_selector,page_next_btn_selector
+from ElementSelectors import gp_image_selector,gp_next_btn_selector
+from ElementSelectors import gp_video_btn_selector , page_video_btn_selector
 import sys , traceback
 import time
 
@@ -17,14 +20,14 @@ class FacebookImageExtractor():
         images = []
         try:                
             # Might be a seller group            
-            image_holder = post.find_element_by_css_selector("a.tm8avpzi")
+            image_holder = post.find_element_by_css_selector(image_holder_selector)
             # image_holder.click()
             browser.execute_script("arguments[0].click();", image_holder)
             # webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
 
             WebDriverWait(browser, 10).until(
                 EC.presence_of_element_located(
-                    (By.CSS_SELECTOR, "div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn"))
+                    (By.CSS_SELECTOR, gp_image_selector))
             )
             
             count = 0
@@ -33,19 +36,19 @@ class FacebookImageExtractor():
                 try:
                     # WebDriverWait(browser, 300).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn")))
                     WebDriverWait(browser,300).until(
-                            lambda x: x.find_element(By.CSS_SELECTOR,"div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn") or x.find_element(By.CSS_SELECTOR,"div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4.nhd2j8a9 > div > div")
+                            lambda x: x.find_element(By.CSS_SELECTOR,gp_video_btn_selector + ',' + gp_image_selector)
                         )
                     try:
-                        video_btn = browser.find_element_by_css_selector("div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4.nhd2j8a9 > div > div")
+                        video_btn = browser.find_element_by_css_selector(gp_video_btn_selector)
                         print("\n----------Video Detected---------")
-                        next_btn = browser.find_element_by_css_selector("div[aria-label='View next image']")
+                        next_btn = browser.find_element_by_css_selector(gp_next_btn_selector)
                         next_btn.click()
                         count += 1
                         continue
                     except:
                         pass
 
-                    spotlight = browser.find_element_by_css_selector("div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn").find_element_by_tag_name("img")
+                    spotlight = browser.find_element_by_css_selector(gp_image_selector).find_element_by_tag_name("img")
 
                     # print('---------------------------------')                    
                     image_url = spotlight.get_attribute("src")
@@ -72,7 +75,7 @@ class FacebookImageExtractor():
                         # hasMore = False
                     else:
                         images.append(image_url)                                     
-                    next_btn = browser.find_element_by_css_selector("div[aria-label='View next image']")
+                    next_btn = browser.find_element_by_css_selector(gp_next_btn_selector)
                     next_btn.click()
                     count += 1
                     
@@ -96,33 +99,34 @@ class FacebookImageExtractor():
         try:                
             # Try clicking on the images
             
-            image_holder = post.find_element_by_css_selector("a.tm8avpzi")
+            image_holder = post.find_element_by_css_selector(image_holder_selector)
             # image_holder.click()
             browser.execute_script("arguments[0].click();", image_holder)
             # webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
 
-            WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located(
-                    (By.CSS_SELECTOR, "img.ji94ytn4"))
-            )
+            # WebDriverWait(browser, 10).until(
+            #     EC.presence_of_element_located(
+            #         (By.CSS_SELECTOR, page_image_selector))
+            # )
             count = 0
             while(count < 70):            
                 try:     
                     # WebDriverWait(browser, 300).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.ji94ytn4")))
                     WebDriverWait(browser,300).until(
-                            lambda x: x.find_element(By.CSS_SELECTOR,"img.ji94ytn4") or x.find_element(By.CSS_SELECTOR,"div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4.nhd2j8a9 > div > div")
+                            lambda x: x.find_element(By.CSS_SELECTOR,page_video_btn_selector + ',' + page_image_selector)
                         )
+                    
                     try:
-                        video_btn = browser.find_element_by_css_selector("div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4.nhd2j8a9 > div > div")
+                        video_btn = browser.find_element_by_css_selector(page_video_btn_selector)
                         print("\n----------Video Detected---------")
-                        next_btn = browser.find_element_by_css_selector("div[aria-label='View next image']")
+                        next_btn = browser.find_element_by_css_selector(page_next_btn_selector)
                         next_btn.click()
                         count += 1
                         continue
                     except:
                         pass
                     # time.sleep(0.3)
-                    spotlight = browser.find_element_by_css_selector("img.ji94ytn4")
+                    spotlight = browser.find_element_by_css_selector(page_image_selector)
 
                     # print('---------------------------------')                    
                     image_url = spotlight.get_attribute("src")
@@ -143,8 +147,7 @@ class FacebookImageExtractor():
                         images.append(image_url)
 
                     ## Clicking next image    
-                    next_btn = browser.find_element_by_css_selector(
-                        "div[aria-label='Next photo']")
+                    next_btn = browser.find_element_by_css_selector(page_next_btn_selector)
                     next_btn.click()
                     # webdriver.ActionChains(browser).send_keys(Keys.ARROW_RIGHT).perform()
                     # time.sleep(1.2)
@@ -158,7 +161,7 @@ class FacebookImageExtractor():
                     if exc_type == ElementNotInteractableException:
                         count = 72
                     elif exc_type == NoSuchElementException:
-                        WebDriverWait(browser,60).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.ji94ytn4")))
+                        WebDriverWait(browser,60).until(EC.presence_of_element_located((By.CSS_SELECTOR, page_image_selector)))
 
 
                     # elif exc_type == InvalidSessionIdException:

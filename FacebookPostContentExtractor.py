@@ -6,13 +6,15 @@ import sys
 from selenium import webdriver
 from time_extractor import get_publish_at
 import csv
+from ElementSelectors import *
+
 
 class ContentExtractor:
     @classmethod
     def get_post_time_stamp(cls,post):
         # Get Date
         print("Retrieving post time stamp")
-        date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-of-type(2) > span").get_attribute("innerText")
+        date_content = post.find_element_by_css_selector(date_content_selector).get_attribute("innerText")
         print(date_content)
         
         publish_at = get_publish_at(date_content)
@@ -29,7 +31,7 @@ class ContentExtractor:
         post_text = ''        
         try: 
             # post_text = post.find_element_by_css_selector("div[data-ad-comet-preview='message']").get_property('textContent')
-            post_text = post.find_element_by_css_selector("div[data-ad-comet-preview='message']")
+            post_text = post.find_element_by_css_selector(page_post_content_selector)
             # webdriver.ActionChains(browser).move_to_element(post_text).perform()
             post_text = post_text.text
             print('------------- retrieving text ------------------')
@@ -51,7 +53,7 @@ class ContentExtractor:
     def get_post_text_for_gp(cls,post,browser):
         post_text = ''
         try:
-            post_text = post.find_element_by_css_selector("div.rq0escxv.a8c37x1j.rz4wbd8a.a8nywdso > div:nth-of-type(2)")
+            post_text = post.find_element_by_css_selector(group_post_content_selector)
             # webdriver.ActionChains(browser).move_to_element(post_text).perform()
             post_text = post_text.text
         except Exception as e:
@@ -73,7 +75,7 @@ class ContentExtractor:
     def get_author_name(cls,post):
         # Author Name
         try:
-            author_name = post.find_element_by_xpath("//*[contains(@id,'jsc_c')]/div/a/strong/span").get_property('innerText') 
+            author_name = post.find_element_by_xpath(page_author_name_xpath_selector).get_property('innerText') 
             print(f"Author name ----------> {author_name}")        
         except Exception as e:
             print("Error retrieving author name" + str(e))  
@@ -86,7 +88,7 @@ class ContentExtractor:
         try:
             # author_name = post.find_element_by_xpath("//*[contains(@id,'jsc_c')]/span/div/a/strong/span").get_property("innerText")
             # author_name = post.find_element_by_xpath("//h2[contains(@id,'jsc_c')]").get_property("textContent")
-            author_name = post.find_element_by_css_selector("h2.gmql0nx0.l94mrbxd.p1ri9a11.lzcic4wl.aahdfvyu.hzawbc8m").get_property("textContent")
+            author_name = post.find_element_by_css_selector(group_author_name_selector).get_property("textContent")
             if re.search("shared",author_name):
                 author_name = re.sub(" shared a post.","",author_name)
             print(f"Author name --------> {author_name}")
@@ -98,9 +100,9 @@ class ContentExtractor:
     @classmethod
     def get_share_count(cls,post):
         try:
-            shares = post.find_element_by_css_selector("div.bp9cbjyn.j83agx80.pfnyh3mw.p1ueia1e > div:nth-of-type(1)").get_property("textContent")
+            shares = post.find_element_by_css_selector(share_count_selector_1).get_property("textContent")
             if re.search(r"share|shares",shares) == None:
-                shares = post.find_element_by_css_selector("div.bp9cbjyn.j83agx80.pfnyh3mw.p1ueia1e > div:nth-of-type(2)").get_property("textContent")
+                shares = post.find_element_by_css_selector(share_count_selector_2).get_property("textContent")
             
             print("raw shares text ------> ",shares)
             reg = r"\d+|\d+\.\d+"
@@ -121,7 +123,7 @@ class ContentExtractor:
     @classmethod
     def get_like_count(cls,post):
         try:
-            likes=post.find_element_by_css_selector("span.gpro0wi8.cwj9ozl2.bzsjyuwj.ja2t1vim > span > span").get_attribute("innerText")
+            likes=post.find_element_by_css_selector(like_count_selector).get_attribute("innerText")
             print("raw like string *******  ",likes)
             reg = r"\d+|\d+\.\d+"
             if re.search(r"k|K",likes):
@@ -142,7 +144,7 @@ class ContentExtractor:
     @classmethod
     def get_comment_count(cls,post):
         try:
-            comments = post.find_element_by_css_selector("div.bp9cbjyn.j83agx80.pfnyh3mw.p1ueia1e > div:nth-of-type(1)").get_property("textContent")
+            comments = post.find_element_by_css_selector(cmt_count_selector).get_property("textContent")
             if "shares" in comments or 'share' in comments:
                 comment_count = 0
                 print("comment count ----------> ",comment_count)
