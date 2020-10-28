@@ -27,6 +27,8 @@ from FacebookPostContentExtractor import ContentExtractor
 from evaluate_date import eval_date_to_crawl
 from TimeFormatter import format_time
 from utility.Send_Mail import send_mail
+from ElementSelectors import post_no_selector,gp_type_check_selector
+from ElementSelectors import date_content_selector,hover_time_selector,time_holder_selector
 
 
 class Crawler:
@@ -129,7 +131,7 @@ class Crawler:
                 if type == "group":
                     # print("This is market place")
                     # Search for discussion word to determind if it is Normal or Marketplace group
-                    gp_type = self.browser.find_element_by_css_selector("div > div.rq0escxv.l9j0dhe7.du4w35lb.j83agx80.pfnyh3mw > div > div > div > div > div > div > div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4 > a:nth-child(3)").text
+                    gp_type = self.browser.find_element_by_css_selector(gp_type_check_selector).text
                     if gp_type == "Discussion":
                         print("This group is normal gp")
                         self.crawl_posts(market_place=0, g_type=1)
@@ -189,8 +191,8 @@ class Crawler:
                 ids, crawl_history_id=crawl_history_id, market_place=0, g_type=0)
         else:
 
-            WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"div > div.rq0escxv.l9j0dhe7.du4w35lb.j83agx80.pfnyh3mw > div > div > div > div > div > div > div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4 > a:nth-child(3)")))
-            gp_type = self.browser.find_element_by_css_selector("div > div.rq0escxv.l9j0dhe7.du4w35lb.j83agx80.pfnyh3mw > div > div > div > div > div > div > div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4 > a:nth-child(3)").text
+            WebDriverWait(self.browser,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,gp_type_check_selector)))
+            gp_type = self.browser.find_element_by_css_selector(gp_type_check_selector).text
 
             if gp_type == "Discussion":
                 print("This group is normal gp")
@@ -285,7 +287,7 @@ class Crawler:
 
         try:
 
-            posts = self.browser.find_elements_by_css_selector("div[aria-posinset]")
+            posts = self.browser.find_elements_by_css_selector(post_no_selector)
             # posts = posts_[::-1]
             # posts = posts[200:]div[aria-posinset]
             check_already_safe_stimestamp = False
@@ -311,7 +313,7 @@ class Crawler:
 
                 date_content = ""
                 try:
-                    date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-child(2) > span").get_attribute("innerText")
+                    date_content = post.find_element_by_css_selector(date_content_selector).get_attribute("innerText")
                     # print(date_content.get_attribute("innerText"))
                     # date_content = post.find_element_by_css_selector("span[id*='jsc']  > span:nth-child(2) > span > a > span > span").get_attribute("innerText")
                     print(date_content)
@@ -324,14 +326,12 @@ class Crawler:
                     print("Day include in date content")
                     time.sleep(1)
                     try:
-                        time_holder = post.find_element_by_css_selector(
-                            'span.oi732d6d.ik7dh3pa.d2edcug0.qv66sw1b.c1et5uql.a8c37x1j.hop8lmos.enqfppq2.e9vueds3.j5wam9gi.knj5qynh.m9osqain.hzawbc8m > span > span:nth-of-type(2) > span')
+                        time_holder = post.find_element_by_css_selector(time_holder_selector)
                         hover = webdriver.ActionChains(
                             self.browser).move_to_element(time_holder)
                         hover.perform()
                         time.sleep(2)
-                        hover_time = self.browser.find_element_by_css_selector(
-                            'div.j34wkznp.qp9yad78.pmk7jnqg.kr520xx4.hzruof5a > span > div > div > span').text
+                        hover_time = self.browser.find_element_by_css_selector(hover_time_selector).text
                         print(f"raw_time -----------------> {hover_time}")
                         publish_date = format_time(hover_time)
                         print(f"Foramt time ---------------> {publish_date}")
@@ -403,6 +403,7 @@ class Crawler:
                 # time.sleep(7)
                 try:
                     self.api_connector.sent_to_digizaay(all_content)
+                    # print("pass")
                 except Exception as e:
                     print("Error sending data to digizaay server")
                     print("Error message : ", str(e))
