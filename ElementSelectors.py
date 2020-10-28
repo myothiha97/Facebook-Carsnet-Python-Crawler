@@ -36,6 +36,9 @@ page_next_btn_selector = "div[aria-label='Next photo']"
 gp_image_selector = "div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn"
 gp_next_btn_selector = "div[aria-label='View next image']"
 
-video_btn_selector = "div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4.nhd2j8a9 > div > div"
+# video_btn_selector = "div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4.nhd2j8a9 > div > div"
+# video_btn_selector = "div.k4urcfbm.kr520xx4.pmk7jnqg.datstx6m > i > div > img"
+page_video_btn_selector = "div.bp9cbjyn.j83agx80.buofh1pr.taijpn5t.k4urcfbm.datstx6m"
+gp_video_btn_selector = "div.i09qtzwb.rq0escxv.n7fi1qx3.pmk7jnqg.j9ispegn.kr520xx4.nhd2j8a9"
 
 

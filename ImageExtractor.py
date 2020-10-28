@@ -10,7 +10,7 @@ from selenium.common.exceptions import NoSuchElementException
 # from selenium.common.exceptions import InvalidSessionIdException
 from ElementSelectors import image_holder_selector,page_image_selector,page_next_btn_selector
 from ElementSelectors import gp_image_selector,gp_next_btn_selector
-from ElementSelectors import video_btn_selector
+from ElementSelectors import gp_video_btn_selector , page_video_btn_selector
 import sys , traceback
 import time
 
@@ -36,10 +36,10 @@ class FacebookImageExtractor():
                 try:
                     # WebDriverWait(browser, 300).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn")))
                     WebDriverWait(browser,300).until(
-                            lambda x: x.find_element(By.CSS_SELECTOR,gp_image_selector) or x.find_element(By.CSS_SELECTOR,video_btn_selector)
+                            lambda x: x.find_element(By.CSS_SELECTOR,gp_video_btn_selector + ',' + gp_image_selector)
                         )
                     try:
-                        video_btn = browser.find_element_by_css_selector(video_btn_selector)
+                        video_btn = browser.find_element_by_css_selector(gp_video_btn_selector)
                         print("\n----------Video Detected---------")
                         next_btn = browser.find_element_by_css_selector(gp_next_btn_selector)
                         next_btn.click()
@@ -104,19 +104,20 @@ class FacebookImageExtractor():
             browser.execute_script("arguments[0].click();", image_holder)
             # webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
 
-            WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located(
-                    (By.CSS_SELECTOR, page_image_selector))
-            )
+            # WebDriverWait(browser, 10).until(
+            #     EC.presence_of_element_located(
+            #         (By.CSS_SELECTOR, page_image_selector))
+            # )
             count = 0
             while(count < 70):            
                 try:     
                     # WebDriverWait(browser, 300).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.ji94ytn4")))
                     WebDriverWait(browser,300).until(
-                            lambda x: x.find_element(By.CSS_SELECTOR,page_image_selector) or x.find_element(By.CSS_SELECTOR,video_btn_selector)
+                            lambda x: x.find_element(By.CSS_SELECTOR,page_video_btn_selector + ',' + page_image_selector)
                         )
+                    
                     try:
-                        video_btn = browser.find_element_by_css_selector(video_btn_selector)
+                        video_btn = browser.find_element_by_css_selector(page_video_btn_selector)
                         print("\n----------Video Detected---------")
                         next_btn = browser.find_element_by_css_selector(page_next_btn_selector)
                         next_btn.click()
