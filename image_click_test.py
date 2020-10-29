@@ -29,7 +29,7 @@ class ImageClickTester():
     def click_images(self):
         self.login(self.mail,self.password)
         time.sleep(5)
-        self.browser.get('https://www.facebook.com/groups/1640172876271325/')
+        self.browser.get('https://www.facebook.com/groups/240683956371062/')
         time.sleep(3)
         for i in range(self.depth):
             # self.click_esc_key()

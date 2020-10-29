@@ -206,32 +206,40 @@ if __name__ == '__main__':
         # p.collect_from_api(ids=27,url = 'https://www.facebook.com/groups/824818357601140/',market_place=1)
         # time.sleep(1) 
 
-        # 28 1.3CC ကားမျိုးစုံရောင်းဝယ်ရေ	https://www.facebook.com/groups/216375745366711
-        p.collect_from_api(ids=28,url = 'https://www.facebook.com/groups/216375745366711',market_place=1)
-        time.sleep(1) 
+        # # 28 1.3CC ကားမျိုးစုံရောင်းဝယ်ရေ	https://www.facebook.com/groups/216375745366711
+        # p.collect_from_api(ids=28,url = 'https://www.facebook.com/groups/216375745366711',market_place=1)
+        # time.sleep(1) 
 
-        # 29	အိမ်ကားမျိုးစုံရောင်းဝယ်လဲ	https://www.facebook.com/groups/220611238364619/?ref=share
-        p.collect_from_api(ids=29,url = 'https://www.facebook.com/groups/220611238364619',market_place=1)
-        time.sleep(1) 
+        # # 29	အိမ်ကားမျိုးစုံရောင်းဝယ်လဲ	https://www.facebook.com/groups/220611238364619/?ref=share
+        # p.collect_from_api(ids=29,url = 'https://www.facebook.com/groups/220611238364619',market_place=1)
+        # time.sleep(1) 
 
-        # 30	Honda Fit သီးသန့်ဝယ်ရောင်း	https://www.facebook.com/groups/1620743871513887/?ref=share
-        p.collect_from_api(ids=30,url = 'https://www.facebook.com/groups/1620743871513887',market_place=1)
-        time.sleep(1) 
+        # # 30	Honda Fit သီးသန့်ဝယ်ရောင်း	https://www.facebook.com/groups/1620743871513887/?ref=share
+        # p.collect_from_api(ids=30,url = 'https://www.facebook.com/groups/1620743871513887',market_place=1)
+        # time.sleep(1) 
 
-        # 31	Land Cruiser,Prado & Surf သီးသန့်ရောင်းဝယ်ရေး	https://www.facebook.com/groups/1136478416452389/?ref=share
-        p.collect_from_api(ids=31,url = 'https://www.facebook.com/groups/1136478416452389/?ref=share',market_place=1)
-        time.sleep(1) 
+        # # 31	Land Cruiser,Prado & Surf သီးသန့်ရောင်းဝယ်ရေး	https://www.facebook.com/groups/1136478416452389/?ref=share
+        # p.collect_from_api(ids=31,url = 'https://www.facebook.com/groups/1136478416452389/?ref=share',market_place=1)
+        # time.sleep(1) 
 
-        # 32 Toyota Crown သီးသန့် ဝယ်ရောင်း Group	https://www.facebook.com/groups/1741203506159078/
-        p.collect_from_api(ids=32,url = 'https://www.facebook.com/groups/1741203506159078/',market_place=1)
-        time.sleep(1) 
+        # # 32 Toyota Crown သီးသန့် ဝယ်ရောင်း Group	https://www.facebook.com/groups/1741203506159078/
+        # p.collect_from_api(ids=32,url = 'https://www.facebook.com/groups/1741203506159078/',market_place=1)
+        # time.sleep(1) 
 
-        # 33	တိုက်ရိုက်ပိုင်ရှင် ကားရောင်းဝယ်ရေး Group	https://www.facebook.com/groups/318103168653574/?ref=share
-        p.collect_from_api(ids=33,url = 'https://www.facebook.com/groups/318103168653574',market_place=1)
-        time.sleep(1) 
+        # # 33	တိုက်ရိုက်ပိုင်ရှင် ကားရောင်းဝယ်ရေး Group	https://www.facebook.com/groups/318103168653574/?ref=share
+        # p.collect_from_api(ids=33,url = 'https://www.facebook.com/groups/318103168653574',market_place=1)
+        # time.sleep(1) 
         
-        # 34	Toyota Kluger သီး သန့် ရောင်း ဝယ် ရေး	https://www.facebook.com/groups/299428733986412/?ref=share
-        p.collect_from_api(ids=34,url = 'https://www.facebook.com/groups/299428733986412',market_place=1)
+        # # 34	Toyota Kluger သီး သန့် ရောင်း ဝယ် ရေး	https://www.facebook.com/groups/299428733986412/?ref=share
+        # p.collect_from_api(ids=34,url = 'https://www.facebook.com/groups/299428733986412',market_place=1)
+        # time.sleep(1) 
+
+        # 40	ပြိုင်ကားသီးသန့်အရောင်းအဝယ်အလဲအထပ်	https://www.facebook.com/groups/866078440191395/
+        # p.collect_from_api(ids=40,url = 'https://www.facebook.com/groups/866078440191395/',market_place=1)
+        # time.sleep(1) 
+
+        # 41	Online Cars For Sale Yangon	https://www.facebook.com/groups/1771308486452783/
+        p.collect_from_api(ids=41,url = 'https://www.facebook.com/groups/1771308486452783/',market_place=1)
         time.sleep(1) 
 
 
