@@ -22,8 +22,8 @@ class FacebookImageExtractor():
             # Might be a seller group            
             image_holder = post.find_element_by_css_selector(image_holder_selector)
             # image_holder.click()
-            browser.execute_script("arguments[0].click();", image_holder)
-            # webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
+            # browser.execute_script("arguments[0].click();", image_holder)
+            webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
 
             try:
                 WebDriverWait(browser, 10).until(
@@ -61,8 +61,8 @@ class FacebookImageExtractor():
             
             image_holder = post.find_element_by_css_selector(image_holder_selector)
             # image_holder.click()
-            browser.execute_script("arguments[0].click();", image_holder)
-            # webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
+            # browser.execute_script("arguments[0].click();", image_holder)
+            webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
 
             # WebDriverWait(browser, 10).until(
             #     EC.presence_of_element_located(
@@ -113,8 +113,24 @@ class FacebookImageExtractor():
                     # time.sleep(1.2)
                     count += 1
                 except Exception as ex:
-                    print("Issue from ImageExtractor : ")
-                    
+                    print("Issue from ImageExtractor : ")                                        
+
+                    try:
+                        WebDriverWait(browser, 10).until(
+                        EC.presence_of_element_located(
+                            (By.CSS_SELECTOR, image_paginator_selector))
+                    )
+                        # Selector image paginator and retrieve all images at once. 
+                        images_pager = browser.find_element_by_css_selector(image_paginator_selector)
+                        print("Image selector found")
+                        image_elements = images_pager.find_elements_by_css_selector('img')
+                        for image in image_elements:
+                            images.append(image.get_attribute("src")) 
+                        
+                        return images
+                    except Exception as exc:
+                        pass
+
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     print("error type : ",exc_type)
                     print(f"Error message ---------> {exc_value} & data type --------> {type(exc_value)} ")

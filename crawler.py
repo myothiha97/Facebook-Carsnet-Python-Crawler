@@ -322,26 +322,33 @@ class Crawler:
                     print(post.get_attribute("innerText"))
                     print(str(e))                    
 
-                if re.search(r"d|D",date_content):
-                    print("Day include in date content")
-                    time.sleep(1)
-                    try:
-                        time_holder = post.find_element_by_css_selector(time_holder_selector)
-                        hover = webdriver.ActionChains(
-                            self.browser).move_to_element(time_holder)
-                        hover.perform()
-                        time.sleep(2)
-                        hover_time = self.browser.find_element_by_css_selector(hover_time_selector).text
-                        print(f"raw_time -----------------> {hover_time}")
-                        publish_date = format_time(hover_time)
-                        print(f"Foramt time ---------------> {publish_date}")
-                        time.sleep(1)
-                    except Exception as e:
-                        print(
-                            f"An error occur when trying to get hover time : {str(e)}")
-                        publish_date = ""
-                else:
-                    publish_date = ContentExtractor.get_post_time_stamp(post)
+                try:
+                    if(date_content != ''):
+                        if re.search(r"d|D",date_content):
+                            print("Day include in date content")
+                            time.sleep(1)
+                            try:
+                                time_holder = post.find_element_by_css_selector(time_holder_selector)
+                                hover = webdriver.ActionChains(
+                                    self.browser).move_to_element(time_holder)
+                                hover.perform()
+                                time.sleep(2)
+                                hover_time = self.browser.find_element_by_css_selector(hover_time_selector).text
+                                print(f"raw_time -----------------> {hover_time}")
+                                publish_date = format_time(hover_time)
+                                print(f"Foramt time ---------------> {publish_date}")
+                                time.sleep(1)
+                            except Exception as e:
+                                print(
+                                    f"An error occur when trying to get hover time : {str(e)}")
+                                publish_date = ""
+                        else:
+                            publish_date = ContentExtractor.get_post_time_stamp(post)
+                except  Exception as e:
+                    print("Error extracting date")
+                    print("Skipping date now")
+                    publish_date = ""
+
 
                 self.browser.execute_script(
                     "arguments[0].scrollIntoView();", post)
@@ -402,7 +409,9 @@ class Crawler:
                     f"Total images -------------------> {len(dataObj['post_images'])}")
                 # time.sleep(7)
                 try:
-                    self.api_connector.sent_to_digizaay(all_content)
+                    # Stop sending post content without image to prevent facebook image issue
+                    if len(dataObj['post_images']) > 0 :
+                        self.api_connector.sent_to_digizaay(all_content)
                     # print("pass")
                 except Exception as e:
                     print("Error sending data to digizaay server")
@@ -432,8 +441,8 @@ class Crawler:
                       {str(e)}
                       """
             send_mail(text_message=content)
-            self.browser.close()
-            sys.exit()
+            # self.browser.close()
+            # sys.exit()
 
     def save_img_to_db(self, count, timestamp, url):
         # Store image and Get image URL from friebase
