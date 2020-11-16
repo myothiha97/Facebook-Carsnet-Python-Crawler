@@ -35,8 +35,10 @@ class FacebookImageExtractor():
                 print("Image selector found")
                 image_elements = images_pager.find_elements_by_css_selector('img')
                 for image in image_elements:
-                    images.append(image.get_attribute("src")) 
-                    
+                    try:
+                        images.append(image.get_attribute("src")) 
+                    except Exception as e:
+                        print(e)
             except Exception as e:
                     print("Error extracting image object")
                     print(str(e))  
@@ -45,7 +47,7 @@ class FacebookImageExtractor():
         except Exception as e:
             # No image holder or images here
             print('Issue from ImageExtractor : ',str(e))
-            KeyBoard.click_esc_key(browser)\
+            KeyBoard.click_esc_key(browser)
         
         print(images)
         return images
@@ -61,8 +63,8 @@ class FacebookImageExtractor():
             
             image_holder = post.find_element_by_css_selector(image_holder_selector)
             # image_holder.click()
-            # browser.execute_script("arguments[0].click();", image_holder)
-            webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
+            browser.execute_script("arguments[0].click();", image_holder)
+            # webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
 
             # WebDriverWait(browser, 10).until(
             #     EC.presence_of_element_located(
@@ -113,23 +115,7 @@ class FacebookImageExtractor():
                     # time.sleep(1.2)
                     count += 1
                 except Exception as ex:
-                    print("Issue from ImageExtractor : ")                                        
-
-                    try:
-                        WebDriverWait(browser, 10).until(
-                        EC.presence_of_element_located(
-                            (By.CSS_SELECTOR, image_paginator_selector))
-                    )
-                        # Selector image paginator and retrieve all images at once. 
-                        images_pager = browser.find_element_by_css_selector(image_paginator_selector)
-                        print("Image selector found")
-                        image_elements = images_pager.find_elements_by_css_selector('img')
-                        for image in image_elements:
-                            images.append(image.get_attribute("src")) 
-                        
-                        return images
-                    except Exception as exc:
-                        pass
+                    print("Issue from ImageExtractor : ",ex)                                        
 
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     print("error type : ",exc_type)
@@ -137,7 +123,22 @@ class FacebookImageExtractor():
                     if exc_type == ElementNotInteractableException:
                         count = 72
                     elif exc_type == NoSuchElementException:
-                        WebDriverWait(browser,60).until(EC.presence_of_element_located((By.CSS_SELECTOR, page_image_selector)))
+                        # WebDriverWait(browser,60).until(EC.presence_of_element_located((By.CSS_SELECTOR, page_image_selector)))
+                        try:
+                            WebDriverWait(browser, 10).until(
+                            EC.presence_of_element_located(
+                                (By.CSS_SELECTOR, image_paginator_selector))
+                        )
+                            # Selector image paginator and retrieve all images at once. 
+                            images_pager = browser.find_element_by_css_selector(image_paginator_selector)
+                            print("Image selector found")
+                            image_elements = images_pager.find_elements_by_css_selector('img')
+                            for image in image_elements:
+                                images.append(image.get_attribute("src")) 
+                            
+                            return images
+                        except Exception as exc:
+                            pass
 
 
                     # elif exc_type == InvalidSessionIdException:
