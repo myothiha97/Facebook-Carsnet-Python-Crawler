@@ -8,7 +8,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import NoSuchElementException
 # from selenium.common.exceptions import InvalidSessionIdException
-from ElementSelectors import image_holder_selector,page_image_selector,page_next_btn_selector
+from ElementSelectors import image_holder_selector,image_paginator_selector,page_image_selector,page_next_btn_selector 
 from ElementSelectors import gp_image_selector,gp_next_btn_selector
 from ElementSelectors import gp_video_btn_selector , page_video_btn_selector
 import sys , traceback
@@ -22,72 +22,32 @@ class FacebookImageExtractor():
             # Might be a seller group            
             image_holder = post.find_element_by_css_selector(image_holder_selector)
             # image_holder.click()
-            browser.execute_script("arguments[0].click();", image_holder)
-            # webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
+            # browser.execute_script("arguments[0].click();", image_holder)
+            webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
 
-            WebDriverWait(browser, 10).until(
+            try:
+                WebDriverWait(browser, 10).until(
                 EC.presence_of_element_located(
-                    (By.CSS_SELECTOR, gp_image_selector))
+                    (By.CSS_SELECTOR, image_paginator_selector))
             )
-            
-            count = 0
-            while(count < 70):
-
-                try:
-                    # WebDriverWait(browser, 300).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.du4w35lb.k4urcfbm.stjgntxs.ni8dbmo4.taijpn5t.buofh1pr.j83agx80.bp9cbjyn")))
-                    WebDriverWait(browser,300).until(
-                            lambda x: x.find_element(By.CSS_SELECTOR,gp_video_btn_selector + ',' + gp_image_selector)
-                        )
-                    try:
-                        video_btn = browser.find_element_by_css_selector(gp_video_btn_selector)
-                        print("\n----------Video Detected---------")
-                        next_btn = browser.find_element_by_css_selector(gp_next_btn_selector)
-                        next_btn.click()
-                        count += 1
-                        continue
-                    except:
-                        pass
-
-                    spotlight = browser.find_element_by_css_selector(gp_image_selector).find_element_by_tag_name("img")
-
-                    # print('---------------------------------')                    
-                    image_url = spotlight.get_attribute("src")
-                    i = 0
+                # Selector image paginator and retrieve all images at once. 
+                images_pager = browser.find_element_by_css_selector(image_paginator_selector)
+                print("Image selector found")
+                image_elements = images_pager.find_elements_by_css_selector('img')
+                for image in image_elements:
+                    images.append(image.get_attribute("src")) 
                     
-                    if len(images) > 0:
-                        print(f'last image url is { images[-1]}')
-                        while image_url == images[-1] and i < 30:
-                            time.sleep(0.2)
-                            i+=1
-                            print(f'image url is {image_url}')
-                            image_url = spotlight.get_attribute("src")
-                            print(f'the loop count of the image is {i}')
-                            
-                        if image_url == images[0]:
-                            print("the image is already crawled")
-                            count = 72
-                            # continue
-                            
-                    # print(image_url)
-                    if image_url in images:
-                        pass
-                        # print('same image already')
-                        # hasMore = False
-                    else:
-                        images.append(image_url)                                     
-                    next_btn = browser.find_element_by_css_selector(gp_next_btn_selector)
-                    next_btn.click()
-                    count += 1
-                    
-                except Exception as ex:
-                    print("Issue from ImageExtractor : "+str(ex))
-                    count += 1
-                    time.sleep(1)
+            except Exception as e:
+                    print("Error extracting image object")
+                    print(str(e))  
             KeyBoard.click_esc_key(browser)
+            
         except Exception as e:
             # No image holder or images here
             print('Issue from ImageExtractor : ',str(e))
-            KeyBoard.click_esc_key(browser)
+            KeyBoard.click_esc_key(browser)\
+        
+        print(images)
         return images
 
 
@@ -101,8 +61,8 @@ class FacebookImageExtractor():
             
             image_holder = post.find_element_by_css_selector(image_holder_selector)
             # image_holder.click()
-            browser.execute_script("arguments[0].click();", image_holder)
-            # webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
+            # browser.execute_script("arguments[0].click();", image_holder)
+            webdriver.ActionChains(browser).move_to_element(image_holder).click(image_holder).perform()
 
             # WebDriverWait(browser, 10).until(
             #     EC.presence_of_element_located(
@@ -153,8 +113,24 @@ class FacebookImageExtractor():
                     # time.sleep(1.2)
                     count += 1
                 except Exception as ex:
-                    print("Issue from ImageExtractor : ")
-                    
+                    print("Issue from ImageExtractor : ")                                        
+
+                    try:
+                        WebDriverWait(browser, 10).until(
+                        EC.presence_of_element_located(
+                            (By.CSS_SELECTOR, image_paginator_selector))
+                    )
+                        # Selector image paginator and retrieve all images at once. 
+                        images_pager = browser.find_element_by_css_selector(image_paginator_selector)
+                        print("Image selector found")
+                        image_elements = images_pager.find_elements_by_css_selector('img')
+                        for image in image_elements:
+                            images.append(image.get_attribute("src")) 
+                        
+                        return images
+                    except Exception as exc:
+                        pass
+
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     print("error type : ",exc_type)
                     print(f"Error message ---------> {exc_value} & data type --------> {type(exc_value)} ")

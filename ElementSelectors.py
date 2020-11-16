@@ -30,6 +30,9 @@ cmt_count_selector = "div.bp9cbjyn.j83agx80.pfnyh3mw.p1ueia1e > div:nth-of-type(
 
 ### Image Content Selectors ###
 image_holder_selector  = "a.tm8avpzi"
+image_paginator_selector = "div.rq0escxv.l9j0dhe7.du4w35lb > div > div > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div.j83agx80.cbu4d94t.h3gjbzrl.l9j0dhe7.du4w35lb.qsy8amke > div.nznu9b0o.ji94ytn4.q10oee1b.r893ighp.ni8dbmo4.stjgntxs.k4urcfbm.spskuzq3.a156tdzh > div > div.cwj9ozl2.j83agx80.cbu4d94t.datstx6m.owwhemhu.ni8dbmo4.stjgntxs.spskuzq3 > div > div.tqsryivl.j83agx80.cbu4d94t.buofh1pr.ni8dbmo4.stjgntxs.l9j0dhe7.r9f5tntg.j9dqwuog > div.bp9cbjyn.tqsryivl.j83agx80.cbu4d94t.buofh1pr.datstx6m.taijpn5t.ni8dbmo4.stjgntxs.l9j0dhe7.abiwlrkh.k4urcfbm > div.du4w35lb.giggcyz0 > div"
+
+
 page_image_selector = "img.ji94ytn4"
 page_next_btn_selector = "div[aria-label='Next photo']"
 

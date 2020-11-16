@@ -86,7 +86,12 @@ if __name__ == '__main__':
             print(f"Total {len(pages)} page to crawl")
             for page in pages:
                 if page['is_active'] == 1:
-                    p.collect_from_api(ids=page['id'],url=page['url'],market_place=page['is_marketplace'])
+                    try:
+                        p.collect_from_api(ids=page['id'],url=page['url'],market_place=page['is_marketplace'])
+                    except Exception as e:
+                        print("Error while crawling page")
+                        print(page['id'])
+                        print("Error message : ", str(e))
                     time.sleep(1)
         else:
             print("There is no page to crawl")
@@ -98,13 +103,13 @@ if __name__ == '__main__':
         p.collect("search")
     
     if args.test_crawl:
-        ## Carsnet Page Test
-        # p.collect_from_api(ids=1,url = "https://www.facebook.com/CarsNET-102005471291910/",market_place=0)
-        # time.sleep(1)
+        # Carsnet Page Test
+        p.collect_from_api(ids=1,url = "https://www.facebook.com/CarsNET-102005471291910/",market_place=0)
+        time.sleep(1)
 
         # # Group Test - Online ကားပြဲစားတန္း ( YGN )
-        p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
-        time.sleep(1)
+        # p.collect_from_api(ids=2,url = 'https://www.facebook.com/groups/643021239182864/',market_place=1)
+        # time.sleep(1)
 
         # # Group Test - Online ကားမျိုးစုံရောင်းဝယ်ရေး
         # p.collect_from_api(ids=3,url = 'https://www.facebook.com/groups/1695736407377955/?ref=share',market_place=1)
@@ -118,9 +123,9 @@ if __name__ == '__main__':
         # p.collect_from_api(ids=5,url = 'https://www.facebook.com/groups/carforsale01/?ref=share',market_place=1)
         # time.sleep(1)
 
-        # Car အရောင်းအဝယ် ရန်ကုန်မြို့
-        p.collect_from_api(ids=6,url = 'https://www.facebook.com/groups/323949978493502/?ref=share',market_place=1)
-        time.sleep(1)
+        # # Car အရောင်းအဝယ် ရန်ကုန်မြို့
+        # p.collect_from_api(ids=6,url = 'https://www.facebook.com/groups/323949978493502/?ref=share',market_place=1)
+        # time.sleep(1)
 
         # # ကားပွဲစားတန်း
         # p.collect_from_api(ids=7,url = 'https://www.facebook.com/groups/1382476945385129/?ref=share',market_place=1)
@@ -174,7 +179,7 @@ if __name__ == '__main__':
         # p.collect_from_api(ids=19,url = 'https://www.facebook.com/groups/240683956371062/',market_place=1)
         # time.sleep(1)  
 
-        # # 20	Car အရောင်းအဝယ် Group MDY	https://www.facebook.com/groups/233517020338369/
+        # 20	Car အရောင်းအဝယ် Group MDY	https://www.facebook.com/groups/233517020338369/
         # p.collect_from_api(ids=20,url = 'https://www.facebook.com/groups/233517020338369/',market_place=1)
         # time.sleep(1)  
 
@@ -182,7 +187,7 @@ if __name__ == '__main__':
         # p.collect_from_api(ids=21,url = 'https://www.facebook.com/groups/1640172876271325/',market_place=1)
         # time.sleep(1)  
 
-        # c-> 22 	Taxi ရောင်းဝယ်ရေး	https://www.facebook.com/groups/155793198089677/
+        # # c-> 22 	Taxi ရောင်းဝယ်ရေး	https://www.facebook.com/groups/155793198089677/
         # p.collect_from_api(ids=22,url = 'https://www.facebook.com/groups/155793198089677/',market_place=1)
         # time.sleep(1)  
 
@@ -202,8 +207,56 @@ if __name__ == '__main__':
         # p.collect_from_api(ids=26,url = 'https://www.facebook.com/groups/carforsale01/',market_place=1)
         # time.sleep(1) 
 
-        ## 27	ကားအမြန်ရောင်းဝယ်ရေး	https://www.facebook.com/groups/824818357601140/?ref=share
+        # # 27	ကားအမြန်ရောင်းဝယ်ရေး	https://www.facebook.com/groups/824818357601140/?ref=share
         # p.collect_from_api(ids=27,url = 'https://www.facebook.com/groups/824818357601140/',market_place=1)
+        # time.sleep(1) 
+
+        # # 28 1.3CC ကားမျိုးစုံရောင်းဝယ်ရေ	https://www.facebook.com/groups/216375745366711
+        # p.collect_from_api(ids=28,url = 'https://www.facebook.com/groups/216375745366711',market_place=1)
+        # time.sleep(1) 
+
+        # # 29	အိမ်ကားမျိုးစုံရောင်းဝယ်လဲ	https://www.facebook.com/groups/220611238364619/?ref=share
+        # p.collect_from_api(ids=29,url = 'https://www.facebook.com/groups/220611238364619',market_place=1)
+        # time.sleep(1) 
+
+        # # 30	Honda Fit သီးသန့်ဝယ်ရောင်း	https://www.facebook.com/groups/1620743871513887/?ref=share
+        # p.collect_from_api(ids=30,url = 'https://www.facebook.com/groups/1620743871513887',market_place=1)
+        # time.sleep(1) 
+
+        # # 31	Land Cruiser,Prado & Surf သီးသန့်ရောင်းဝယ်ရေး	https://www.facebook.com/groups/1136478416452389/?ref=share
+        # p.collect_from_api(ids=31,url = 'https://www.facebook.com/groups/1136478416452389/?ref=share',market_place=1)
+        # time.sleep(1) 
+
+        # # 32 Toyota Crown သီးသန့် ဝယ်ရောင်း Group	https://www.facebook.com/groups/1741203506159078/
+        # p.collect_from_api(ids=32,url = 'https://www.facebook.com/groups/1741203506159078/',market_place=1)
+        # time.sleep(1) 
+
+        # # 33	တိုက်ရိုက်ပိုင်ရှင် ကားရောင်းဝယ်ရေး Group	https://www.facebook.com/groups/318103168653574/?ref=share
+        # p.collect_from_api(ids=33,url = 'https://www.facebook.com/groups/318103168653574',market_place=1)
+        # time.sleep(1) 
+        
+        # # 34	Toyota Kluger သီး သန့် ရောင်း ဝယ် ရေး	https://www.facebook.com/groups/299428733986412/?ref=share
+        # p.collect_from_api(ids=34,url = 'https://www.facebook.com/groups/299428733986412',market_place=1)
+        # time.sleep(1) 
+
+        # 40	ပြိုင်ကားသီးသန့်အရောင်းအဝယ်အလဲအထပ်	https://www.facebook.com/groups/866078440191395/
+        # p.collect_from_api(ids=40,url = 'https://www.facebook.com/groups/866078440191395/',market_place=1)
+        # time.sleep(1) 
+
+        # 42	ကားအရောင်းအဝယ်(ရန်ကုန်မြို့)
+        # p.collect_from_api(ids=41,url = 'https://www.facebook.com/groups/323949978493502/',market_place=1)
+        # time.sleep(1) 
+
+        # # 43	Probox/Succeed သီးသန့်ရောင်းဝယ်ရေး
+        # p.collect_from_api(ids=41,url = 'https://www.facebook.com/groups/690320221441465/',market_place=1)
+        # time.sleep(1) 
+
+        ## 44	MDY ကားအမြန်အရောင်းဝယ်
+        # p.collect_from_api(ids=41,url = 'https://www.facebook.com/groups/1781454882137772/',market_place=1)
+        # time.sleep(1) 
+
+        ## 45	MDY ကားအရောင်းအဝယ်
+        # p.collect_from_api(ids=41,url = 'https://www.facebook.com/groups/634822679883506/?ref=share',market_place=1)
         # time.sleep(1) 
 
 
