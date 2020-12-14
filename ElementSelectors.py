@@ -15,7 +15,7 @@ hover_time_selector = "div.j34wkznp.qp9yad78.pmk7jnqg.kr520xx4.hzruof5a > span >
 date_content_selector = "span[id*='jsc']  > span:nth-of-type(2) > span"
 
 ### Post Contents Selectors ###
-post_no_selector = "div[aria-posinset]"
+post_no_selector = "div.du4w35lb.k4urcfbm.l9j0dhe7.sjgh65i0"
 page_post_content_selector = "div[data-ad-comet-preview='message']"
 group_post_content_selector = "div.rq0escxv.a8c37x1j.rz4wbd8a.a8nywdso > div:nth-of-type(2)"
 page_author_name_xpath_selector = "//*[contains(@id,'jsc_c')]/div/a/strong/span"
