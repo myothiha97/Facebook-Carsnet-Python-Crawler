@@ -81,6 +81,7 @@ class FacebookImageExtractor():
                     try:
                         video_btn = browser.find_element_by_css_selector(page_video_btn_selector)
                         print("\n----------Video Detected---------")
+                        # webdriver.ActionChains(browser).send_keys(Keys.ARROW_RIGHT).perform()
                         next_btn = browser.find_element_by_css_selector(page_next_btn_selector)
                         next_btn.click()
                         count += 1
@@ -88,7 +89,10 @@ class FacebookImageExtractor():
                     except:
                         pass
                     # time.sleep(0.3)
+                    next_btn = browser.find_element_by_css_selector(page_next_btn_selector)
+                    webdriver.ActionChains(browser).move_to_element(next_btn).perform()
                     spotlight = browser.find_element_by_css_selector(page_image_selector)
+                    webdriver.ActionChains(browser).move_to_element(spotlight).perform()
 
                     # print('---------------------------------')                    
                     image_url = spotlight.get_attribute("src")
@@ -109,7 +113,7 @@ class FacebookImageExtractor():
                         images.append(image_url)
 
                     ## Clicking next image    
-                    next_btn = browser.find_element_by_css_selector(page_next_btn_selector)
+                    # webdriver.ActionChains(browser).send_keys(Keys.ARROW_RIGHT).perform()
                     next_btn.click()
                     # webdriver.ActionChains(browser).send_keys(Keys.ARROW_RIGHT).perform()
                     # time.sleep(1.2)
