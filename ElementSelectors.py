@@ -12,7 +12,7 @@ gp_type_check_selector2 = "div.cb02d2ww.ni8dbmo4.stjgntxs.l9j0dhe7.k4urcfbm.du4w
 ### Date Check Selectors ###
 time_holder_selector = "span.oi732d6d.ik7dh3pa.d2edcug0.qv66sw1b.c1et5uql.a8c37x1j.hop8lmos.enqfppq2.e9vueds3.j5wam9gi.knj5qynh.m9osqain.hzawbc8m > span > span:nth-of-type(2) > span"
 hover_time_selector = "div.j34wkznp.qp9yad78.pmk7jnqg.kr520xx4.hzruof5a > span > div > div > span"
-date_content_selector = "span[id*='jsc']  > span:nth-of-type(2) > span"
+date_content_selector = "span[id*='jsc']  > span:nth-of-type(2) > span > a"
 
 ### Post Contents Selectors ###
 # post_no_selector = "div.du4w35lb.k4urcfbm.l9j0dhe7.sjgh65i0"

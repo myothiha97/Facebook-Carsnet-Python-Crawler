@@ -14,11 +14,15 @@ class ContentExtractor:
     def get_post_time_stamp(cls,post):
         # Get Date
         print("Retrieving post time stamp")
-        date_content = post.find_element_by_css_selector(date_content_selector).get_attribute("innerText")
-        print(date_content)
-        
-        publish_at = get_publish_at(date_content)
-        time.sleep(1)
+        try:
+
+            date_content = post.find_element_by_css_selector(date_content_selector).get_attribute("aria-label")
+            print(date_content)
+            
+            publish_at = get_publish_at(date_content)
+            time.sleep(1)
+        except:
+            publish_at = ''
         # with open("Post_Dates.csv",'a') as fileobj:
         #     fieldnames = ['Raw_date','Format_date']
         #     writer = csv.DictWriter(fileobj,fieldnames=fieldnames)

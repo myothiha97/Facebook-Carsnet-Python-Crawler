@@ -144,6 +144,8 @@ class Crawler:
 
     def collect_from_api(self, ids, url, market_place):
         self.browser.get(url)
+        time.sleep(1)
+        print(self.browser.current_url)
         time.sleep(4)
 
         crawl_history_id = self.api_connector.get_crawl_history_id(ids)
@@ -203,7 +205,7 @@ class Crawler:
                 self.crawl_posts(
                     ids, crawl_history_id=crawl_history_id, market_place=1, g_type=1)
         # self.crawl_posts(ids,market_place)
-
+        # time.sleep(60)
     def select_types(self, type, url):
 
         # Wait till the current browser is already login and reach home page
@@ -283,7 +285,7 @@ class Crawler:
     def crawl_posts(self, ids, crawl_history_id, market_place, g_type):
 
         # Skip to the post index directly
-        current_post_index = 1
+        current_post_index = 0
 
         try:
 
@@ -319,7 +321,8 @@ class Crawler:
                     print(date_content)
                 except  Exception as e:
                     print("Error extracting date_content")
-                    print(post.get_attribute("innerText"))
+                    # print(post.get_attribute("innerText"))
+                    date_content = ''
                     print(str(e))                    
 
                 try:
