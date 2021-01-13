@@ -1,6 +1,6 @@
 ### See More Selectors ###
 page_see_more_selector = "div.j83agx80.cbu4d94t.ew0dbk1b.irj2b8pg > div > span > div > div:last-child > div"
-group_see_more_selector = "div.dati1w0a.f10w8fjw.hv4rvrfc.jb3vyjys > span > div:last-child > div"
+group_see_more_selector = 'div[data-ad-preview="message"] > div > div > span > div:last-of-type > div > div'
 
 ### Share check selectors ###
 share_check_selector = "div.pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m > div:nth-of-type(2) > div > div:nth-of-type(1) > span"
@@ -12,12 +12,13 @@ gp_type_check_selector2 = "div.cb02d2ww.ni8dbmo4.stjgntxs.l9j0dhe7.k4urcfbm.du4w
 ### Date Check Selectors ###
 time_holder_selector = "span.oi732d6d.ik7dh3pa.d2edcug0.qv66sw1b.c1et5uql.a8c37x1j.hop8lmos.enqfppq2.e9vueds3.j5wam9gi.knj5qynh.m9osqain.hzawbc8m > span > span:nth-of-type(2) > span"
 hover_time_selector = "div.j34wkznp.qp9yad78.pmk7jnqg.kr520xx4.hzruof5a > span > div > div > span"
-date_content_selector = "span[id*='jsc']  > span:nth-of-type(2) > span"
+date_content_selector = "span[id*='jsc']  > span:nth-of-type(2) > span > a"
 
 ### Post Contents Selectors ###
-post_no_selector = "div.du4w35lb.k4urcfbm.l9j0dhe7.sjgh65i0"
+# post_no_selector = "div.du4w35lb.k4urcfbm.l9j0dhe7.sjgh65i0"
+post_no_selector = "div[aria-describedby]"
 page_post_content_selector = "div[data-ad-comet-preview='message']"
-group_post_content_selector = "div.rq0escxv.a8c37x1j.rz4wbd8a.a8nywdso > div:nth-of-type(2)"
+group_post_content_selector = "div.rq0escxv.a8c37x1j.rz4wbd8a.a8nywdso > div:nth-of-type(2),div[data-ad-comet-preview='message']"
 page_author_name_xpath_selector = "//*[contains(@id,'jsc_c')]/div/a/strong/span"
 group_author_name_selector = "h2.gmql0nx0.l94mrbxd.p1ri9a11.lzcic4wl.aahdfvyu.hzawbc8m"
 
