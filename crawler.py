@@ -142,7 +142,7 @@ class Crawler:
             # self.save_post_to_db(page_id)
     # Select types and return sql query for post and imges
 
-    def collect_from_api(self, ids, url, market_place):
+    def collect_from_api(self, ids, url, market_place , num_scrolls):
         self.browser.get(url)
         time.sleep(1)
         print(self.browser.current_url)
@@ -151,8 +151,9 @@ class Crawler:
         crawl_history_id = self.api_connector.get_crawl_history_id(ids)
         # crawl_history_id = 15
         scroll_count = 1
+        print(f"Numbers of Scrolls -----------> {num_scrolls} \n")
         try:
-            for scroll in range(self.depth):
+            for scroll in range(num_scrolls):
                 timestamp = calendar.timegm(time.gmtime())
                 # Click Esc Key to prevent browser notification
                 self.click_esc_key()
