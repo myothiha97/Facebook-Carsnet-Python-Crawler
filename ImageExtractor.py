@@ -8,7 +8,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import NoSuchElementException
 # from selenium.common.exceptions import InvalidSessionIdException
-from ElementSelectors import image_holder_selector,image_paginator_selector,page_image_selector,page_next_btn_selector 
+from ElementSelectors import image_holder_selector,image_paginator_selector,page_image_selector,page_next_btn_selector
 from ElementSelectors import gp_image_selector,gp_next_btn_selector
 from ElementSelectors import gp_video_btn_selector , page_video_btn_selector
 import sys , traceback
@@ -57,7 +57,6 @@ class FacebookImageExtractor():
         # actions = ActionChains(browser)
         
         images = []
-        
         try:                
             # Try clicking on the images
             
@@ -71,7 +70,7 @@ class FacebookImageExtractor():
             #         (By.CSS_SELECTOR, page_image_selector))
             # )
             count = 0
-            while(count < 70):            
+            while(count < 31):            
                 try:     
                     # WebDriverWait(browser, 300).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.ji94ytn4")))
                     WebDriverWait(browser,300).until(
@@ -103,10 +102,11 @@ class FacebookImageExtractor():
                             i+=1                            
                             image_url = spotlight.get_attribute("src")
                             print(f'the loop count of the image is {i}')
+
                     print(f'Successfully retrieve image ${image_url}')
                     if image_url in images:                        
                         print('This image is already retrieved')
-                        count = 80
+                        count = 40
                         # hasMore = False
                     else:
                         print('Appending image into the image list')
@@ -125,7 +125,7 @@ class FacebookImageExtractor():
                     print("error type : ",exc_type)
                     print(f"Error message ---------> {exc_value} & data type --------> {type(exc_value)} ")
                     if exc_type == ElementNotInteractableException:
-                        count = 72
+                        count = 40
                     elif exc_type == NoSuchElementException:
                         # WebDriverWait(browser,60).until(EC.presence_of_element_located((By.CSS_SELECTOR, page_image_selector)))
                         try:
@@ -160,6 +160,8 @@ class FacebookImageExtractor():
             print('Issue from ImageHolder : ' + str(e))
             KeyBoard.click_esc_key(browser)
         
+        time.sleep(1)
         return images
+
 
     
