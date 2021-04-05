@@ -299,7 +299,7 @@ class Crawler:
             ''' Skip to desire post number.Only use when large amount of posts are crawled '''
 
             posts = posts[current_post_index:] ## Can use desire number. 
-            # check = True
+            check = False
             for g,post in enumerate(posts):
                 # Click See More Button if exist
                 # webdriver.ActionChains(self.browser).move_to_element(post).perform()
@@ -307,11 +307,11 @@ class Crawler:
                 g = current_post_index
                 ''' Skipping logic '''
 
-                # if check == True:  
-                #     print("Skipped")
-                #     self.browser.execute_script("arguments[0].scrollIntoView();", post)
-                #     check = False
-                #     continue
+                if check == True:  
+                    print("Skipped")
+                    self.browser.execute_script("arguments[0].scrollIntoView();", post)
+                    check = False
+                    continue
                 ''' Check if the date is needed to be hovered '''
 
                 date_content = ""
